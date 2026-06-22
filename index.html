@@ -677,177 +677,100 @@
             z-index: 1;
         }
 
-        /* ===== WORKS (이미지+제목 스크롤 / 설명만 가운데 고정) ===== */
-        .works-list {}
-
-        /* 각 프로젝트: 왼쪽 이미지 더미는 스크롤, 오른쪽 설명은 고정 */
-        .work-proj {
+        /* ===== WORKS (2-column staggered grid) ===== */
+        .works-grid {
             display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 70px;
-            padding-top: 40px;
-            border-top: 1px solid #e7e7e7;
-            align-items: stretch;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 48px;
+            align-items: start;
         }
+        .works-col { display: flex; flex-direction: column; gap: 64px; }
+        .works-col--r { padding-top: 200px; }
 
-        /* 왼쪽: 여러 이미지가 세로로 쌓여 함께 스크롤됨 */
-        .wp-visual {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        .wp-shot {
-            position: relative;
-            height: 145vh;
-            border-radius: 20px;
+        .wcard { display: flex; flex-direction: column; }
+        .wcard-img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 16px;
             overflow: hidden;
-            display: flex;
-            align-items: flex-end;
-            padding: 22px;
-        }
-        .wp-shot.s1 { background: linear-gradient(135deg, #3D5A80, #1A1A2E); }
-        .wp-shot.s2 { background: linear-gradient(160deg, #5A6B8C, #2A2A4A); }
-        .wp-shot.s3 { background: linear-gradient(135deg, #2A2A4A, #1A1A2E); }
-        .wp-shot.s4 { background: linear-gradient(160deg, #4A5A78, #1A1A2E); }
-        .wp-cap {
-            background: rgba(253,252,248,0.93);
-            backdrop-filter: blur(6px);
-            color: var(--ink);
-            border-radius: 12px;
-            padding: 13px 18px;
-            font-size: 0.82em;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            width: min(300px, 72%);
-        }
-        .wp-cap span:last-child { color: var(--gold); }
-
-        /* 오른쪽 텍스트 컬럼: 이미지 높이만큼 차지 */
-        .wp-text {
             position: relative;
-            display: flex;
-            flex-direction: column;
         }
-
-        /* 제목+설명 영역: 이 안에서 설명이 고정되고, 끝나면 footer 위에서 풀려 올라감 */
-        .wp-main {
-            flex: 1;
+        .wcard-img.s1 { background: linear-gradient(135deg, #3D5A80, #1A1A2E); }
+        .wcard-img.s2 { background: linear-gradient(160deg, #5A6B8C, #2A2A4A); }
+        .wcard-img.s3 { background: linear-gradient(135deg, #2A2A4A, #1A1A2E); }
+        .wcard-img.s4 { background: linear-gradient(160deg, #4A5A78, #1A1A2E); }
+        .wcard-info { padding: 22px 0 0; }
+        .wcard-meta {
             display: flex;
-            flex-direction: column;
-        }
-
-        /* 제목 + 연도: 상단에서 함께 스크롤되어 사라짐 */
-        .wp-head {
-            display: flex;
-            align-items: flex-start;
+            align-items: baseline;
             justify-content: space-between;
-            gap: 20px;
-            padding-top: 6vh;
+            gap: 12px;
+            margin-bottom: 12px;
         }
-        .wp-title {
-            font-size: clamp(2.2em, 4.4vw, 3.8em);
-            font-weight: 800;
+        .wcard-title {
+            font-size: clamp(1.1em, 1.9vw, 1.55em);
+            font-weight: 700;
             color: var(--ink);
-            letter-spacing: -1.5px;
-            line-height: 1.05;
+            letter-spacing: -0.4px;
+            line-height: 1.2;
         }
-        .wp-year {
-            font-size: 0.95em;
+        .wcard-year {
+            font-size: 0.82em;
             color: var(--gold);
             font-weight: 600;
             letter-spacing: 1px;
             white-space: nowrap;
             flex-shrink: 0;
         }
-
-        /* 설명 + 태그: 화면 상단 근처에 고정(sticky), 왼쪽 이미지가 지나가는 동안 머무름 */
-        .wp-sticky {
-            position: sticky;
-            top: 16vh;
-            margin-top: 14vh;
-            align-self: flex-start;
+        .wcard-desc {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.75;
+            margin-bottom: 18px;
         }
-        .wp-sticky p {
-            color: #555;
-            font-size: 0.98em;
-            line-height: 1.85;
-            max-width: 460px;
-            margin-bottom: 30px;
+        .wcard-tags {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
         }
-        .wp-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-        .wp-tags span {
-            font-size: 0.72em;
+        .wcard-tags span {
+            font-size: 0.68em;
             color: #7a7a88;
             background: #EFEDE4;
             border-radius: 6px;
-            padding: 8px 15px;
+            padding: 7px 13px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             font-weight: 600;
-            transition: background 0.3s, color 0.3s;
         }
-        .wp-sticky:hover .wp-tags span { background: #E8D5B7; color: var(--ink); }
-
-        /* 태그 + 링크 + 바코드: 컬럼 맨 아래 → 왼쪽 이미지 하단과 같은 위치에 고정 */
-        .wp-foot {
-            margin-top: auto;
-            padding-bottom: 4px;
-            display: flex;
-            flex-direction: column;
-            gap: 26px;
-            align-items: flex-start;
-        }
-        .wp-foot-row {
-            width: 100%;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 24px;
-        }
-        .wp-links {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .wp-link {
+        .wcard-links { display: flex; gap: 22px; flex-wrap: wrap; }
+        .wcard-link {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.8em;
+            font-size: 0.77em;
             font-weight: 700;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             color: var(--ink);
             text-decoration: none;
             border-bottom: 1.5px solid var(--ink);
-            padding-bottom: 5px;
+            padding-bottom: 4px;
             transition: color 0.3s, border-color 0.3s, gap 0.3s;
         }
-        .wp-link:hover { color: var(--gold); border-color: var(--gold); gap: 16px; }
-        .wp-link i {
+        .wcard-link:hover { color: var(--gold); border-color: var(--gold); gap: 16px; }
+        .wcard-link i {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border: 1.5px solid currentColor;
-            border-radius: 5px;
+            border-radius: 4px;
             font-size: 0.55em;
             font-style: normal;
             padding-left: 1px;
-        }
-        .wp-barcode {
-            width: 110px;
-            height: 46px;
-            flex-shrink: 0;
-            background: repeating-linear-gradient(90deg,
-                var(--ink) 0 2px, transparent 2px 4px,
-                var(--ink) 4px 5px, transparent 5px 8px,
-                var(--ink) 8px 11px, transparent 11px 13px);
         }
 
         /* ===== 마퀴 (흐르는 텍스트 띠) ===== */
@@ -992,11 +915,10 @@
             .profile-photo { aspect-ratio: 4 / 3; }
             .skill-row { grid-template-columns: 40px 56px 1fr; gap: 16px; padding: 24px 10px; }
             .skill-desc { grid-column: 1 / -1; }
-            .work-proj { grid-template-columns: 1fr; gap: 20px; padding-bottom: 30px; }
-            .wp-shot { height: 64vw; max-height: 420px; border-radius: 14px; }
-            .wp-head { padding-top: 0; margin-bottom: 22px; }
-            .wp-sticky { position: static; top: auto; margin-top: 40px; }
-            .wp-foot { margin-top: 40px; }
+            .works-grid { grid-template-columns: 1fr; }
+            .works-col--r { padding-top: 0; }
+            .works-col { gap: 44px; }
+            .wcard-img { border-radius: 12px; }
             .lc-viewport { height: 560px; }
             .marquee-track span { font-size: 1.6em; }
         }
@@ -1230,103 +1152,69 @@
                 <p class="sheet-tag">기획부터 디자인까지<br>직접 완성한 작업물</p>
             </div>
 
-            <div class="works-list">
-                <!-- 왼쪽 이미지 더미는 스크롤, 오른쪽 설명은 고정, 하단 링크+바코드 -->
-                <div class="work-proj">
-                    <div class="wp-visual">
-                        <div class="wp-shot s1"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                    </div>
-                    <div class="wp-text">
-                        <div class="wp-main">
-                        <div class="wp-head">
-                            <h3 class="wp-title">프로젝트 이름</h3>
-                            <span class="wp-year">(2025)</span>
-                        </div>
-                        <div class="wp-sticky">
-                            <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다. 스크롤하면 왼쪽 이미지는 지나가고, 이 설명은 화면에 고정되어 머뭅니다.</p>
+            <div class="works-grid">
+                <!-- 왼쪽 컬럼: 프로젝트 1, 3 -->
+                <div class="works-col works-col--l">
+                    <div class="wcard">
+                        <div class="wcard-img s1"></div>
+                        <div class="wcard-info">
+                            <div class="wcard-meta">
+                                <h3 class="wcard-title">프로젝트 이름</h3>
+                                <span class="wcard-year">2025</span>
                             </div>
-                        </div>
-                        <div class="wp-foot">
-                            <div class="wp-tags"><span>UI-DESIGN</span><span>UX</span><span>BRANDING</span></div>
-                            <div class="wp-foot-row">
-                                <div class="wp-links"><a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
-                                <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a></div>
-                                <div class="wp-barcode"></div>
+                            <p class="wcard-desc">프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                            <div class="wcard-tags"><span>UI-DESIGN</span><span>UX</span><span>BRANDING</span></div>
+                            <div class="wcard-links">
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="work-proj">
-                    <div class="wp-visual">
-                        <div class="wp-shot s2"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                    </div>
-                    <div class="wp-text">
-                        <div class="wp-main">
-                        <div class="wp-head">
-                            <h3 class="wp-title">프로젝트 이름</h3>
-                            <span class="wp-year">(2025)</span>
-                        </div>
-                        <div class="wp-sticky">
-                            <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                    <div class="wcard">
+                        <div class="wcard-img s3"></div>
+                        <div class="wcard-info">
+                            <div class="wcard-meta">
+                                <h3 class="wcard-title">프로젝트 이름</h3>
+                                <span class="wcard-year">2024</span>
                             </div>
-                        </div>
-                        <div class="wp-foot">
-                            <div class="wp-tags"><span>FIGMA</span><span>PROTOTYPE</span></div>
-                            <div class="wp-foot-row">
-                                <div class="wp-links"><a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
-                                <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a></div>
-                                <div class="wp-barcode"></div>
+                            <p class="wcard-desc">프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                            <div class="wcard-tags"><span>GRAPHIC</span><span>EDITORIAL</span></div>
+                            <div class="wcard-links">
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="work-proj">
-                    <div class="wp-visual">
-                        <div class="wp-shot s3"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                    </div>
-                    <div class="wp-text">
-                        <div class="wp-main">
-                        <div class="wp-head">
-                            <h3 class="wp-title">프로젝트 이름</h3>
-                            <span class="wp-year">(2024)</span>
-                        </div>
-                        <div class="wp-sticky">
-                            <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                <!-- 오른쪽 컬럼: 프로젝트 2, 4 (아래 오프셋) -->
+                <div class="works-col works-col--r">
+                    <div class="wcard">
+                        <div class="wcard-img s2"></div>
+                        <div class="wcard-info">
+                            <div class="wcard-meta">
+                                <h3 class="wcard-title">프로젝트 이름</h3>
+                                <span class="wcard-year">2025</span>
                             </div>
-                        </div>
-                        <div class="wp-foot">
-                            <div class="wp-tags"><span>GRAPHIC</span><span>EDITORIAL</span></div>
-                            <div class="wp-foot-row">
-                                <div class="wp-links"><a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
-                                <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a></div>
-                                <div class="wp-barcode"></div>
+                            <p class="wcard-desc">프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                            <div class="wcard-tags"><span>FIGMA</span><span>PROTOTYPE</span></div>
+                            <div class="wcard-links">
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="work-proj">
-                    <div class="wp-visual">
-                        <div class="wp-shot s4"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                    </div>
-                    <div class="wp-text">
-                        <div class="wp-main">
-                        <div class="wp-head">
-                            <h3 class="wp-title">프로젝트 이름</h3>
-                            <span class="wp-year">(2024)</span>
-                        </div>
-                        <div class="wp-sticky">
-                            <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                    <div class="wcard">
+                        <div class="wcard-img s4"></div>
+                        <div class="wcard-info">
+                            <div class="wcard-meta">
+                                <h3 class="wcard-title">프로젝트 이름</h3>
+                                <span class="wcard-year">2024</span>
                             </div>
-                        </div>
-                        <div class="wp-foot">
-                            <div class="wp-tags"><span>WEB</span><span>HTML/CSS</span></div>
-                            <div class="wp-foot-row">
-                                <div class="wp-links"><a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
-                                <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a></div>
-                                <div class="wp-barcode"></div>
+                            <p class="wcard-desc">프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                            <div class="wcard-tags"><span>WEB</span><span>HTML/CSS</span></div>
+                            <div class="wcard-links">
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
+                                <a class="wcard-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
                         </div>
                     </div>
@@ -1709,7 +1597,7 @@
                 requestAnimationFrame(animateRing);
             })();
 
-            const hoverSel = 'a, button, .work-proj, .skill-row';
+            const hoverSel = 'a, button, .wcard, .skill-row';
             document.addEventListener('mouseover', (e) => {
                 if (e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
             });
