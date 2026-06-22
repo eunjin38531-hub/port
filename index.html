@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고은진 | 사용자의 나침반 디자이너</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='none' stroke='%23c8a96a' stroke-width='5'/><polygon points='50,18 42,50 58,50' fill='%23c8a96a'/><polygon points='50,82 42,50 58,50' fill='%235a6b82'/></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ink: #0f1722;
+            --navy: #16243a;
+            --gold: #c8a96a;
+            --gold-soft: #e6d3a3;
+            --paper: #f5f1e8;
+            --line: #2a3b54;
+        }
+
+        html, body {
+            height: 100%;
+            scroll-behavior: auto;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', 'Noto Sans CJK KR', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        /* 스크롤 잠금 */
+        body.locked {
+            overflow: hidden;
+        }
+
+        /* ===== 로딩 화면 ===== */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--ink);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .loader-compass {
+            width: 70px;
+            height: 70px;
+            border: 2px solid var(--line);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            margin-top: 24px;
+            color: var(--gold-soft);
+            font-size: 0.85em;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* ===== 홈(히어로) 화면 ===== */
+        #home {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background:
+                radial-gradient(circle at 50% 42%, rgba(200,169,106,0.10), transparent 55%),
+                linear-gradient(160deg, var(--ink) 0%, var(--navy) 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* 배경 좌표선 */
+        .home-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+
+        .home-inner {
+            position: relative;
+            text-align: center;
+            z-index: 5;
+            pointer-events: none;
+            padding: 0 24px;
+        }
+
+        .home-name {
+            color: var(--gold-soft);
+            font-size: 0.9em;
+            letter-spacing: 8px;
+            margin-bottom: 28px;
+            opacity: 0.85;
+        }
+
+        .home-title {
+            font-size: clamp(2.6em, 9vw, 5.5em);
+            font-weight: 800;
+            color: var(--paper);
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .home-title .accent {
+            color: var(--gold);
+        }
+
+        .home-sub {
+            margin-top: 22px;
+            color: rgba(245,241,232,0.6);
+            font-size: 1em;
+            letter-spacing: 1px;
+        }
+
+        /* 나침반 그래픽 */
+        .compass {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(80vw, 560px);
+            height: min(80vw, 560px);
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .compass .ring {
+            fill: none;
+            stroke: var(--line);
+        }
+
+        .compass .tick {
+            stroke: rgba(200,169,106,0.4);
+        }
+
+        .compass .cardinal {
+            fill: var(--gold-soft);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .compass .needle {
+            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            transform-origin: 300px 300px;
+        }
+
+        /* 사용자가 긋는 선 레이어 */
+        #drawLayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            cursor: crosshair;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .draw-path {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 6px rgba(200,169,106,0.6));
+        }
+
+        /* 하단 안내 + 진행도 */
+        .home-guide {
+            position: absolute;
+            bottom: 46px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 12;
+            text-align: center;
+            width: min(86vw, 420px);
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .home-guide .hint {
+            color: rgba(245,241,232,0.75);
+            font-size: 0.92em;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+
+        .home-guide .hint b {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        .progress-num {
+            margin-top: 10px;
+            color: rgba(245,241,232,0.5);
+            font-size: 0.78em;
+            letter-spacing: 2px;
+        }
+
+        /* 홈 → 콘텐츠 전환 */
+        #home.depart {
+            transition: opacity 0.9s ease, transform 0.9s ease;
+            opacity: 0;
+            transform: translateY(-40px);
+            pointer-events: none;
+        }
+
+        .scroll-cue {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--gold);
+            font-size: 1.4em;
+            opacity: 0;
+            z-index: 12;
+            transition: opacity 0.5s ease;
+        }
+
+        .scroll-cue.show {
+            opacity: 1;
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 10px); }
+        }
+
+        /* ===== 이하 기존 콘텐츠 ===== */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 1px solid #e5e5e5;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        nav.nav-visible { opacity: 1; }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            padding: 20px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav a {
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95em;
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 1.4em;
+            line-height: 1.4;
+        }
+
+        nav a span:first-child {
+            color: #666;
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            display: block;
+        }
+
+        nav a span:last-child {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            color: var(--gold);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            display: block;
+            white-space: nowrap;
+        }
+
+        nav a:hover span:first-child,
+        nav a.active span:first-child { transform: translateY(-100%); }
+
+        nav a:hover span:last-child,
+        nav a.active span:last-child { transform: translateY(-100%); }
+
+        /* ===== CUSTOM CURSOR ===== */
+        @media (hover: hover) {
+            * { cursor: none !important; }
+        }
+
+        #cursor-dot {
+            position: fixed;
+            top: 0; left: 0;
+            width: 8px; height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+            will-change: left, top;
+        }
+
+        #cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            width: 40px; height: 40px;
+            border: 1.5px solid rgba(200, 169, 106, 0.55);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                        height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                        border-color 0.3s;
+            will-change: left, top;
+        }
+
+        body.cursor-hover #cursor-ring {
+            width: 68px;
+            height: 68px;
+            border-color: var(--gold);
+        }
+
+        body.cursor-hover #cursor-dot {
+            width: 4px;
+            height: 4px;
+            opacity: 0.5;
+        }
+
+        @media (hover: none) {
+            #cursor-dot, #cursor-ring { display: none; }
+        }
+
+        /* 상단 스크롤 진행 바 */
+        #scrollProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #e6d3a3, #c8a96a);
+            z-index: 2000;
+            transition: width 0.1s linear;
+        }
+
+        /* 스크롤 리빌 애니메이션 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal.in { opacity: 1; transform: translateY(0); }
+
+        /* ===== 공통 시트(섹션) ===== */
+        .sheet {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 140px 60px;
+            position: relative;
+        }
+
+        /* 섹션 헤더: 인덱스 번호 + 대형 타이틀 */
+        .sheet-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 80px;
+            border-bottom: 1px solid #e7e7e7;
+            padding-bottom: 28px;
+        }
+
+        .sheet-title {
+            font-size: clamp(2.4em, 6vw, 4.6em);
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: #0f1722;
+            line-height: 0.95;
+            display: flex;
+            align-items: baseline;
+            gap: 18px;
+        }
+
+        .sheet-title .idx {
+            font-size: 0.3em;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 2px;
+            transform: translateY(-1.4em);
+        }
+
+        .sheet-tag {
+            font-size: 0.82em;
+            color: #999;
+            letter-spacing: 1px;
+            text-align: right;
+            max-width: 280px;
+            line-height: 1.5;
+        }
+
+        /* ===== ABOUT ME ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 70px;
+            align-items: start;
+        }
+
+        .about-statement {
+            font-size: clamp(1.5em, 2.6vw, 2.3em);
+            font-weight: 700;
+            color: #0f1722;
+            line-height: 1.35;
+            letter-spacing: -0.5px;
+            margin-bottom: 44px;
+        }
+
+        .about-statement .hl { color: var(--gold); }
+
+        .profile-photo {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            background: linear-gradient(150deg, #16243a, #0f1722);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(230,211,163,0.5);
+            font-size: 0.9em;
+            letter-spacing: 3px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .profile-contact { list-style: none; margin-top: 30px; }
+
+        .profile-contact li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #555;
+            font-size: 0.88em;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-contact .ci {
+            display: inline-flex;
+            justify-content: center;
+            width: 20px;
+            color: var(--gold);
+        }
+
+        .about-block { margin-bottom: 48px; }
+
+        .about-h {
+            font-size: 0.78em;
+            font-weight: 700;
+            color: #999;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .about-h::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .rec {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 18px;
+            padding: 14px 0;
+            font-size: 0.88em;
+            line-height: 1.55;
+            border-bottom: 1px solid #f2f2f2;
+            transition: padding-left 0.3s, background 0.3s;
+        }
+        .rec:hover { padding-left: 10px; background: #fcfaf5; }
+
+        .rec-date { color: var(--gold); font-weight: 600; font-size: 0.92em; }
+        .rec-body { color: #333; }
+        .rec-body em { font-style: normal; color: #999; display: block; margin-top: 3px; }
+
+        /* ===== SKILLS ===== */
+        .skills-list { border-top: 1px solid #e7e7e7; }
+
+        .skill-row {
+            display: grid;
+            grid-template-columns: 60px 64px 200px 1fr;
+            gap: 30px;
+            align-items: center;
+            padding: 34px 18px;
+            border-bottom: 1px solid #e7e7e7;
+            transition: background 0.35s, padding-left 0.35s;
+            position: relative;
+        }
+
+        .skill-row::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 0;
+            background: linear-gradient(90deg, rgba(200,169,106,0.12), transparent);
+            transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .skill-row:hover::before { width: 100%; }
+        .skill-row:hover { padding-left: 34px; }
+
+        .skill-num {
+            font-size: 0.85em;
+            color: #bbb;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+        .skill-row:hover .skill-num { color: var(--gold); }
+
+        .skill-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #fff;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .skill-row:hover .skill-icon { transform: rotate(-8deg) scale(1.12); }
+
+        .skill-icon.figma { background: #1e1e1e; }
+        .skill-icon.ps { background: #001e36; color: #31a8ff; border: 1px solid #31a8ff; }
+        .skill-icon.ai { background: #330000; color: #ff9a00; border: 1px solid #ff9a00; }
+        .skill-icon.id { background: #2d0013; color: #ff3366; border: 1px solid #ff3366; }
+        .skill-icon.vscode { background: #fff; border: 1px solid #e5e5e5; }
+        .skill-icon.office { background: #fff; border: 1px solid #e5e5e5; }
+
+        .off-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+            width: 28px;
+            height: 28px;
+        }
+        .off-grid i { border-radius: 3px; display: block; }
+
+        .skill-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #0f1722;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s;
+        }
+        .skill-row:hover .skill-name { color: var(--gold); }
+
+        .skill-desc {
+            color: #777;
+            font-size: 0.86em;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== WORKS ===== */
+        .works-list { border-top: 1px solid #e7e7e7; }
+
+        .work-item {
+            display: grid;
+            grid-template-columns: 80px 1fr 380px;
+            gap: 40px;
+            align-items: center;
+            padding: 40px 18px;
+            border-bottom: 1px solid #e7e7e7;
+            position: relative;
+            transition: padding-left 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .work-item:hover { padding-left: 34px; }
+
+        .work-num {
+            font-size: 0.9em;
+            color: #bbb;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        .work-item:hover .work-num { color: var(--gold); }
+
+        .work-main h3 {
+            font-size: clamp(1.6em, 3vw, 2.6em);
+            font-weight: 800;
+            color: #0f1722;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            transition: color 0.35s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .work-item:hover .work-main h3 { color: var(--gold); transform: translateX(8px); }
+
+        .work-main p { color: #888; font-size: 0.9em; line-height: 1.6; max-width: 460px; }
+
+        .work-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .work-tags span {
+            font-size: 0.72em;
+            color: #888;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            padding: 5px 14px;
+            letter-spacing: 1px;
+        }
+
+        .work-image {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #1c2c45 0%, #0f1722 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(230,211,163,0.4);
+            font-size: 0.82em;
+            letter-spacing: 3px;
+            overflow: hidden;
+            border-radius: 6px;
+            clip-path: inset(0 0 0 0);
+            transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .work-image::after {
+            content: 'VIEW →';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(200, 169, 106, 0.92);
+            color: #0f1722;
+            font-weight: 700;
+            font-size: 0.95em;
+            letter-spacing: 3px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.35s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .work-item:hover .work-image::after { opacity: 1; transform: translateY(0); }
+
+        /* ===== 마퀴 (흐르는 텍스트 띠) ===== */
+        .marquee {
+            background: #0f1722;
+            overflow: hidden;
+            padding: 28px 0;
+            white-space: nowrap;
+        }
+        .marquee-track {
+            display: inline-block;
+            animation: marquee 22s linear infinite;
+        }
+        .marquee-track span {
+            font-size: 2.4em;
+            font-weight: 800;
+            color: var(--paper);
+            letter-spacing: -1px;
+            margin: 0 30px;
+        }
+        .marquee-track span.o { color: transparent; -webkit-text-stroke: 1px var(--gold); }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* ===== 자소서 (COVER LETTER) ===== */
+        .letter { background: #0f1722; max-width: none; color: #fff; }
+        .letter .sheet-head { border-bottom-color: rgba(255,255,255,0.12); }
+        .letter .sheet-title { color: var(--paper); }
+        .letter .sheet-tag { color: rgba(255,255,255,0.5); }
+        .letter .inner { max-width: 1280px; margin: 0 auto; }
+
+        .letter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+        }
+
+        .letter-headline {
+            font-size: clamp(1.3em, 2.2vw, 1.8em);
+            font-weight: 700;
+            color: var(--gold-soft);
+            line-height: 1.5;
+            letter-spacing: -0.5px;
+            margin-bottom: 34px;
+            padding-left: 22px;
+            border-left: 3px solid var(--gold);
+        }
+
+        .letter-block p {
+            color: rgba(245,241,232,0.75);
+            font-size: 0.92em;
+            line-height: 2;
+            margin-bottom: 22px;
+        }
+
+        footer {
+            background: #0a0f16;
+            padding: 60px 40px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+        footer .big {
+            font-size: 2.4em;
+            font-weight: 800;
+            color: var(--paper);
+            letter-spacing: -1px;
+            margin-bottom: 14px;
+            display: block;
+        }
+        footer .big .accent { color: var(--gold); }
+
+        @media (max-width: 920px) {
+            nav ul { gap: 22px; padding: 15px 20px; }
+            .sheet { padding: 90px 24px; }
+            .sheet-head { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 50px; }
+            .sheet-tag { text-align: left; }
+            .about-grid { grid-template-columns: 1fr; gap: 50px; }
+            .profile-photo { aspect-ratio: 4 / 3; }
+            .skill-row { grid-template-columns: 40px 56px 1fr; gap: 16px; padding: 24px 10px; }
+            .skill-desc { grid-column: 1 / -1; }
+            .work-item { grid-template-columns: 40px 1fr; gap: 16px; padding: 30px 10px; }
+            .work-image { grid-column: 1 / -1; height: 200px; }
+            .letter-grid { grid-template-columns: 1fr; gap: 44px; }
+            .marquee-track span { font-size: 1.6em; }
+        }
+    </style>
+    <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+</head>
+<body class="locked">
+
+    <!-- 상단 스크롤 진행 바 -->
+    <div id="scrollProgress"></div>
+
+    <!-- 로딩 화면 -->
+    <div id="loader">
+        <div class="loader-compass"></div>
+        <div class="loader-text">Finding your way</div>
+    </div>
+
+    <!-- 홈(히어로) -->
+    <section id="home">
+        <div class="home-grid"></div>
+
+        <!-- 나침반 -->
+        <svg class="compass" viewBox="0 0 600 600">
+            <circle class="ring" cx="300" cy="300" r="250" stroke-width="1.5"/>
+            <circle class="ring" cx="300" cy="300" r="210" stroke-width="1"/>
+            <circle class="ring" cx="300" cy="300" r="6" fill="#c8a96a" stroke="none"/>
+            <!-- 눈금 -->
+            <g class="ticks">
+                <line class="tick" x1="300" y1="50" x2="300" y2="78" stroke-width="2"/>
+                <line class="tick" x1="300" y1="522" x2="300" y2="550" stroke-width="2"/>
+                <line class="tick" x1="50" y1="300" x2="78" y2="300" stroke-width="2"/>
+                <line class="tick" x1="522" y1="300" x2="550" y2="300" stroke-width="2"/>
+            </g>
+            <!-- 방위 -->
+            <text class="cardinal" x="300" y="40" text-anchor="middle">N</text>
+            <text class="cardinal" x="300" y="575" text-anchor="middle">S</text>
+            <text class="cardinal" x="575" y="306" text-anchor="middle">E</text>
+            <text class="cardinal" x="25" y="306" text-anchor="middle">W</text>
+            <!-- 바늘 -->
+            <g class="needle" id="needle">
+                <polygon points="300,120 285,300 315,300" fill="#c8a96a"/>
+                <polygon points="300,480 285,300 315,300" fill="#5a6b82"/>
+            </g>
+        </svg>
+
+        <!-- 사용자가 긋는 선 -->
+        <svg id="drawLayer" preserveAspectRatio="none">
+            <path class="draw-path" id="drawPath" d=""/>
+        </svg>
+
+        <!-- 중앙 텍스트 -->
+        <div class="home-inner">
+            <div class="home-name">PORTFOLIO · 고은진</div>
+            <h1 class="home-title">사용자의 <span class="accent">나침반</span></h1>
+            <p class="home-sub">길을 잃지 않도록, 경험을 설계합니다</p>
+        </div>
+
+        <!-- 안내 + 진행도 -->
+        <div class="home-guide" id="guide">
+            <div class="hint">화면을 <b>드래그</b>해 길을 그어보세요 · 방향을 찾으면 여정이 시작됩니다</div>
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-num" id="progressNum">0%</div>
+        </div>
+
+        <div class="scroll-cue" id="scrollCue">↓</div>
+    </section>
+
+    <!-- 네비게이션 -->
+    <nav>
+        <ul>
+            <li><a href="#about"><span>About</span><span aria-hidden="true">About</span></a></li>
+            <li><a href="#skills"><span>Skills</span><span aria-hidden="true">Skills</span></a></li>
+            <li><a href="#works"><span>Works</span><span aria-hidden="true">Works</span></a></li>
+            <li><a href="#letter"><span>자소서</span><span aria-hidden="true">자소서</span></a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- ABOUT ME -->
+        <section id="about" class="sheet">
+            <div class="sheet-head">
+                <h2 class="sheet-title"><span class="idx">01</span>About</h2>
+                <p class="sheet-tag">디자이너 고은진 · UI/UX<br>사용자의 나침반</p>
+            </div>
+
+            <div class="about-grid">
+                <!-- 좌측: 이미지 + 연락처 -->
+                <div class="about-profile">
+                    <div class="profile-photo">PROFILE</div>
+                    <ul class="profile-contact">
+                        <li><span class="ci">◷</span> 0000.00.00</li>
+                        <li><span class="ci">☎</span> 010-0000-0000</li>
+                        <li><span class="ci">✉</span> contact@example.com</li>
+                        <li><span class="ci">⌖</span> 서울시 (비공개)</li>
+                    </ul>
+                </div>
+
+                <!-- 우측: 큰 선언문 + 이력 -->
+                <div class="about-col">
+                    <p class="about-statement">보기 좋은 화면을 넘어,<br>사용자가 <span class="hl">길을 잃지 않도록</span><br>경험의 흐름을 설계합니다.</p>
+
+                    <div class="about-block">
+                        <h4 class="about-h">학력</h4>
+                        <div class="rec">
+                            <span class="rec-date">2021.03<br>– 2025.02</span>
+                            <span class="rec-body">한국폴리텍대학 서울 정수캠퍼스<em>시각디자인과 졸업</em></span>
+                        </div>
+                    </div>
+
+                    <div class="about-block">
+                        <h4 class="about-h">경력</h4>
+                        <div class="rec">
+                            <span class="rec-date">2024.10<br>– 2026.03</span>
+                            <span class="rec-body">클라우드 PC방<em>고객 응대 · 음식 조리 · 매장/재고 관리</em></span>
+                        </div>
+                    </div>
+
+                    <div class="about-block">
+                        <h4 class="about-h">교육</h4>
+                        <div class="rec">
+                            <span class="rec-date">2026.04<br>– 07</span>
+                            <span class="rec-body">서울시 매력일자리 AI 디자인 취업캠프</span>
+                        </div>
+                    </div>
+
+                    <div class="about-block">
+                        <h4 class="about-h">전시</h4>
+                        <div class="rec"><span class="rec-date">2025.07</span><span class="rec-body">2025 한국디자인문화학회 신진작가전</span></div>
+                        <div class="rec"><span class="rec-date">2025.08</span><span class="rec-body">디지털로 그린 세상</span></div>
+                        <div class="rec"><span class="rec-date">2025.12</span><span class="rec-body">Piece Of Cake</span></div>
+                    </div>
+
+                    <div class="about-block">
+                        <h4 class="about-h">자격증</h4>
+                        <div class="rec"><span class="rec-date">2020.10</span><span class="rec-body">컴퓨터그래픽스기능사</span></div>
+                        <div class="rec"><span class="rec-date">2020.06</span><span class="rec-body">GTQ (그래픽기술자격) 1급</span></div>
+                        <div class="rec"><span class="rec-date">2020.07</span><span class="rec-body">GTQi (그래픽기술자격 일러스트) 1급</span></div>
+                        <div class="rec"><span class="rec-date">2019–2020</span><span class="rec-body">ITQ 한글·엑셀·파워포인트·인터넷 A등급<em>아래한글 · 액세스 포함</em></span></div>
+                    </div>
+
+                    <div class="about-block">
+                        <h4 class="about-h">봉사활동</h4>
+                        <div class="rec"><span class="rec-date">2024.11<br>– 12</span><span class="rec-body">서울시립뇌성마비복지관<em>생활지원 (식사·목욕·세탁·간병·이미용) 3회</em></span></div>
+                        <div class="rec"><span class="rec-date">2024.11</span><span class="rec-body">노원구자원봉사센터<em>자원봉사교육 및 활성화 캠페인</em></span></div>
+                        <div class="rec"><span class="rec-date">2024.11</span><span class="rec-body">도봉구보건소의약과<em>심폐소생술 교육 및 SNS 홍보</em></span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 마퀴 -->
+        <div class="marquee">
+            <div class="marquee-track">
+                <span>UI/UX DESIGN</span><span class="o">FIGMA</span><span>BRANDING</span><span class="o">EXPERIENCE</span><span>UI/UX DESIGN</span><span class="o">FIGMA</span><span>BRANDING</span><span class="o">EXPERIENCE</span>
+            </div>
+        </div>
+
+        <!-- SKILLS -->
+        <section id="skills" class="sheet">
+            <div class="sheet-head">
+                <h2 class="sheet-title"><span class="idx">02</span>Skills</h2>
+                <p class="sheet-tag">디자인 툴부터 구현까지<br>전 과정을 다룹니다</p>
+            </div>
+
+            <div class="skills-list">
+                <div class="skill-row">
+                    <span class="skill-num">01</span>
+                    <div class="skill-icon figma">
+                        <svg viewBox="0 0 38 57" width="22" height="33"><path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/><path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/><path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/><path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"/><path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/></svg>
+                    </div>
+                    <h4 class="skill-name">Figma</h4>
+                    <p class="skill-desc">오토 레이아웃, 컴포넌트·베리언트, 디자인 시스템 등록, 프로토타입·스마트 애니메이션, 와이어프레임 및 UI 화면 설계</p>
+                </div>
+
+                <div class="skill-row">
+                    <span class="skill-num">02</span>
+                    <div class="skill-icon ps">Ps</div>
+                    <h4 class="skill-name">Photoshop</h4>
+                    <p class="skill-desc">배경 제거, 클리핑·레이어 마스크, 스마트 오브젝트, 색상 보정, 블렌딩 모드, 필터·브러시, 목업 제작, 합성</p>
+                </div>
+
+                <div class="skill-row">
+                    <span class="skill-num">03</span>
+                    <div class="skill-icon ai">Ai</div>
+                    <h4 class="skill-name">Illustrator</h4>
+                    <p class="skill-desc">벡터 드로잉, 펜 툴, 패스파인더, 아트보드, 서체·외곽선, 그라디언트·패턴, 로고·브랜드·아이콘 제작</p>
+                </div>
+
+                <div class="skill-row">
+                    <span class="skill-num">04</span>
+                    <div class="skill-icon id">Id</div>
+                    <h4 class="skill-name">InDesign</h4>
+                    <p class="skill-desc">도큐먼트·마스터 페이지, 텍스트/오브젝트 프레임, 이미지 배치, 문자·단락 스타일, 편집 디자인</p>
+                </div>
+
+                <div class="skill-row">
+                    <span class="skill-num">05</span>
+                    <div class="skill-icon vscode">
+                        <svg viewBox="0 0 32 32" width="26" height="26"><path fill="#0065a9" d="M23.15 2.587 16.5 8.7 9.6 3.4 7 4.5l8 7.5L7 19.5l2.6 1.1 6.9-5.3 6.65 6.113L29 19.4V4.6z"/><path fill="#007acc" d="M29 4.6 23.15 2.587 7 17.9V4.5L4.5 6.4v13.2L7 21.5v-3.6l16.15 11.913L29 27.4z" opacity=".4"/></svg>
+                    </div>
+                    <h4 class="skill-name">VS Code</h4>
+                    <p class="skill-desc">HTML/CSS 기본 구조, 텍스트·이미지·링크, 폰트·색상·배경 스타일링, 레이아웃 기초 구현</p>
+                </div>
+
+                <div class="skill-row">
+                    <span class="skill-num">06</span>
+                    <div class="skill-icon office">
+                        <span class="off-grid"><i style="background:#d83b01"></i><i style="background:#0f9d58"></i><i style="background:#ca5010"></i><i style="background:#185abd"></i></span>
+                    </div>
+                    <h4 class="skill-name">MS Office</h4>
+                    <p class="skill-desc">Word 문서·표 서식 / Excel 함수·차트·Vlookup / PowerPoint 슬라이드 마스터·애니메이션</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORKS -->
+        <section id="works" class="sheet">
+            <div class="sheet-head">
+                <h2 class="sheet-title"><span class="idx">03</span>Works</h2>
+                <p class="sheet-tag">기획부터 디자인까지<br>직접 완성한 작업물</p>
+            </div>
+
+            <div class="works-list">
+                <div class="work-item">
+                    <span class="work-num">01</span>
+                    <div class="work-main">
+                        <h3>프로젝트 이름</h3>
+                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                        <div class="work-tags"><span>UI/UX</span><span>Branding</span></div>
+                    </div>
+                    <div class="work-image">PROJECT 01</div>
+                </div>
+
+                <div class="work-item">
+                    <span class="work-num">02</span>
+                    <div class="work-main">
+                        <h3>프로젝트 이름</h3>
+                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                        <div class="work-tags"><span>Figma</span><span>Prototype</span></div>
+                    </div>
+                    <div class="work-image">PROJECT 02</div>
+                </div>
+
+                <div class="work-item">
+                    <span class="work-num">03</span>
+                    <div class="work-main">
+                        <h3>프로젝트 이름</h3>
+                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                        <div class="work-tags"><span>Graphic</span><span>Editorial</span></div>
+                    </div>
+                    <div class="work-image">PROJECT 03</div>
+                </div>
+
+                <div class="work-item">
+                    <span class="work-num">04</span>
+                    <div class="work-main">
+                        <h3>프로젝트 이름</h3>
+                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                        <div class="work-tags"><span>Web</span><span>HTML/CSS</span></div>
+                    </div>
+                    <div class="work-image">PROJECT 04</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 자소서 (COVER LETTER) -->
+        <section id="letter" class="sheet letter">
+          <div class="inner">
+            <div class="sheet-head">
+                <h2 class="sheet-title"><span class="idx">04</span>Letter</h2>
+                <p class="sheet-tag">왜 디자인이고,<br>어떤 디자이너가 되고 싶은가</p>
+            </div>
+            <div class="letter-grid">
+                <div class="letter-block">
+                    <h3 class="letter-headline">"노력은 결국 결과로 이어진다는 믿음으로,<br>디자인을 시작했습니다."</h3>
+                    <p>고등학교 3학년 때, "지금 아니면 끝까지 해보지 못할 것 같다"는 생각으로 직업전문학교에 다니며 디자인 수업과 자격증 공부를 병행했습니다. 컴퓨터그래픽스기능사, GTQ, GTQi를 취득하는 과정에서 단순히 시험을 위한 공부가 아니라 실제로 툴을 익히고 활용하려 했고, 부족한 부분을 반복해서 보완하며 실력과 자신감을 함께 키웠습니다. 이 경험을 통해 새로운 환경에서도 스스로 배우고 끝까지 해내는 태도를 갖게 되었으며, 지금도 맡은 일에 책임감을 가지고 꾸준히 성장하려 노력하고 있습니다.</p>
+                    <p>저는 단순히 보기 좋은 화면이 아니라, 사용자의 흐름과 경험을 설계하는 UI/UX 디자인에 매력을 느껴 지원했습니다. 대학에서 진행한 친환경 문구 브랜드 디자인 프로젝트에서는 시장조사와 컨셉 기획부터 로고 및 전체 디자인 방향 설정까지 전 과정을 직접 경험했습니다. 단순히 과제를 제출하는 것이 아니라 실제 브랜드를 만든다는 생각으로 사용자와 브랜드의 연결 방식을 고민했고, 주변 피드백을 반영하며 완성도를 높여갔습니다. 이 과정에서 디자인은 예쁘게 만드는 작업이 아니라, 브랜드의 목적과 사용자의 경험을 함께 고려해야 한다는 것을 배웠습니다.</p>
+                </div>
+
+                <div class="letter-block">
+                    <h3 class="letter-headline">"보이는 것 너머 사용자의 경험을<br>설계하는 디자이너가 되겠습니다."</h3>
+                    <p>저의 강점은 책임감을 가지고 결과물의 완성도를 끝까지 높이는 태도입니다. 졸업전시위원회 활동을 하며 오프라인 배너 디자인부터 HTML/CSS 기반 홈페이지 작업까지 전 과정에 참여했고, 디자인이 실제 웹 환경에서도 안정적으로 구현될 수 있도록 수십 번 수정을 반복하며 세부적인 부분까지 점검했습니다. 그 결과 졸업 작품들을 전교생에게 성공적으로 선보일 수 있었고, 디자인은 시각적 완성에서 끝나는 것이 아니라 실제 사용 환경과 구현 과정까지 함께 고려해야 한다는 점을 배웠습니다. 졸업 이후에도 총 세 번의 개인 전시를 이어오며 작품 컨셉부터 설명까지 스스로 점검하고, 현재도 신진작가 활동에 도전하고 있습니다.</p>
+                    <p>단순히 화면을 제작하는 디자이너가 아니라, 사용자가 서비스 안에서 헤매지 않도록 경험 전반을 설계하는 UI/UX 디자이너로 성장하고 싶습니다. 사용자가 어떤 지점에서 불편함을 느끼는지 지속적으로 관찰하고, 더 직관적인 흐름과 인터랙션을 고민하겠습니다. 입사 후에도 디자인과 구현에 대한 이해를 넓혀가며 기획자와 개발자 등 다양한 직군과 원활히 협업하고, 맡은 일에 책임감을 가지고 서비스의 완성도를 높이는 데 기여하겠습니다.</p>
+                </div>
+            </div>
+          </div>
+        </section>
+    </main>
+
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <footer>
+        <span class="big">사용자의 <span class="accent">나침반</span></span>
+        <p>contact@example.com · 010-0000-0000</p>
+        <p>&copy; 2026 고은진 · UI/UX Designer</p>
+    </footer>
+
+    <script>
+        // 브라우저의 스크롤 위치 복원 비활성화 (새로고침 시 항상 맨 위)
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        const THRESHOLD = 900;
+        let state = { drawing: false, total: 0, lastX: 0, lastY: 0, points: [], unlocked: false };
+        let listeners = null;
+
+        function resetPage() {
+            state = { drawing: false, total: 0, lastX: 0, lastY: 0, points: [], unlocked: false };
+            window.scrollTo(0, 0);
+
+            const home = document.getElementById('home');
+            const loader = document.getElementById('loader');
+            const guide = document.getElementById('guide');
+            const fill = document.getElementById('progressFill');
+            const num = document.getElementById('progressNum');
+            const drawPath = document.getElementById('drawPath');
+            const needle = document.getElementById('needle');
+            const scrollCue = document.getElementById('scrollCue');
+
+            // null 체크
+            if (!home || !loader) {
+                console.error('Home or loader element not found');
+                return;
+            }
+
+            // 홈 화면을 먼저 보이게 설정
+            home.classList.remove('depart');
+            home.removeAttribute('style');
+            home.style.display = 'flex';
+            home.style.opacity = '1';
+            home.style.transform = 'translateY(0)';
+            home.style.visibility = 'visible';
+            home.style.pointerEvents = 'auto';
+            home.style.zIndex = '1';
+
+            // 내부 요소들
+            if (guide) guide.style.opacity = '1';
+            if (fill) fill.style.width = '0%';
+            if (num) num.textContent = '0%';
+            if (drawPath) drawPath.setAttribute('d', '');
+            if (needle) needle.style.transform = 'rotate(0deg)';
+            if (scrollCue) scrollCue.classList.remove('show');
+
+            document.body.classList.add('locked');
+
+            // 로더를 명시적으로 보이게 설정
+            loader.classList.remove('hidden');
+            loader.removeAttribute('style');
+            loader.style.opacity = '1';
+            loader.style.visibility = 'visible';
+            loader.style.pointerEvents = 'auto';
+            loader.style.zIndex = '3000';
+
+            // 1.4초 후 로더 숨김 (홈 화면이 보임)
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                loader.removeAttribute('style');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                loader.style.pointerEvents = 'none';
+                loader.style.zIndex = '-1';
+            }, 1400);
+        }
+
+        function setupDrawing() {
+            if (listeners) return; // 중복 등록 방지
+
+            const body = document.body;
+            const home = document.getElementById('home');
+            const drawLayer = document.getElementById('drawLayer');
+            const drawPath = document.getElementById('drawPath');
+            const fill = document.getElementById('progressFill');
+            const num = document.getElementById('progressNum');
+            const needle = document.getElementById('needle');
+            const guide = document.getElementById('guide');
+            const scrollCue = document.getElementById('scrollCue');
+
+            const pos = (e) => {
+                const t = e.touches?.[0] || e;
+                return { x: t.clientX, y: t.clientY };
+            };
+
+            const start = (e) => {
+                if (state.unlocked) return;
+                e.preventDefault();
+                state.drawing = true;
+                const p = pos(e);
+                state.lastX = p.x;
+                state.lastY = p.y;
+                state.points = [`M ${p.x} ${p.y}`];
+                drawPath.setAttribute('d', state.points.join(' '));
+            };
+
+            const move = (e) => {
+                if (!state.drawing || state.unlocked) return;
+                e.preventDefault();
+                const p = pos(e);
+                const dx = p.x - state.lastX;
+                const dy = p.y - state.lastY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                state.total += dist;
+                state.lastX = p.x;
+                state.lastY = p.y;
+                state.points.push(`L ${p.x} ${p.y}`);
+                drawPath.setAttribute('d', state.points.join(' '));
+
+                const pct = Math.min(100, Math.round((state.total / THRESHOLD) * 100));
+                fill.style.width = pct + '%';
+                num.textContent = pct + '%';
+
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+                needle.style.transform = `rotate(${angle}deg)`;
+
+                if (state.total >= THRESHOLD) unlock();
+            };
+
+            const end = () => {
+                state.drawing = false;
+            };
+
+            const unlock = () => {
+                if (state.unlocked) return;
+                state.unlocked = true;
+
+                needle.style.transform = 'rotate(0deg)';
+                guide.style.opacity = '0';
+                fill.style.width = '100%';
+                num.textContent = '도착!';
+
+                setTimeout(() => {
+                    home.classList.add('depart');
+                    body.classList.remove('locked');
+
+                    const navEl = document.querySelector('nav');
+                    if (navEl) setTimeout(() => navEl.classList.add('nav-visible'), 300);
+
+                    if (window.lenis) {
+                        setTimeout(() => window.lenis.scrollTo('#about', { duration: 1.2 }), 80);
+                    } else {
+                        document.documentElement.style.scrollBehavior = 'smooth';
+                        document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+                    }
+
+                    setTimeout(() => {
+                        home.style.display = 'none';
+                        document.documentElement.style.scrollBehavior = 'auto';
+                    }, 1000);
+                }, 700);
+            };
+
+            // 이벤트 리스너 등록
+            drawLayer.addEventListener('mousedown', start);
+            drawLayer.addEventListener('dragstart', (e) => e.preventDefault());
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', end);
+            drawLayer.addEventListener('touchstart', start, { passive: false });
+            drawLayer.addEventListener('touchmove', move, { passive: false });
+            drawLayer.addEventListener('touchend', end);
+
+            const blockScroll = (e) => { if (!state.unlocked) e.preventDefault(); };
+            document.addEventListener('wheel', blockScroll, { passive: false });
+            document.addEventListener('touchmove', (e) => {
+                if (!state.unlocked && !state.drawing) e.preventDefault();
+            }, { passive: false });
+            document.addEventListener('keydown', (e) => {
+                if (!state.unlocked && ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(e.key)) e.preventDefault();
+            });
+
+            listeners = { start, move, end };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            resetPage();
+            setupDrawing();
+        });
+
+        window.addEventListener('load', resetPage);
+
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) {
+                resetPage();
+                setupDrawing();
+            }
+        });
+
+        // ===== 콘텐츠 인터랙션 (리빌 / 진행바 / 네비) =====
+        function setupContentInteractions() {
+            // 1) 스크롤 리빌 — 주요 요소에 자동 적용
+            const targets = document.querySelectorAll(
+                '.sheet-head, .about-profile, .about-statement, .about-block, .skill-row, .work-item, .letter-block'
+            );
+            targets.forEach((el, i) => {
+                el.classList.add('reveal');
+                // 같은 그룹은 살짝 시차를 둬 순차 등장
+                el.style.transitionDelay = ((i % 4) * 80) + 'ms';
+            });
+
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+            targets.forEach((el) => io.observe(el));
+
+            // 2) 상단 스크롤 진행 바 + 3) 네비 현재 섹션 하이라이트
+            const progress = document.getElementById('scrollProgress');
+            const navLinks = Array.from(document.querySelectorAll('nav a'));
+            const sections = navLinks
+                .map((a) => document.querySelector(a.getAttribute('href')))
+                .filter(Boolean);
+
+            function onScroll() {
+                const scrollTop = window.scrollY;
+                const docH = document.documentElement.scrollHeight - window.innerHeight;
+                const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
+                if (progress) progress.style.width = pct + '%';
+
+                // 현재 보이는 섹션 찾기
+                const mid = scrollTop + window.innerHeight * 0.35;
+                let activeIdx = 0;
+                sections.forEach((sec, i) => {
+                    if (sec.offsetTop <= mid) activeIdx = i;
+                });
+                navLinks.forEach((a, i) => a.classList.toggle('active', i === activeIdx));
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupContentInteractions();
+            setupLenis();
+            setupCursor();
+            setupMagnetic();
+            setupHomeParallax();
+        });
+
+        // ===== LENIS SMOOTH SCROLL =====
+        function setupLenis() {
+            if (typeof Lenis === 'undefined') return;
+            window.lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smoothWheel: true,
+            });
+            (function raf(time) {
+                window.lenis.raf(time);
+                requestAnimationFrame(raf);
+            })(0);
+        }
+
+        // ===== CUSTOM CURSOR (lerp) =====
+        function setupCursor() {
+            const dot = document.getElementById('cursor-dot');
+            const ring = document.getElementById('cursor-ring');
+            if (!dot || !ring) return;
+
+            let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+            let rx = mx, ry = my;
+
+            document.addEventListener('mousemove', (e) => {
+                mx = e.clientX;
+                my = e.clientY;
+                dot.style.left = mx + 'px';
+                dot.style.top = my + 'px';
+            });
+
+            const lerp = (a, b, t) => a + (b - a) * t;
+            (function animateRing() {
+                rx = lerp(rx, mx, 0.1);
+                ry = lerp(ry, my, 0.1);
+                ring.style.left = rx + 'px';
+                ring.style.top = ry + 'px';
+                requestAnimationFrame(animateRing);
+            })();
+
+            const hoverSel = 'a, button, .work-item, .skill-row';
+            document.addEventListener('mouseover', (e) => {
+                if (e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
+            });
+            document.addEventListener('mouseout', (e) => {
+                if (e.target.closest(hoverSel)) document.body.classList.remove('cursor-hover');
+            });
+            document.addEventListener('mouseleave', () => {
+                dot.style.opacity = '0'; ring.style.opacity = '0';
+            });
+            document.addEventListener('mouseenter', () => {
+                dot.style.opacity = '1'; ring.style.opacity = '1';
+            });
+        }
+
+        // ===== MAGNETIC NAV BUTTONS =====
+        function setupMagnetic() {
+            document.querySelectorAll('nav a').forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const r = btn.getBoundingClientRect();
+                    const dx = (e.clientX - (r.left + r.width / 2)) * 0.4;
+                    const dy = (e.clientY - (r.top + r.height / 2)) * 0.4;
+                    btn.style.transition = 'transform 0.1s linear';
+                    btn.style.transform = `translate(${dx}px, ${dy}px)`;
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)';
+                    btn.style.transform = '';
+                });
+            });
+        }
+
+        // ===== HOME MOUSE PARALLAX =====
+        function setupHomeParallax() {
+            const homeEl = document.getElementById('home');
+            const compassEl = document.querySelector('.compass');
+            const gridEl = document.querySelector('.home-grid');
+            if (!homeEl || !compassEl) return;
+
+            let tx = 0, ty = 0, cx = 0, cy = 0;
+            homeEl.addEventListener('mousemove', (e) => {
+                tx = (e.clientX / homeEl.offsetWidth - 0.5) * 22;
+                ty = (e.clientY / homeEl.offsetHeight - 0.5) * 22;
+            });
+            (function animatePx() {
+                cx += (tx - cx) * 0.06;
+                cy += (ty - cy) * 0.06;
+                compassEl.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
+                if (gridEl) gridEl.style.transform = `translate(${cx * 0.3}px, ${cy * 0.3}px)`;
+                requestAnimationFrame(animatePx);
+            })();
+        }
+    </script>
+</body>
+</html>
