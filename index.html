@@ -387,8 +387,34 @@
             opacity: 0.5;
         }
 
+        /* 나침반 바늘 커서 (작업물 이미지 호버 시) */
+        #cursor-needle {
+            position: fixed;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 100000;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+            will-change: left, top, transform;
+        }
+        #cursor-needle svg { display: block; will-change: transform; }
+
+        body.cursor-compass #cursor-needle {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        body.cursor-compass #cursor-dot { opacity: 0; }
+        body.cursor-compass #cursor-ring {
+            width: 76px;
+            height: 76px;
+            border-color: var(--gold-soft);
+            background: rgba(232, 213, 183, 0.12);
+            backdrop-filter: blur(1px);
+        }
+
         @media (hover: none) {
-            #cursor-dot, #cursor-ring { display: none; }
+            #cursor-dot, #cursor-ring, #cursor-needle { display: none; }
         }
 
         /* 상단 스크롤 진행 바 */
@@ -694,11 +720,17 @@
             border-radius: 16px;
             overflow: hidden;
             position: relative;
+            transition: background 0.55s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .wcard-img.s1 { background: linear-gradient(135deg, #3D5A80, #1A1A2E); }
         .wcard-img.s2 { background: linear-gradient(160deg, #5A6B8C, #2A2A4A); }
         .wcard-img.s3 { background: linear-gradient(135deg, #2A2A4A, #1A1A2E); }
         .wcard-img.s4 { background: linear-gradient(160deg, #4A5A78, #1A1A2E); }
+        /* 호버 시 대비되는 따뜻한 크림→골드 색상으로 전환 */
+        .wcard:hover .wcard-img.s1 { background: linear-gradient(135deg, #F0E2C8, #B98E54); }
+        .wcard:hover .wcard-img.s2 { background: linear-gradient(160deg, #F4E8D2, #C9A876); }
+        .wcard:hover .wcard-img.s3 { background: linear-gradient(135deg, #E8D5B7, #9C7B45); }
+        .wcard:hover .wcard-img.s4 { background: linear-gradient(160deg, #F0E2C8, #A8854A); }
         .wcard-info { padding: 22px 0 0; }
         .wcard-meta {
             display: flex;
@@ -1269,6 +1301,13 @@
 
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
+    <div id="cursor-needle" aria-hidden="true">
+        <svg width="18" height="54" viewBox="0 0 18 54">
+            <polygon points="9,2 15,27 3,27" fill="#3D5A80"/>
+            <polygon points="3,27 15,27 9,52" fill="#E8D5B7"/>
+            <circle cx="9" cy="27" r="2.6" fill="#1A1A2E"/>
+        </svg>
+    </div>
 
     <footer>
         <span class="big">사용자의 <span class="accent">나침반</span></span>
@@ -1576,33 +1615,60 @@
         function setupCursor() {
             const dot = document.getElementById('cursor-dot');
             const ring = document.getElementById('cursor-ring');
+            const needle = document.getElementById('cursor-needle');
+            const needleSvg = needle ? needle.querySelector('svg') : null;
             if (!dot || !ring) return;
 
             let mx = window.innerWidth / 2, my = window.innerHeight / 2;
-            let rx = mx, ry = my;
+            let rx = mx, ry = my;       // ring (지연 추적)
+            let nx = mx, ny = my;       // needle (지연 추적)
+            let pmx = mx, pmy = my;     // 직전 위치 (이동 방향 계산용)
+            let targetAngle = 0, angle = 0;
 
             document.addEventListener('mousemove', (e) => {
                 mx = e.clientX;
                 my = e.clientY;
                 dot.style.left = mx + 'px';
                 dot.style.top = my + 'px';
+                // 이동 방향으로 바늘이 향하도록 각도 계산 (바늘 기본은 위쪽=북쪽)
+                const dx = mx - pmx, dy = my - pmy;
+                if (dx * dx + dy * dy > 9) {
+                    targetAngle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+                    pmx = mx; pmy = my;
+                }
             });
 
             const lerp = (a, b, t) => a + (b - a) * t;
+            // 최단 경로로 각도 보간 (-180~180 래핑)
+            const lerpAngle = (a, b, t) => {
+                let d = ((b - a + 540) % 360) - 180;
+                return a + d * t;
+            };
             (function animateRing() {
-                rx = lerp(rx, mx, 0.1);
-                ry = lerp(ry, my, 0.1);
+                rx = lerp(rx, mx, 0.12);
+                ry = lerp(ry, my, 0.12);
                 ring.style.left = rx + 'px';
                 ring.style.top = ry + 'px';
+                if (needle && needleSvg) {
+                    nx = lerp(nx, mx, 0.18);
+                    ny = lerp(ny, my, 0.18);
+                    needle.style.left = nx + 'px';
+                    needle.style.top = ny + 'px';
+                    angle = lerpAngle(angle, targetAngle, 0.12);
+                    needleSvg.style.transform = `rotate(${angle}deg)`;
+                }
                 requestAnimationFrame(animateRing);
             })();
 
             const hoverSel = 'a, button, .wcard, .skill-row';
+            const compassSel = '.wcard-img';
             document.addEventListener('mouseover', (e) => {
                 if (e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
+                if (e.target.closest(compassSel)) document.body.classList.add('cursor-compass');
             });
             document.addEventListener('mouseout', (e) => {
                 if (e.target.closest(hoverSel)) document.body.classList.remove('cursor-hover');
+                if (e.target.closest(compassSel)) document.body.classList.remove('cursor-compass');
             });
             document.addEventListener('mouseleave', () => {
                 dot.style.opacity = '0'; ring.style.opacity = '0';
