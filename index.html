@@ -655,7 +655,7 @@
         }
         .wp-shot {
             position: relative;
-            height: 68vh;
+            height: 94vh;
             border-radius: 20px;
             overflow: hidden;
             display: flex;
@@ -690,6 +690,13 @@
             flex-direction: column;
         }
 
+        /* 제목+설명 영역: 이 안에서 설명이 고정되고, 끝나면 footer 위에서 풀려 올라감 */
+        .wp-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* 제목 + 연도: 상단에서 함께 스크롤되어 사라짐 */
         .wp-head {
             display: flex;
@@ -714,11 +721,11 @@
             flex-shrink: 0;
         }
 
-        /* 설명 + 태그: 화면 중앙에 고정(sticky), 왼쪽 이미지가 지나가는 동안 머무름 */
+        /* 설명 + 태그: 화면 상단 근처에 고정(sticky), 왼쪽 이미지가 지나가는 동안 머무름 */
         .wp-sticky {
             position: sticky;
-            top: 38vh;
-            margin-top: 8vh;
+            top: 16vh;
+            margin-top: 14vh;
             align-self: flex-start;
         }
         .wp-sticky p {
@@ -742,10 +749,9 @@
         }
         .wp-sticky:hover .wp-tags span { background: #E8D5B7; color: var(--ink); }
 
-        /* 하단: 바로가기 링크 + 바코드 (이미지 더미 끝 지점) */
+        /* 하단: 바로가기 링크 + 바코드 (이미지 끝 지점) */
         .wp-foot {
-            margin-top: auto;
-            padding-bottom: 9vh;
+            padding-bottom: 6vh;
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
@@ -1107,9 +1113,9 @@
                 <div class="work-proj">
                     <div class="wp-visual">
                         <div class="wp-shot s1"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                        <div class="wp-shot s2"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
                     </div>
                     <div class="wp-text">
+                        <div class="wp-main">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2025)</span>
@@ -1117,6 +1123,7 @@
                         <div class="wp-sticky">
                             <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다. 스크롤하면 왼쪽 이미지는 지나가고, 이 설명은 화면에 고정되어 머뭅니다.</p>
                             <div class="wp-tags"><span>UI-DESIGN</span><span>UX</span><span>BRANDING</span></div>
+                        </div>
                         </div>
                         <div class="wp-foot">
                             <div class="wp-links">
@@ -1131,9 +1138,9 @@
                 <div class="work-proj">
                     <div class="wp-visual">
                         <div class="wp-shot s2"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                        <div class="wp-shot s3"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
                     </div>
                     <div class="wp-text">
+                        <div class="wp-main">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2025)</span>
@@ -1141,6 +1148,7 @@
                         <div class="wp-sticky">
                             <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
                             <div class="wp-tags"><span>FIGMA</span><span>PROTOTYPE</span></div>
+                        </div>
                         </div>
                         <div class="wp-foot">
                             <div class="wp-links">
@@ -1155,9 +1163,9 @@
                 <div class="work-proj">
                     <div class="wp-visual">
                         <div class="wp-shot s3"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                        <div class="wp-shot s4"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
                     </div>
                     <div class="wp-text">
+                        <div class="wp-main">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2024)</span>
@@ -1165,6 +1173,7 @@
                         <div class="wp-sticky">
                             <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
                             <div class="wp-tags"><span>GRAPHIC</span><span>EDITORIAL</span></div>
+                        </div>
                         </div>
                         <div class="wp-foot">
                             <div class="wp-links">
@@ -1179,9 +1188,9 @@
                 <div class="work-proj">
                     <div class="wp-visual">
                         <div class="wp-shot s4"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
-                        <div class="wp-shot s1"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
                     </div>
                     <div class="wp-text">
+                        <div class="wp-main">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2024)</span>
@@ -1189,6 +1198,7 @@
                         <div class="wp-sticky">
                             <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
                             <div class="wp-tags"><span>WEB</span><span>HTML/CSS</span></div>
+                        </div>
                         </div>
                         <div class="wp-foot">
                             <div class="wp-links">
