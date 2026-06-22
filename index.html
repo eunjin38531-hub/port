@@ -637,42 +637,57 @@
         /* ===== WORKS (이미지+제목 스크롤 / 설명만 가운데 고정) ===== */
         .works-list {}
 
-        /* 각 프로젝트 = 세로로 긴 영역. 이미지·제목 고정, 설명만 그 사이를 스크롤 */
+        /* 각 프로젝트: 왼쪽 이미지 더미는 스크롤, 오른쪽 설명은 고정 */
         .work-proj {
             display: grid;
-            grid-template-columns: 1.15fr 1fr;
-            gap: 64px;
-            min-height: 200vh;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 70px;
             padding-top: 40px;
             border-top: 1px solid #e7e7e7;
+            align-items: stretch;
         }
 
-        /* 왼쪽 이미지: 크게, 화면에 고정(sticky)됨 */
+        /* 왼쪽: 여러 이미지가 세로로 쌓여 함께 스크롤됨 */
         .wp-visual {
-            position: sticky;
-            top: 90px;
-            align-self: start;
-            height: calc(100vh - 130px);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .wp-shot {
+            position: relative;
+            height: 82vh;
             border-radius: 20px;
             overflow: hidden;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(232,213,183,0.5);
-            font-size: 0.9em;
-            letter-spacing: 4px;
+            align-items: flex-end;
+            padding: 22px;
         }
-        .wp-visual.v1 { background: linear-gradient(135deg, #3D5A80, #1A1A2E); }
-        .wp-visual.v2 { background: linear-gradient(135deg, #5A6B8C, #1A1A2E); }
-        .wp-visual.v3 { background: linear-gradient(135deg, #2A2A4A, #1A1A2E); }
-        .wp-visual.v4 { background: linear-gradient(135deg, #4A5A78, #1A1A2E); }
+        .wp-shot.s1 { background: linear-gradient(135deg, #3D5A80, #1A1A2E); }
+        .wp-shot.s2 { background: linear-gradient(160deg, #5A6B8C, #2A2A4A); }
+        .wp-shot.s3 { background: linear-gradient(135deg, #2A2A4A, #1A1A2E); }
+        .wp-shot.s4 { background: linear-gradient(160deg, #4A5A78, #1A1A2E); }
+        .wp-cap {
+            background: rgba(253,252,248,0.93);
+            backdrop-filter: blur(6px);
+            color: var(--ink);
+            border-radius: 12px;
+            padding: 13px 18px;
+            font-size: 0.82em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            width: min(300px, 72%);
+        }
+        .wp-cap span:last-child { color: var(--gold); }
 
-        /* 오른쪽 텍스트 컬럼 (이미지 높이만큼 차지) */
+        /* 오른쪽 텍스트 컬럼: 이미지 높이만큼 차지 */
         .wp-text {
             position: relative;
             display: flex;
             flex-direction: column;
-            min-height: calc(100vh - 130px);
         }
 
         /* 제목 + 연도: 상단에서 함께 스크롤되어 사라짐 */
@@ -681,7 +696,7 @@
             align-items: flex-start;
             justify-content: space-between;
             gap: 20px;
-            padding-top: 8vh;
+            padding-top: 6vh;
         }
         .wp-title {
             font-size: clamp(2.2em, 4.4vw, 3.8em);
@@ -699,12 +714,14 @@
             flex-shrink: 0;
         }
 
-        /* 설명: 제목과 링크 사이를 스크롤하며 지나감 (움직이는 부분) */
-        .wp-desc {
-            margin-top: 12vh;
-            margin-bottom: auto;
+        /* 설명 + 태그: 화면에 고정(sticky), 왼쪽 이미지가 지나가는 동안 머무름 */
+        .wp-sticky {
+            position: sticky;
+            top: 16vh;
+            margin-top: 16vh;
+            align-self: flex-start;
         }
-        .wp-desc p {
+        .wp-sticky p {
             color: #555;
             font-size: 0.98em;
             line-height: 1.85;
@@ -723,16 +740,21 @@
             font-weight: 600;
             transition: background 0.3s, color 0.3s;
         }
-        .wp-desc:hover .wp-tags span { background: #E8D5B7; color: var(--ink); }
+        .wp-sticky:hover .wp-tags span { background: #E8D5B7; color: var(--ink); }
 
-        /* 바로가기 링크: 이미지가 끝나는 지점(하단)에 고정 */
-        .wp-links {
-            position: sticky;
-            bottom: 60px;
+        /* 하단: 바로가기 링크 + 바코드 (이미지 더미 끝 지점) */
+        .wp-foot {
+            margin-top: auto;
+            padding-bottom: 9vh;
             display: flex;
-            gap: 34px;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .wp-links {
+            display: flex;
+            gap: 30px;
             flex-wrap: wrap;
-            padding-top: 40px;
         }
         .wp-link {
             display: inline-flex;
@@ -760,6 +782,15 @@
             font-size: 0.55em;
             font-style: normal;
             padding-left: 1px;
+        }
+        .wp-barcode {
+            width: 110px;
+            height: 46px;
+            flex-shrink: 0;
+            background: repeating-linear-gradient(90deg,
+                var(--ink) 0 2px, transparent 2px 4px,
+                var(--ink) 4px 5px, transparent 5px 8px,
+                var(--ink) 8px 11px, transparent 11px 13px);
         }
 
         /* ===== 마퀴 (흐르는 텍스트 띠) ===== */
@@ -844,11 +875,11 @@
             .profile-photo { aspect-ratio: 4 / 3; }
             .skill-row { grid-template-columns: 40px 56px 1fr; gap: 16px; padding: 24px 10px; }
             .skill-desc { grid-column: 1 / -1; }
-            .work-proj { grid-template-columns: 1fr; gap: 24px; min-height: auto; padding-bottom: 30px; }
-            .wp-visual { position: relative; top: 0; height: 80vw; max-height: 460px; border-radius: 14px; }
-            .wp-head { position: static; top: auto; margin-bottom: 24px; }
-            .wp-desc { margin-top: 0; }
-            .wp-links { position: static; bottom: auto; margin-top: 30px; }
+            .work-proj { grid-template-columns: 1fr; gap: 20px; padding-bottom: 30px; }
+            .wp-shot { height: 64vw; max-height: 420px; border-radius: 14px; }
+            .wp-head { padding-top: 0; margin-bottom: 22px; }
+            .wp-sticky { position: static; top: auto; margin-top: 24px; }
+            .wp-foot { margin-top: 30px; padding-bottom: 10px; }
             .letter-grid { grid-template-columns: 1fr; gap: 44px; }
             .marquee-track span { font-size: 1.6em; }
         }
@@ -1072,76 +1103,100 @@
             </div>
 
             <div class="works-list">
-                <!-- 각 프로젝트: 왼쪽 이미지 + 오른쪽(제목 스크롤 / 설명 고정) -->
+                <!-- 왼쪽 이미지 더미는 스크롤, 오른쪽 설명은 고정, 하단 링크+바코드 -->
                 <div class="work-proj">
-                    <div class="wp-visual v1">PROJECT 01</div>
+                    <div class="wp-visual">
+                        <div class="wp-shot s1"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
+                        <div class="wp-shot s2"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
+                    </div>
                     <div class="wp-text">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2025)</span>
                         </div>
-                        <div class="wp-desc">
-                            <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다. 스크롤하면 왼쪽 이미지와 제목은 함께 올라가고, 이 설명만 화면 가운데에 머뭅니다.</p>
+                        <div class="wp-sticky">
+                            <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다. 스크롤하면 왼쪽 이미지는 지나가고, 이 설명은 화면에 고정되어 머뭅니다.</p>
                             <div class="wp-tags"><span>UI-DESIGN</span><span>UX</span><span>BRANDING</span></div>
                         </div>
-                        <div class="wp-links">
+                        <div class="wp-foot">
+                            <div class="wp-links">
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
+                            <div class="wp-barcode"></div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="work-proj">
-                    <div class="wp-visual v2">PROJECT 02</div>
+                    <div class="wp-visual">
+                        <div class="wp-shot s2"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
+                        <div class="wp-shot s3"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
+                    </div>
                     <div class="wp-text">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2025)</span>
                         </div>
-                        <div class="wp-desc">
+                        <div class="wp-sticky">
                             <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
                             <div class="wp-tags"><span>FIGMA</span><span>PROTOTYPE</span></div>
                         </div>
-                        <div class="wp-links">
+                        <div class="wp-foot">
+                            <div class="wp-links">
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
+                            <div class="wp-barcode"></div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="work-proj">
-                    <div class="wp-visual v3">PROJECT 03</div>
+                    <div class="wp-visual">
+                        <div class="wp-shot s3"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
+                        <div class="wp-shot s4"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
+                    </div>
                     <div class="wp-text">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2024)</span>
                         </div>
-                        <div class="wp-desc">
+                        <div class="wp-sticky">
                             <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
                             <div class="wp-tags"><span>GRAPHIC</span><span>EDITORIAL</span></div>
                         </div>
-                        <div class="wp-links">
+                        <div class="wp-foot">
+                            <div class="wp-links">
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
+                            <div class="wp-barcode"></div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="work-proj">
-                    <div class="wp-visual v4">PROJECT 04</div>
+                    <div class="wp-visual">
+                        <div class="wp-shot s4"><div class="wp-cap"><span>대표 이미지</span><span>↗</span></div></div>
+                        <div class="wp-shot s1"><div class="wp-cap"><span>상세 화면</span><span>↗</span></div></div>
+                    </div>
                     <div class="wp-text">
                         <div class="wp-head">
                             <h3 class="wp-title">프로젝트 이름</h3>
                             <span class="wp-year">(2024)</span>
                         </div>
-                        <div class="wp-desc">
+                        <div class="wp-sticky">
                             <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
                             <div class="wp-tags"><span>WEB</span><span>HTML/CSS</span></div>
                         </div>
-                        <div class="wp-links">
+                        <div class="wp-foot">
+                            <div class="wp-links">
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">LIVE WEBSITE <i>▶</i></a>
                                 <a class="wp-link" href="#" target="_blank" rel="noopener">CASE STUDY <i>▶</i></a>
                             </div>
+                            <div class="wp-barcode"></div>
+                        </div>
                     </div>
                 </div>
             </div>
