@@ -633,93 +633,108 @@
             z-index: 1;
         }
 
-        /* ===== WORKS ===== */
-        .works-list { border-top: 1px solid #e7e7e7; }
-
-        .work-item {
+        /* ===== WORKS (sticky 이미지 + 스크롤 동기화) ===== */
+        .works-sticky {
             display: grid;
-            grid-template-columns: 80px 1fr 380px;
-            gap: 40px;
-            align-items: center;
-            padding: 40px 18px;
-            border-bottom: 1px solid #e7e7e7;
-            position: relative;
-            transition: padding-left 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .work-item:hover { padding-left: 34px; }
-
-        .work-num {
-            font-size: 0.9em;
-            color: #bbb;
-            font-weight: 600;
-            letter-spacing: 1px;
-            transition: color 0.3s;
-        }
-        .work-item:hover .work-num { color: var(--gold); }
-
-        .work-main h3 {
-            font-size: clamp(1.6em, 3vw, 2.6em);
-            font-weight: 800;
-            color: #0f1722;
-            letter-spacing: -1px;
-            line-height: 1.1;
-            margin-bottom: 12px;
-            transition: color 0.35s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .work-item:hover .work-main h3 { color: var(--gold); transform: translateX(8px); }
-
-        .work-main p { color: #888; font-size: 0.9em; line-height: 1.6; max-width: 460px; }
-
-        .work-tags {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-        .work-tags span {
-            font-size: 0.72em;
-            color: #888;
-            border: 1px solid #e0e0e0;
-            border-radius: 30px;
-            padding: 5px 14px;
-            letter-spacing: 1px;
+            grid-template-columns: 1fr 1fr;
+            gap: 70px;
+            align-items: start;
         }
 
-        .work-image {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            background: linear-gradient(135deg, #1c2c45 0%, #0f1722 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(230,211,163,0.4);
-            font-size: 0.82em;
-            letter-spacing: 3px;
+        /* 왼쪽: 고정되는 비주얼 */
+        .works-visual {
+            position: sticky;
+            top: 110px;
+            height: 70vh;
+            border-radius: 8px;
             overflow: hidden;
-            border-radius: 6px;
-            clip-path: inset(0 0 0 0);
-            transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            background: #0f1722;
         }
 
-        .work-image::after {
-            content: 'VIEW →';
+        .wv-img {
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(200, 169, 106, 0.92);
-            color: #0f1722;
-            font-weight: 700;
-            font-size: 0.95em;
-            letter-spacing: 3px;
+            color: rgba(230,211,163,0.45);
+            font-size: 0.9em;
+            letter-spacing: 4px;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.35s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: scale(1.06);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .wv-img.active { opacity: 1; transform: scale(1); z-index: 1; }
+
+        .wv-img.v1 { background: linear-gradient(135deg, #1c2c45, #0f1722); }
+        .wv-img.v2 { background: linear-gradient(135deg, #2a2118, #0f1722); }
+        .wv-img.v3 { background: linear-gradient(135deg, #1a2e2a, #0f1722); }
+        .wv-img.v4 { background: linear-gradient(135deg, #2a1a2e, #0f1722); }
+
+        /* 진행 표시 (왼쪽 하단) */
+        .wv-count {
+            position: absolute;
+            left: 24px;
+            bottom: 22px;
+            z-index: 2;
+            color: var(--paper);
+            font-size: 0.85em;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        .wv-count b { color: var(--gold); font-size: 1.6em; }
+
+        /* 오른쪽: 스크롤되는 프로젝트 설명 */
+        .works-content {}
+
+        .wc-item {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 30px 0;
+            opacity: 0.35;
+            transition: opacity 0.5s ease;
+        }
+        .wc-item.active { opacity: 1; }
+
+        .wc-num {
+            font-size: 0.85em;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
         }
 
-        .work-item:hover .work-image::after { opacity: 1; transform: translateY(0); }
+        .wc-item h3 {
+            font-size: clamp(2em, 4vw, 3.4em);
+            font-weight: 800;
+            color: #0f1722;
+            letter-spacing: -1.5px;
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        .wc-item p {
+            color: #777;
+            font-size: 0.95em;
+            line-height: 1.8;
+            max-width: 440px;
+            margin-bottom: 22px;
+        }
+
+        .wc-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .wc-tags span {
+            font-size: 0.72em;
+            color: #888;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            padding: 6px 16px;
+            letter-spacing: 1px;
+            transition: border-color 0.3s, color 0.3s;
+        }
+        .wc-item.active .wc-tags span { border-color: var(--gold); color: var(--gold); }
 
         /* ===== 마퀴 (흐르는 텍스트 띠) ===== */
         .marquee {
@@ -803,8 +818,9 @@
             .profile-photo { aspect-ratio: 4 / 3; }
             .skill-row { grid-template-columns: 40px 56px 1fr; gap: 16px; padding: 24px 10px; }
             .skill-desc { grid-column: 1 / -1; }
-            .work-item { grid-template-columns: 40px 1fr; gap: 16px; padding: 30px 10px; }
-            .work-image { grid-column: 1 / -1; height: 200px; }
+            .works-sticky { grid-template-columns: 1fr; gap: 0; }
+            .works-visual { position: relative; top: 0; height: 56vw; max-height: 360px; margin-bottom: 30px; }
+            .wc-item { min-height: auto; padding: 36px 0; opacity: 1; }
             .letter-grid { grid-template-columns: 1fr; gap: 44px; }
             .marquee-track span { font-size: 1.6em; }
         }
@@ -1027,45 +1043,45 @@
                 <p class="sheet-tag">기획부터 디자인까지<br>직접 완성한 작업물</p>
             </div>
 
-            <div class="works-list">
-                <div class="work-item">
-                    <span class="work-num">01</span>
-                    <div class="work-main">
-                        <h3>프로젝트 이름</h3>
-                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
-                        <div class="work-tags"><span>UI/UX</span><span>Branding</span></div>
-                    </div>
-                    <div class="work-image">PROJECT 01</div>
+            <div class="works-sticky">
+                <!-- 왼쪽: 고정 비주얼 (스크롤에 따라 교체) -->
+                <div class="works-visual">
+                    <div class="wv-img v1" data-idx="0">PROJECT 01</div>
+                    <div class="wv-img v2" data-idx="1">PROJECT 02</div>
+                    <div class="wv-img v3" data-idx="2">PROJECT 03</div>
+                    <div class="wv-img v4" data-idx="3">PROJECT 04</div>
+                    <div class="wv-count"><b id="wvNum">01</b> / 04</div>
                 </div>
 
-                <div class="work-item">
-                    <span class="work-num">02</span>
-                    <div class="work-main">
+                <!-- 오른쪽: 스크롤되는 프로젝트 설명 -->
+                <div class="works-content">
+                    <div class="wc-item" data-idx="0">
+                        <span class="wc-num">PROJECT 01</span>
                         <h3>프로젝트 이름</h3>
-                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
-                        <div class="work-tags"><span>Figma</span><span>Prototype</span></div>
+                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다. 스크롤하면 왼쪽 이미지가 이 프로젝트에 맞춰 바뀝니다.</p>
+                        <div class="wc-tags"><span>UI/UX</span><span>Branding</span></div>
                     </div>
-                    <div class="work-image">PROJECT 02</div>
-                </div>
 
-                <div class="work-item">
-                    <span class="work-num">03</span>
-                    <div class="work-main">
+                    <div class="wc-item" data-idx="1">
+                        <span class="wc-num">PROJECT 02</span>
                         <h3>프로젝트 이름</h3>
                         <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
-                        <div class="work-tags"><span>Graphic</span><span>Editorial</span></div>
+                        <div class="wc-tags"><span>Figma</span><span>Prototype</span></div>
                     </div>
-                    <div class="work-image">PROJECT 03</div>
-                </div>
 
-                <div class="work-item">
-                    <span class="work-num">04</span>
-                    <div class="work-main">
+                    <div class="wc-item" data-idx="2">
+                        <span class="wc-num">PROJECT 03</span>
                         <h3>프로젝트 이름</h3>
                         <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
-                        <div class="work-tags"><span>Web</span><span>HTML/CSS</span></div>
+                        <div class="wc-tags"><span>Graphic</span><span>Editorial</span></div>
                     </div>
-                    <div class="work-image">PROJECT 04</div>
+
+                    <div class="wc-item" data-idx="3">
+                        <span class="wc-num">PROJECT 04</span>
+                        <h3>프로젝트 이름</h3>
+                        <p>프로젝트 설명을 입력하세요. 어떤 프로젝트였고, 어떤 역할을 맡았는지 소개합니다.</p>
+                        <div class="wc-tags"><span>Web</span><span>HTML/CSS</span></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1297,7 +1313,7 @@
         function setupContentInteractions() {
             // 1) 스크롤 리빌 — 주요 요소에 자동 적용
             const targets = document.querySelectorAll(
-                '.sheet-head, .about-profile, .about-statement, .about-block, .skill-row, .work-item, .letter-block'
+                '.sheet-head, .about-profile, .about-statement, .about-block, .skill-row, .letter-block'
             );
             targets.forEach((el, i) => {
                 el.classList.add('reveal');
@@ -1348,7 +1364,33 @@
             setupCursor();
             setupMagnetic();
             setupHomeParallax();
+            setupStickyWorks();
         });
+
+        // ===== STICKY WORKS (왼쪽 이미지 ↔ 오른쪽 스크롤 동기화) =====
+        function setupStickyWorks() {
+            const items = Array.from(document.querySelectorAll('.wc-item'));
+            const imgs = Array.from(document.querySelectorAll('.wv-img'));
+            const numEl = document.getElementById('wvNum');
+            if (!items.length || !imgs.length) return;
+
+            const setActive = (idx) => {
+                imgs.forEach((im, i) => im.classList.toggle('active', i === idx));
+                items.forEach((it, i) => it.classList.toggle('active', i === idx));
+                if (numEl) numEl.textContent = String(idx + 1).padStart(2, '0');
+            };
+            setActive(0);
+
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActive(Number(entry.target.dataset.idx));
+                    }
+                });
+            }, { threshold: 0.55, rootMargin: '-20% 0px -20% 0px' });
+
+            items.forEach((it) => io.observe(it));
+        }
 
         // ===== LENIS SMOOTH SCROLL =====
         function setupLenis() {
@@ -1389,7 +1431,7 @@
                 requestAnimationFrame(animateRing);
             })();
 
-            const hoverSel = 'a, button, .work-item, .skill-row';
+            const hoverSel = 'a, button, .wc-item, .skill-row';
             document.addEventListener('mouseover', (e) => {
                 if (e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
             });
