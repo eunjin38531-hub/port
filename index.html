@@ -955,30 +955,16 @@
         <div class="home-grid"></div>
 
         <!-- 눈 (텍스트 뒤 배경, 눈동자가 마우스를 따라감) -->
-        <svg class="eyes-svg" id="eyes" viewBox="0 0 1000 500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <clipPath id="eyeClipL"><path d="M150,250 Q300,172 450,250 Q300,328 150,250 Z"/></clipPath>
-                <clipPath id="eyeClipR"><path d="M550,250 Q700,172 850,250 Q700,328 550,250 Z"/></clipPath>
-            </defs>
-            <g fill="none" stroke="#E8E8E8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                <!-- 왼쪽 눈 -->
-                <path d="M150,250 Q300,172 450,250 Q300,328 150,250 Z"/>
-                <g clip-path="url(#eyeClipL)">
-                    <g class="eyeball" id="ballL">
-                        <circle cx="300" cy="250" r="52"/>
-                        <circle cx="300" cy="250" r="11" fill="#D0D0D0" stroke="none"/>
-                        <circle cx="296" cy="246" r="2.5" fill="#ffffff" stroke="none"/>
-                    </g>
-                </g>
-                <!-- 오른쪽 눈 -->
-                <path d="M550,250 Q700,172 850,250 Q700,328 550,250 Z"/>
-                <g clip-path="url(#eyeClipR)">
-                    <g class="eyeball" id="ballR">
-                        <circle cx="700" cy="250" r="52"/>
-                        <circle cx="700" cy="250" r="11" fill="#D0D0D0" stroke="none"/>
-                        <circle cx="696" cy="246" r="2.5" fill="#ffffff" stroke="none"/>
-                    </g>
-                </g>
+        <svg class="eyes-svg" id="eyes" viewBox="0 0 1000 240" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <!-- 왼쪽 동공 -->
+            <g class="eyeball" id="ballL">
+                <circle cx="425" cy="120" r="22" fill="#E0E0E0"/>
+                <circle cx="425" cy="120" r="6" fill="#16181D"/>
+            </g>
+            <!-- 오른쪽 동공 -->
+            <g class="eyeball" id="ballR">
+                <circle cx="575" cy="120" r="22" fill="#E0E0E0"/>
+                <circle cx="575" cy="120" r="6" fill="#16181D"/>
             </g>
         </svg>
 
@@ -1552,13 +1538,13 @@
             const svg = document.getElementById('eyes');
             if (!svg) return;
             const balls = [
-                { el: document.getElementById('ballL'), vx: 300 },
-                { el: document.getElementById('ballR'), vx: 700 },
+                { el: document.getElementById('ballL'), vx: 425 },
+                { el: document.getElementById('ballR'), vx: 575 },
             ].filter(b => b.el);
             if (!balls.length) return;
 
-            const VW = 1000, VH = 500, EYE_CY = 250;
-            const MAX_X = 34, MAX_Y = 15; // viewBox 단위, 아몬드 안에서만 움직임
+            const VW = 1000, VH = 240, EYE_CY = 120;
+            const MAX_X = 55, MAX_Y = 30; // viewBox 단위
             let mx = window.innerWidth / 2, my = window.innerHeight / 2, raf = null;
 
             const update = () => {
