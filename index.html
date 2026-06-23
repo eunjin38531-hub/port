@@ -151,7 +151,7 @@
         /* 눈 — 히어로 상단 메인 요소, 눈동자가 마우스를 따라감 */
         .eyes-svg {
             position: relative;
-            width: clamp(320px, 46vw, 440px);
+            width: clamp(360px, 60vw, 680px);
             height: auto;
             z-index: 3;
             opacity: 1;
@@ -944,23 +944,37 @@
         <div class="home-grid"></div>
 
         <!-- 눈 (텍스트 뒤 배경, 눈동자가 마우스를 따라감) -->
-        <svg class="eyes-svg" id="eyes" viewBox="0 0 440 240" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <svg class="eyes-svg" id="eyes" viewBox="0 0 680 170" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <clipPath id="clipL"><path d="M20,95 C80,20 260,20 320,95 C260,150 80,150 20,95 Z"/></clipPath>
+                <clipPath id="clipR"><path d="M360,95 C420,20 600,20 660,95 C600,150 420,150 360,95 Z"/></clipPath>
+            </defs>
             <!-- 눈 (ballL) -->
-            <circle cx="135" cy="120" r="105" fill="#F0EDE8"/>
-            <circle cx="135" cy="120" r="75" fill="#3D4F8A"/>
-            <g class="eyeball" id="ballL">
-                <circle cx="135" cy="120" r="33" fill="#16181D"/>
-                <circle cx="122" cy="107" r="8" fill="#ffffff"/>
-                <circle cx="144" cy="113" r="4" fill="#ffffff"/>
+            <g clip-path="url(#clipL)">
+                <path d="M20,95 C80,20 260,20 320,95 C260,150 80,150 20,95 Z" fill="#F0EDE8"/>
+                <circle cx="170" cy="95" r="50" fill="#3D4F8A"/>
+                <g class="eyeball" id="ballL">
+                    <circle cx="170" cy="95" r="21" fill="#16181D"/>
+                    <circle cx="162" cy="87" r="5" fill="#ffffff"/>
+                    <circle cx="175" cy="91" r="2.5" fill="#ffffff"/>
+                </g>
             </g>
+            <path d="M20,95 C80,20 260,20 320,95" fill="none" stroke="#16181D" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M20,95 C80,150 260,150 320,95" fill="none" stroke="#16181D" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
+            <path d="M310,88 Q322,95 310,102" fill="none" stroke="#16181D" stroke-width="3.2" stroke-linecap="round"/>
             <!-- 눈 (ballR) -->
-            <circle cx="303" cy="120" r="105" fill="#F0EDE8"/>
-            <circle cx="303" cy="120" r="75" fill="#3D4F8A"/>
-            <g class="eyeball" id="ballR">
-                <circle cx="303" cy="120" r="33" fill="#16181D"/>
-                <circle cx="290" cy="107" r="8" fill="#ffffff"/>
-                <circle cx="312" cy="113" r="4" fill="#ffffff"/>
+            <g clip-path="url(#clipR)">
+                <path d="M360,95 C420,20 600,20 660,95 C600,150 420,150 360,95 Z" fill="#F0EDE8"/>
+                <circle cx="510" cy="95" r="50" fill="#3D4F8A"/>
+                <g class="eyeball" id="ballR">
+                    <circle cx="510" cy="95" r="21" fill="#16181D"/>
+                    <circle cx="502" cy="87" r="5" fill="#ffffff"/>
+                    <circle cx="515" cy="91" r="2.5" fill="#ffffff"/>
+                </g>
             </g>
+            <path d="M360,95 C420,20 600,20 660,95" fill="none" stroke="#16181D" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M360,95 C420,150 600,150 660,95" fill="none" stroke="#16181D" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
+            <path d="M370,88 Q358,95 370,102" fill="none" stroke="#16181D" stroke-width="3.2" stroke-linecap="round"/>
         </svg>
 
         <!-- 중앙 텍스트 -->
@@ -1533,13 +1547,13 @@
             const svg = document.getElementById('eyes');
             if (!svg) return;
             const balls = [
-                { el: document.getElementById('ballL'), vx: 135 },
-                { el: document.getElementById('ballR'), vx: 303 },
+                { el: document.getElementById('ballL'), vx: 170 },
+                { el: document.getElementById('ballR'), vx: 510 },
             ].filter(b => b.el);
             if (!balls.length) return;
 
-            const VW = 440, VH = 240, EYE_CY = 120;
-            const MAX_X = 35, MAX_Y = 35; // viewBox 단위, 홍채(r75)-동공(r33) 안쪽
+            const VW = 680, VH = 170, EYE_CY = 95;
+            const MAX_X = 24, MAX_Y = 12; // viewBox 단위, 홍채(r50)-동공(r21) 안쪽
             let mx = window.innerWidth / 2, my = window.innerHeight / 2, raf = null;
 
             const update = () => {
