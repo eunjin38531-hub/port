@@ -95,7 +95,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            touch-action: none;
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -228,37 +227,6 @@
         .home-guide .hint b {
             color: var(--gold);
             font-weight: 700;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--gold-soft), var(--gold));
-            border-radius: 4px;
-            transition: width 0.1s linear;
-        }
-
-        .progress-num {
-            margin-top: 10px;
-            color: rgba(245,246,244,0.5);
-            font-size: 0.78em;
-            letter-spacing: 2px;
-        }
-
-        /* 홈 → 콘텐츠 전환 */
-        #home.depart {
-            transition: opacity 0.9s ease, transform 0.9s ease;
-            opacity: 0;
-            transform: translateY(-40px);
-            pointer-events: none;
         }
 
         .scroll-cue {
@@ -966,11 +934,9 @@
             <p class="home-sub">말하기 전에 먼저 알아채는 디자이너가 되겠습니다</p>
         </div>
 
-        <!-- 안내 + 진행도 -->
+        <!-- 안내 -->
         <div class="home-guide" id="guide">
-            <div class="hint">마우스를 <b>움직여</b> 보세요 · 말하기 전에, 당신의 다음 발걸음을 먼저 읽습니다</div>
-            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-            <div class="progress-num" id="progressNum">읽는 중 0%</div>
+            <div class="hint"><b>스크롤</b>하여 다음으로</div>
         </div>
 
         <div class="scroll-cue" id="scrollCue">↓</div>
@@ -1272,19 +1238,16 @@
             history.scrollRestoration = 'manual';
         }
 
-        const THRESHOLD = 900;
-        let state = { drawing: false, total: 0, lastX: 0, lastY: 0, points: [], unlocked: false };
+        let state = { unlocked: false };
         let listeners = null;
 
         function resetPage() {
-            state = { drawing: false, total: 0, lastX: 0, lastY: 0, points: [], unlocked: false };
+            state = { unlocked: false };
             window.scrollTo(0, 0);
 
             const home = document.getElementById('home');
             const loader = document.getElementById('loader');
             const guide = document.getElementById('guide');
-            const fill = document.getElementById('progressFill');
-            const num = document.getElementById('progressNum');
             const scrollCue = document.getElementById('scrollCue');
 
             // null 체크
@@ -1305,12 +1268,11 @@
 
             // 내부 요소들
             if (guide) guide.style.opacity = '1';
-            if (fill) fill.style.width = '0%';
-            if (num) num.textContent = '읽는 중 0%';
             document.querySelectorAll('#eyes .pupil').forEach(p => p.style.transform = '');
             if (scrollCue) scrollCue.classList.remove('show');
 
             document.body.classList.add('locked');
+            if (window.lenis) window.lenis.stop(); // 홈에서는 스크롤 정지
 
             // 로더를 명시적으로 보이게 설정
             loader.classList.remove('hidden');
@@ -1328,96 +1290,71 @@
                 loader.style.visibility = 'hidden';
                 loader.style.pointerEvents = 'none';
                 loader.style.zIndex = '-1';
+                if (scrollCue) scrollCue.classList.add('show'); // 스크롤 유도 표시
             }, 1400);
         }
 
-        // 홈 인터랙션: 사용자가 움직이기만 하면 사이트가 먼저 '읽어' 진행됨 (눈치)
+        // 홈 인터랙션: 스크롤하면 다음 섹션으로 슬라이드되어 넘어감
         function setupDrawing() {
             if (listeners) return; // 중복 등록 방지
 
             const body = document.body;
             const home = document.getElementById('home');
-            const fill = document.getElementById('progressFill');
-            const num = document.getElementById('progressNum');
             const guide = document.getElementById('guide');
 
-            // 움직임·의도를 누적해 사이트가 사용자를 '읽는' 정도를 채움
-            const sense = (amount) => {
-                if (state.unlocked) return;
-                state.total += amount;
-                const pct = Math.min(100, Math.round((state.total / THRESHOLD) * 100));
-                fill.style.width = pct + '%';
-                num.textContent = pct < 100 ? '읽는 중 ' + pct + '%' : '먼저 알아챘습니다';
-                if (state.total >= THRESHOLD) unlock();
-            };
-
-            // 커서/손가락 이동을 읽는다 (눈동자가 따라오는 동안 진행도 누적)
-            const read = (e) => {
-                if (state.unlocked) return;
-                if (e.type === 'touchmove') e.preventDefault();
-                const t = e.touches?.[0] || e;
-                const x = t.clientX, y = t.clientY;
-
-                // 첫 이벤트는 위치만 잡고 통과 (0,0 점프 방지)
-                if (state.lastX === 0 && state.lastY === 0) { state.lastX = x; state.lastY = y; return; }
-
-                const dx = x - state.lastX, dy = y - state.lastY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                state.lastX = x; state.lastY = y;
-                if (dist < 0.5) return;
-
-                sense(dist);
-            };
-
-            const unlock = () => {
+            // 홈 → 다음 섹션으로 부드럽게 슬라이드
+            const advance = () => {
                 if (state.unlocked) return;
                 state.unlocked = true;
 
-                guide.style.opacity = '0';
-                fill.style.width = '100%';
-                num.textContent = '먼저 알아챘습니다';
+                if (guide) guide.style.opacity = '0';
+                const scrollCue = document.getElementById('scrollCue');
+                if (scrollCue) scrollCue.classList.remove('show');
 
-                setTimeout(() => {
-                    home.classList.add('depart');
-                    body.classList.remove('locked');
+                body.classList.remove('locked');
 
-                    const navEl = document.querySelector('nav');
-                    if (navEl) setTimeout(() => navEl.classList.add('nav-visible'), 300);
+                const navEl = document.querySelector('nav');
+                if (navEl) setTimeout(() => navEl.classList.add('nav-visible'), 200);
 
-                    if (window.lenis) {
-                        setTimeout(() => window.lenis.scrollTo('#about', { duration: 1.2 }), 80);
-                    } else {
-                        document.documentElement.style.scrollBehavior = 'smooth';
-                        document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
-                    }
-
-                    setTimeout(() => {
-                        home.style.display = 'none';
-                        document.documentElement.style.scrollBehavior = 'auto';
-                    }, 1000);
-                }, 700);
+                if (window.lenis) {
+                    window.lenis.start();
+                    window.lenis.scrollTo('#about', { duration: 1.1, force: true });
+                } else {
+                    document.documentElement.style.scrollBehavior = 'smooth';
+                    document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => { document.documentElement.style.scrollBehavior = 'auto'; }, 1100);
+                }
             };
 
-            // 이동을 수동적으로 읽음 (드래그 없이도)
-            document.addEventListener('mousemove', read);
-            document.addEventListener('touchmove', read, { passive: false });
-
-            // 스크롤·키 입력 = "내려가고 싶다"는 의도. 막되, 그 의도를 먼저 읽어 가속
-            const blockScroll = (e) => {
+            // 아래로 스크롤(휠) 시 전환, 위로는 무시
+            const onWheel = (e) => {
                 if (state.unlocked) return;
                 e.preventDefault();
-                sense(240);
+                if (e.deltaY > 0) advance();
             };
-            document.addEventListener('wheel', blockScroll, { passive: false });
-            document.addEventListener('keydown', (e) => {
+            // 키보드: 아래 방향 키/스페이스/엔터로 전환
+            const onKey = (e) => {
                 if (state.unlocked) return;
-                if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Enter'].includes(e.key)) {
-                    e.preventDefault();
-                    sense(280);
-                }
-            });
+                if (['ArrowDown', 'PageDown', 'End', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); advance(); }
+                else if (['ArrowUp', 'PageUp', 'Home'].includes(e.key)) { e.preventDefault(); }
+            };
+            // 터치: 위로 스와이프(= 아래로 스크롤)하면 전환
+            let touchStartY = null;
+            const onTouchStart = (e) => { touchStartY = e.touches[0]?.clientY ?? null; };
+            const onTouchMove = (e) => {
+                if (state.unlocked) return;
+                e.preventDefault();
+                if (touchStartY === null) return;
+                const dy = touchStartY - (e.touches[0]?.clientY ?? touchStartY);
+                if (dy > 28) advance(); // 위로 28px 이상 스와이프
+            };
 
-            listeners = { read };
+            document.addEventListener('wheel', onWheel, { passive: false });
+            document.addEventListener('keydown', onKey);
+            document.addEventListener('touchstart', onTouchStart, { passive: true });
+            document.addEventListener('touchmove', onTouchMove, { passive: false });
+
+            listeners = { onWheel, onKey };
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1592,6 +1529,8 @@
                 easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                 smoothWheel: true,
             });
+            // 홈 잠금 상태면 즉시 정지 (스크롤 게이트가 풀어줌)
+            if (document.body.classList.contains('locked')) window.lenis.stop();
             (function raf(time) {
                 window.lenis.raf(time);
                 requestAnimationFrame(raf);
