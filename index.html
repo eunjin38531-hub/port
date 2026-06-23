@@ -147,61 +147,20 @@
             letter-spacing: 1px;
         }
 
-        /* 눈 — 마우스를 따라 움직이는 눈동자 */
-        .eyes {
+        /* 눈 — 텍스트 뒤 배경처럼 깔리는 큰 SVG, 눈동자가 마우스를 따라감 */
+        .eyes-svg {
             position: absolute;
-            top: 30%;
+            top: 50%;
             left: 50%;
+            width: clamp(340px, 66vw, 1150px);
+            height: auto;
             transform: translate(-50%, -50%);
-            display: flex;
-            gap: 38px;
-            z-index: 4;
+            z-index: 2;            /* 텍스트(z-index:5)보다 아래 */
+            opacity: 0.18;
             pointer-events: none;
         }
-        .eye {
-            position: relative;
-            width: clamp(64px, 11vw, 96px);
-            height: clamp(80px, 14vw, 120px);
-            background: var(--paper);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-        }
-        /* 눈꺼풀 — 주기적으로 깜빡임 */
-        .eye::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(160deg, var(--navy), var(--ink));
-            transform: translateY(-101%);
-            animation: blink 6s ease-in-out infinite;
-        }
-        .eye:last-child::before { animation-delay: 0.06s; }
-        @keyframes blink {
-            0%, 90%, 100% { transform: translateY(-101%); }
-            94%, 96% { transform: translateY(0); }
-        }
-        .pupil {
-            position: relative;
-            width: clamp(30px, 5vw, 42px);
-            height: clamp(30px, 5vw, 42px);
-            background: var(--ink);
-            border-radius: 50%;
+        .eyes-svg .eyeball {
             transition: transform 0.12s ease-out;
-            will-change: transform;
-        }
-        .pupil::after {
-            content: '';
-            position: absolute;
-            top: 18%;
-            right: 18%;
-            width: 26%;
-            height: 26%;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50%;
         }
 
         /* 하단 안내 + 진행도 */
@@ -921,11 +880,52 @@
     <section id="home">
         <div class="home-grid"></div>
 
-        <!-- 눈 (마우스를 따라 보는 눈동자) -->
-        <div class="eyes" id="eyes" aria-hidden="true">
-            <div class="eye"><span class="pupil"></span></div>
-            <div class="eye"><span class="pupil"></span></div>
-        </div>
+        <!-- 눈 (텍스트 뒤 배경, 눈동자가 마우스를 따라감) -->
+        <svg class="eyes-svg" id="eyes" viewBox="0 0 1000 500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="irisGrad" cx="50%" cy="42%" r="58%">
+                    <stop offset="0%" stop-color="#46598F"/>
+                    <stop offset="48%" stop-color="#2A3358"/>
+                    <stop offset="100%" stop-color="#11142a"/>
+                </radialGradient>
+                <clipPath id="lidClipL"><path d="M130,250 C195,158 405,158 470,250 C405,342 195,342 130,250 Z"/></clipPath>
+                <clipPath id="lidClipR"><path d="M530,250 C595,158 805,158 870,250 C805,342 595,342 530,250 Z"/></clipPath>
+            </defs>
+
+            <!-- 왼쪽 눈 -->
+            <g>
+                <g clip-path="url(#lidClipL)">
+                    <rect x="125" y="150" width="350" height="200" fill="#F5F6F4"/>
+                    <g class="eyeball" id="ballL">
+                        <circle cx="300" cy="250" r="80" fill="url(#irisGrad)"/>
+                        <circle cx="300" cy="250" r="80" fill="none" stroke="#0e1124" stroke-width="3" opacity="0.55"/>
+                        <circle cx="300" cy="250" r="35" fill="#0a0b13"/>
+                        <circle cx="276" cy="226" r="13" fill="#ffffff" opacity="0.92"/>
+                        <circle cx="320" cy="270" r="6" fill="#ffffff" opacity="0.4"/>
+                    </g>
+                </g>
+                <!-- 눈꺼풀 라인 -->
+                <path d="M130,250 C195,158 405,158 470,250 C405,342 195,342 130,250 Z" fill="none" stroke="#F5F6F4" stroke-width="4"/>
+                <!-- 윗 쌍꺼풀 라인 -->
+                <path d="M152,228 C212,150 398,150 452,224" fill="none" stroke="#C2C8D8" stroke-width="2.5" opacity="0.6"/>
+            </g>
+
+            <!-- 오른쪽 눈 -->
+            <g>
+                <g clip-path="url(#lidClipR)">
+                    <rect x="525" y="150" width="350" height="200" fill="#F5F6F4"/>
+                    <g class="eyeball" id="ballR">
+                        <circle cx="700" cy="250" r="80" fill="url(#irisGrad)"/>
+                        <circle cx="700" cy="250" r="80" fill="none" stroke="#0e1124" stroke-width="3" opacity="0.55"/>
+                        <circle cx="700" cy="250" r="35" fill="#0a0b13"/>
+                        <circle cx="676" cy="226" r="13" fill="#ffffff" opacity="0.92"/>
+                        <circle cx="720" cy="270" r="6" fill="#ffffff" opacity="0.4"/>
+                    </g>
+                </g>
+                <path d="M530,250 C595,158 805,158 870,250 C805,342 595,342 530,250 Z" fill="none" stroke="#F5F6F4" stroke-width="4"/>
+                <path d="M552,228 C612,150 798,150 852,224" fill="none" stroke="#C2C8D8" stroke-width="2.5" opacity="0.6"/>
+            </g>
+        </svg>
 
         <!-- 중앙 텍스트 -->
         <div class="home-inner">
@@ -1268,7 +1268,7 @@
 
             // 내부 요소들
             if (guide) guide.style.opacity = '1';
-            document.querySelectorAll('#eyes .pupil').forEach(p => p.style.transform = '');
+            document.querySelectorAll('#eyes .eyeball').forEach(g => g.removeAttribute('transform'));
             if (scrollCue) scrollCue.classList.remove('show');
 
             document.body.classList.add('locked');
@@ -1431,26 +1431,32 @@
             setupEyes();
         });
 
-        // ===== 홈 눈동자 — 마우스를 따라 본다 =====
+        // ===== 홈 눈동자 — 마우스를 따라 본다 (SVG 그룹 이동) =====
         function setupEyes() {
-            const eyes = Array.from(document.querySelectorAll('#eyes .eye'));
-            if (!eyes.length) return;
+            const svg = document.getElementById('eyes');
+            if (!svg) return;
+            const balls = [
+                { el: document.getElementById('ballL'), vx: 300 },
+                { el: document.getElementById('ballR'), vx: 700 },
+            ].filter(b => b.el);
+            if (!balls.length) return;
+
+            const VW = 1000, VH = 500, EYE_CY = 250;
+            const MAX_X = 44, MAX_Y = 22; // viewBox 단위, 흰자 안에서만 움직임
             let mx = window.innerWidth / 2, my = window.innerHeight / 2, raf = null;
+
             const update = () => {
                 raf = null;
-                eyes.forEach((eye) => {
-                    const pupil = eye.querySelector('.pupil');
-                    if (!pupil) return;
-                    const r = eye.getBoundingClientRect();
-                    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+                const r = svg.getBoundingClientRect();
+                if (!r.width) return;
+                balls.forEach((b) => {
+                    const cx = r.left + r.width * (b.vx / VW);
+                    const cy = r.top + r.height * (EYE_CY / VH);
                     const ang = Math.atan2(my - cy, mx - cx);
-                    // 눈 안에서 움직일 수 있는 최대 반경 (흰자 여백)
-                    const rx = (r.width - pupil.offsetWidth) / 2 - 4;
-                    const ry = (r.height - pupil.offsetHeight) / 2 - 4;
-                    const reach = Math.min(1, Math.hypot(mx - cx, my - cy) / 280);
-                    const tx = Math.cos(ang) * rx * reach;
-                    const ty = Math.sin(ang) * ry * reach;
-                    pupil.style.transform = `translate(${tx}px, ${ty}px)`;
+                    const reach = Math.min(1, Math.hypot(mx - cx, my - cy) / 520);
+                    const tx = Math.cos(ang) * MAX_X * reach;
+                    const ty = Math.sin(ang) * MAX_Y * reach;
+                    b.el.setAttribute('transform', `translate(${tx.toFixed(1)} ${ty.toFixed(1)})`);
                 });
             };
             document.addEventListener('mousemove', (e) => {
@@ -1597,7 +1603,7 @@
         // ===== HOME MOUSE PARALLAX =====
         function setupHomeParallax() {
             const homeEl = document.getElementById('home');
-            const eyesEl = document.querySelector('.eyes');
+            const eyesEl = document.getElementById('eyes');
             const gridEl = document.querySelector('.home-grid');
             if (!homeEl) return;
 
