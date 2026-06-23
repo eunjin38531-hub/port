@@ -43,7 +43,7 @@
         #loader {
             position: fixed;
             inset: 0;
-            background: var(--ink);
+            background: var(--paper);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -65,7 +65,7 @@
         .loader-compass {
             width: 70px;
             height: 70px;
-            border: 2px solid var(--line);
+            border: 2px solid rgba(22, 24, 29, 0.12);
             border-top-color: var(--gold);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -77,7 +77,7 @@
 
         .loader-text {
             margin-top: 24px;
-            color: var(--gold-soft);
+            color: var(--gold);
             font-size: 0.85em;
             letter-spacing: 4px;
             text-transform: uppercase;
@@ -143,7 +143,7 @@
 
         .home-sub {
             margin-top: 22px;
-            color: var(--gold-soft);
+            color: rgba(22, 24, 29, 0.62);
             font-size: 1em;
             letter-spacing: 1px;
         }
@@ -171,12 +171,12 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: var(--gold-soft);
+            color: var(--gold);
             opacity: 0;
             z-index: 12;
             transition: opacity 0.5s ease;
         }
-        .scroll-cue.show { opacity: 0.85; }
+        .scroll-cue.show { opacity: 1; }
         .scroll-cue-text {
             font-size: 0.66em;
             font-weight: 600;
@@ -279,54 +279,7 @@
         .nav-right a:hover span:last-child,
         .nav-right a.active span:last-child { transform: translateY(-100%); }
 
-        /* ===== CUSTOM CURSOR ===== */
-        @media (hover: hover) {
-            * { cursor: none !important; }
-        }
-
-        #cursor-dot {
-            position: fixed;
-            top: -100px; left: -100px;
-            width: 8px; height: 8px;
-            background: var(--gold);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99999;
-            transform: translate(-50%, -50%);
-            transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
-            will-change: left, top;
-        }
-
-        #cursor-ring {
-            position: fixed;
-            top: -100px; left: -100px;
-            width: 40px; height: 40px;
-            border: 1.5px solid rgba(61, 79, 138, 0.55);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99998;
-            transform: translate(-50%, -50%);
-            transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                        height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                        border-color 0.3s;
-            will-change: left, top;
-        }
-
-        body.cursor-hover #cursor-ring {
-            width: 68px;
-            height: 68px;
-            border-color: var(--gold);
-        }
-
-        body.cursor-hover #cursor-dot {
-            width: 4px;
-            height: 4px;
-            opacity: 0.5;
-        }
-
-        @media (hover: none) {
-            #cursor-dot, #cursor-ring { display: none; }
-        }
+        /* (커스텀 커서 제거 — 네이티브 커서 사용) */
 
         /* 상단 스크롤 진행 바 */
         #scrollProgress {
@@ -928,7 +881,7 @@
     </style>
     <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 </head>
-<body class="locked">
+<body>
 
     <!-- 상단 스크롤 진행 바 -->
     <div id="scrollProgress"></div>
@@ -1287,8 +1240,6 @@
     </main>
 
 
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
 
     <footer>
         <span class="big">눈치밥 <span class="accent">디자이너</span></span>
@@ -1335,9 +1286,6 @@
             document.querySelectorAll('#eyes .eyeball').forEach(g => g.removeAttribute('transform'));
             if (scrollCue) scrollCue.classList.remove('show');
 
-            document.body.classList.add('locked');
-            if (window.lenis) window.lenis.stop(); // 홈에서는 스크롤 정지
-
             // 로더를 명시적으로 보이게 설정
             loader.classList.remove('hidden');
             loader.removeAttribute('style');
@@ -1358,68 +1306,29 @@
             }, 1400);
         }
 
-        // 홈 인터랙션: 스크롤하면 다음 섹션으로 슬라이드되어 넘어감
+        // 홈 인터랙션: 자연 스크롤(잠금 없음) + 스크롤 큐 클릭/페이드
         function setupDrawing() {
             if (listeners) return; // 중복 등록 방지
 
-            const body = document.body;
-            const home = document.getElementById('home');
-            const guide = document.getElementById('guide');
-
-            // 홈 → 다음 섹션으로 부드럽게 슬라이드
-            const advance = () => {
-                if (state.unlocked) return;
-                state.unlocked = true;
-
-                if (guide) guide.style.opacity = '0';
-                const scrollCue = document.getElementById('scrollCue');
-                if (scrollCue) scrollCue.classList.remove('show');
-
-                body.classList.remove('locked');
-
-                if (window.lenis) {
-                    window.lenis.start();
-                    window.lenis.scrollTo('#about', { duration: 1.1, offset: -72, force: true });
-                } else {
-                    document.documentElement.style.scrollBehavior = 'smooth';
-                    document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => { document.documentElement.style.scrollBehavior = 'auto'; }, 1100);
-                }
-            };
-
-            // 아래로 스크롤(휠) 시 전환, 위로는 무시
-            const onWheel = (e) => {
-                if (state.unlocked) return;
-                e.preventDefault();
-                if (e.deltaY > 0) advance();
-            };
-            // 키보드: 아래 방향 키/스페이스/엔터로 전환
-            const onKey = (e) => {
-                if (state.unlocked) return;
-                if (['ArrowDown', 'PageDown', 'End', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); advance(); }
-                else if (['ArrowUp', 'PageUp', 'Home'].includes(e.key)) { e.preventDefault(); }
-            };
-            // 터치: 위로 스와이프(= 아래로 스크롤)하면 전환
-            let touchStartY = null;
-            const onTouchStart = (e) => { touchStartY = e.touches[0]?.clientY ?? null; };
-            const onTouchMove = (e) => {
-                if (state.unlocked) return;
-                e.preventDefault();
-                if (touchStartY === null) return;
-                const dy = touchStartY - (e.touches[0]?.clientY ?? touchStartY);
-                if (dy > 28) advance(); // 위로 28px 이상 스와이프
-            };
-
-            document.addEventListener('wheel', onWheel, { passive: false });
-            document.addEventListener('keydown', onKey);
-            document.addEventListener('touchstart', onTouchStart, { passive: true });
-            document.addEventListener('touchmove', onTouchMove, { passive: false });
-
-            // 스크롤 유도 화살표 클릭 시에도 전환
             const cue = document.getElementById('scrollCue');
-            if (cue) cue.addEventListener('click', (e) => { e.preventDefault(); advance(); });
 
-            listeners = { onWheel, onKey };
+            // 화살표 클릭 → About으로 부드럽게 이동
+            if (cue) {
+                cue.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.getElementById('about');
+                    if (window.lenis) window.lenis.scrollTo(target, { duration: 1.1, offset: -72 });
+                    else target.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
+            // 살짝만 스크롤해도 큐는 사라짐(역할 끝남)
+            const onScrollHideCue = () => {
+                if (window.scrollY > 40 && cue) cue.classList.remove('show');
+            };
+            window.addEventListener('scroll', onScrollHideCue, { passive: true });
+
+            listeners = { onScrollHideCue };
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1492,7 +1401,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             setupContentInteractions();
             setupLenis();
-            setupCursor();
             setupMagnetic();
             setupHomeParallax();
             setupLetterCarousel();
@@ -1652,46 +1560,6 @@
                 window.lenis.raf(time);
                 requestAnimationFrame(raf);
             })(0);
-        }
-
-        // ===== CUSTOM CURSOR (lerp) =====
-        function setupCursor() {
-            const dot = document.getElementById('cursor-dot');
-            const ring = document.getElementById('cursor-ring');
-            if (!dot || !ring) return;
-
-            let mx = window.innerWidth / 2, my = window.innerHeight / 2;
-            let rx = mx, ry = my;       // ring (지연 추적)
-
-            document.addEventListener('mousemove', (e) => {
-                mx = e.clientX;
-                my = e.clientY;
-                dot.style.left = mx + 'px';
-                dot.style.top = my + 'px';
-            });
-
-            const lerp = (a, b, t) => a + (b - a) * t;
-            (function animateRing() {
-                rx = lerp(rx, mx, 0.12);
-                ry = lerp(ry, my, 0.12);
-                ring.style.left = rx + 'px';
-                ring.style.top = ry + 'px';
-                requestAnimationFrame(animateRing);
-            })();
-
-            const hoverSel = 'a, button, .wcard, .skill-row';
-            document.addEventListener('mouseover', (e) => {
-                if (e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
-            });
-            document.addEventListener('mouseout', (e) => {
-                if (e.target.closest(hoverSel)) document.body.classList.remove('cursor-hover');
-            });
-            document.addEventListener('mouseleave', () => {
-                dot.style.opacity = '0'; ring.style.opacity = '0';
-            });
-            document.addEventListener('mouseenter', () => {
-                dot.style.opacity = '1'; ring.style.opacity = '1';
-            });
         }
 
         // ===== MAGNETIC NAV BUTTONS =====
