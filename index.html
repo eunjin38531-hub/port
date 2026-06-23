@@ -151,7 +151,7 @@
         /* 눈 — 히어로 상단 메인 요소, 눈동자가 마우스를 따라감 */
         .eyes-svg {
             position: relative;
-            width: clamp(300px, 40vw, 440px);
+            width: clamp(320px, 46vw, 440px);
             height: auto;
             z-index: 3;
             opacity: 1;
@@ -944,66 +944,22 @@
         <div class="home-grid"></div>
 
         <!-- 눈 (텍스트 뒤 배경, 눈동자가 마우스를 따라감) -->
-        <svg class="eyes-svg" id="eyes" viewBox="0 0 350 140" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <svg class="eyes-svg" id="eyes" viewBox="0 0 440 240" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
             <!-- 눈 (ballL) -->
-            <circle cx="100" cy="70" r="60" fill="#F5F6F4"/>
-            <circle cx="100" cy="70" r="40" fill="#3D4F8A"/>
-            <g stroke="#1E2D5A" stroke-width="0.8" opacity="0.6">
-                    <line x1="120.0" y1="70.0" x2="137.5" y2="70.0"/>
-                    <line x1="119.0" y1="76.2" x2="135.7" y2="81.6"/>
-                    <line x1="116.2" y1="81.8" x2="130.3" y2="92.0"/>
-                    <line x1="111.8" y1="86.2" x2="122.0" y2="100.3"/>
-                    <line x1="106.2" y1="89.0" x2="111.6" y2="105.7"/>
-                    <line x1="100.0" y1="90.0" x2="100.0" y2="107.5"/>
-                    <line x1="93.8" y1="89.0" x2="88.4" y2="105.7"/>
-                    <line x1="88.2" y1="86.2" x2="78.0" y2="100.3"/>
-                    <line x1="83.8" y1="81.8" x2="69.7" y2="92.0"/>
-                    <line x1="81.0" y1="76.2" x2="64.3" y2="81.6"/>
-                    <line x1="80.0" y1="70.0" x2="62.5" y2="70.0"/>
-                    <line x1="81.0" y1="63.8" x2="64.3" y2="58.4"/>
-                    <line x1="83.8" y1="58.2" x2="69.7" y2="48.0"/>
-                    <line x1="88.2" y1="53.8" x2="78.0" y2="39.7"/>
-                    <line x1="93.8" y1="51.0" x2="88.4" y2="34.3"/>
-                    <line x1="100.0" y1="50.0" x2="100.0" y2="32.5"/>
-                    <line x1="106.2" y1="51.0" x2="111.6" y2="34.3"/>
-                    <line x1="111.8" y1="53.8" x2="122.0" y2="39.7"/>
-                    <line x1="116.2" y1="58.2" x2="130.3" y2="48.0"/>
-                    <line x1="119.0" y1="63.8" x2="135.7" y2="58.4"/>
-            </g>
+            <circle cx="135" cy="120" r="105" fill="#F0EDE8"/>
+            <circle cx="135" cy="120" r="75" fill="#3D4F8A"/>
             <g class="eyeball" id="ballL">
-                <circle cx="100" cy="70" r="17.5" fill="#16181D"/>
-                <circle cx="93" cy="63" r="4" fill="#ffffff"/>
-                <circle cx="105" cy="66" r="2" fill="#ffffff"/>
+                <circle cx="135" cy="120" r="33" fill="#16181D"/>
+                <circle cx="122" cy="107" r="8" fill="#ffffff"/>
+                <circle cx="144" cy="113" r="4" fill="#ffffff"/>
             </g>
             <!-- 눈 (ballR) -->
-            <circle cx="250" cy="70" r="60" fill="#F5F6F4"/>
-            <circle cx="250" cy="70" r="40" fill="#3D4F8A"/>
-            <g stroke="#1E2D5A" stroke-width="0.8" opacity="0.6">
-                    <line x1="270.0" y1="70.0" x2="287.5" y2="70.0"/>
-                    <line x1="269.0" y1="76.2" x2="285.7" y2="81.6"/>
-                    <line x1="266.2" y1="81.8" x2="280.3" y2="92.0"/>
-                    <line x1="261.8" y1="86.2" x2="272.0" y2="100.3"/>
-                    <line x1="256.2" y1="89.0" x2="261.6" y2="105.7"/>
-                    <line x1="250.0" y1="90.0" x2="250.0" y2="107.5"/>
-                    <line x1="243.8" y1="89.0" x2="238.4" y2="105.7"/>
-                    <line x1="238.2" y1="86.2" x2="228.0" y2="100.3"/>
-                    <line x1="233.8" y1="81.8" x2="219.7" y2="92.0"/>
-                    <line x1="231.0" y1="76.2" x2="214.3" y2="81.6"/>
-                    <line x1="230.0" y1="70.0" x2="212.5" y2="70.0"/>
-                    <line x1="231.0" y1="63.8" x2="214.3" y2="58.4"/>
-                    <line x1="233.8" y1="58.2" x2="219.7" y2="48.0"/>
-                    <line x1="238.2" y1="53.8" x2="228.0" y2="39.7"/>
-                    <line x1="243.8" y1="51.0" x2="238.4" y2="34.3"/>
-                    <line x1="250.0" y1="50.0" x2="250.0" y2="32.5"/>
-                    <line x1="256.2" y1="51.0" x2="261.6" y2="34.3"/>
-                    <line x1="261.8" y1="53.8" x2="272.0" y2="39.7"/>
-                    <line x1="266.2" y1="58.2" x2="280.3" y2="48.0"/>
-                    <line x1="269.0" y1="63.8" x2="285.7" y2="58.4"/>
-            </g>
+            <circle cx="303" cy="120" r="105" fill="#F0EDE8"/>
+            <circle cx="303" cy="120" r="75" fill="#3D4F8A"/>
             <g class="eyeball" id="ballR">
-                <circle cx="250" cy="70" r="17.5" fill="#16181D"/>
-                <circle cx="243" cy="63" r="4" fill="#ffffff"/>
-                <circle cx="255" cy="66" r="2" fill="#ffffff"/>
+                <circle cx="303" cy="120" r="33" fill="#16181D"/>
+                <circle cx="290" cy="107" r="8" fill="#ffffff"/>
+                <circle cx="312" cy="113" r="4" fill="#ffffff"/>
             </g>
         </svg>
 
@@ -1577,13 +1533,13 @@
             const svg = document.getElementById('eyes');
             if (!svg) return;
             const balls = [
-                { el: document.getElementById('ballL'), vx: 100 },
-                { el: document.getElementById('ballR'), vx: 250 },
+                { el: document.getElementById('ballL'), vx: 135 },
+                { el: document.getElementById('ballR'), vx: 303 },
             ].filter(b => b.el);
             if (!balls.length) return;
 
-            const VW = 350, VH = 140, EYE_CY = 70;
-            const MAX_X = 18, MAX_Y = 18; // viewBox 단위, 홍채(r40)-동공(r17.5) 안쪽
+            const VW = 440, VH = 240, EYE_CY = 120;
+            const MAX_X = 35, MAX_Y = 35; // viewBox 단위, 홍채(r75)-동공(r33) 안쪽
             let mx = window.innerWidth / 2, my = window.innerHeight / 2, raf = null;
 
             const update = () => {
