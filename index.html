@@ -95,7 +95,6 @@
             align-items: center;
             justify-content: center;
             gap: clamp(20px, 3vh, 44px);
-            padding-bottom: clamp(90px, 18vh, 200px); /* 내용을 위로 (눈과 스크롤 사이) */
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -130,11 +129,11 @@
         }
 
         .home-title {
-            font-size: clamp(2.6em, 9vw, 5.5em);
+            font-size: clamp(3.2em, 12vw, 8em);
             font-weight: 800;
             color: var(--ink);
-            line-height: 1.1;
-            letter-spacing: -1px;
+            line-height: 1.0;
+            letter-spacing: -3px;
         }
 
         .home-title .accent {
@@ -146,19 +145,6 @@
             color: rgba(22, 24, 29, 0.62);
             font-size: 1em;
             letter-spacing: 1px;
-        }
-
-        /* 눈 — 히어로 상단 메인 요소, 눈동자가 마우스를 따라감 */
-        .eyes-svg {
-            position: relative;
-            width: clamp(360px, 60vw, 680px);
-            height: auto;
-            z-index: 3;
-            opacity: 1;
-            pointer-events: none;
-        }
-        .eyes-svg .eyeball {
-            transition: transform 0.12s ease-out;
         }
 
         .scroll-cue {
@@ -896,43 +882,10 @@
     <section id="home">
         <div class="home-grid"></div>
 
-        <!-- 눈 (텍스트 뒤 배경, 눈동자가 마우스를 따라감) -->
-        <svg class="eyes-svg" id="eyes" viewBox="0 0 680 170" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <clipPath id="clipL"><path d="M20,95 C80,20 260,20 320,95 C260,150 80,150 20,95 Z"/></clipPath>
-                <clipPath id="clipR"><path d="M360,95 C420,20 600,20 660,95 C600,150 420,150 360,95 Z"/></clipPath>
-            </defs>
-            <!-- 눈 (ballL) -->
-            <g clip-path="url(#clipL)">
-                <path d="M20,95 C80,20 260,20 320,95 C260,150 80,150 20,95 Z" fill="#F0EDE8"/>
-                <circle cx="170" cy="95" r="50" fill="#3D4F8A"/>
-                <g class="eyeball" id="ballL">
-                    <circle cx="170" cy="95" r="21" fill="#16181D"/>
-                    <circle cx="162" cy="87" r="5" fill="#ffffff"/>
-                    <circle cx="175" cy="91" r="2.5" fill="#ffffff"/>
-                </g>
-            </g>
-            <path d="M20,95 C80,20 260,20 320,95" fill="none" stroke="#16181D" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M20,95 C80,150 260,150 320,95" fill="none" stroke="#16181D" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
-            <path d="M310,88 Q322,95 310,102" fill="none" stroke="#16181D" stroke-width="3.2" stroke-linecap="round"/>
-            <!-- 눈 (ballR) -->
-            <g clip-path="url(#clipR)">
-                <path d="M360,95 C420,20 600,20 660,95 C600,150 420,150 360,95 Z" fill="#F0EDE8"/>
-                <circle cx="510" cy="95" r="50" fill="#3D4F8A"/>
-                <g class="eyeball" id="ballR">
-                    <circle cx="510" cy="95" r="21" fill="#16181D"/>
-                    <circle cx="502" cy="87" r="5" fill="#ffffff"/>
-                    <circle cx="515" cy="91" r="2.5" fill="#ffffff"/>
-                </g>
-            </g>
-            <path d="M360,95 C420,20 600,20 660,95" fill="none" stroke="#16181D" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M360,95 C420,150 600,150 660,95" fill="none" stroke="#16181D" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
-            <path d="M370,88 Q358,95 370,102" fill="none" stroke="#16181D" stroke-width="3.2" stroke-linecap="round"/>
-        </svg>
-
-        <!-- 중앙 텍스트 -->
+        <!-- 히어로 텍스트 -->
         <div class="home-inner">
-            <h1 class="home-title">눈치밥 <span class="accent">디자이너</span><br>고은진입니다</h1>
+            <p class="home-name">EUNJIN KO &nbsp;·&nbsp; UI/UX DESIGNER</p>
+            <h1 class="home-title">눈치밥<br><span class="accent">디자이너</span></h1>
             <p class="home-sub">말하기 전에 먼저 알아채는 디자이너입니다</p>
         </div>
 
@@ -1405,7 +1358,6 @@
             setupHomeParallax();
             setupLetterCarousel();
             setupCardAnticipation();
-            setupEyes();
             setupNav();
             setupAboutTabs();
         });
@@ -1448,45 +1400,6 @@
                     }
                 });
             });
-        }
-
-        // ===== 홈 눈동자 — 마우스를 따라 본다 (SVG 그룹 이동) =====
-        function setupEyes() {
-            const svg = document.getElementById('eyes');
-            if (!svg) return;
-            const balls = [
-                { el: document.getElementById('ballL'), vx: 170 },
-                { el: document.getElementById('ballR'), vx: 510 },
-            ].filter(b => b.el);
-            if (!balls.length) return;
-
-            const VW = 680, VH = 170, EYE_CY = 95;
-            const MAX_X = 24, MAX_Y = 12; // viewBox 단위, 홍채(r50)-동공(r21) 안쪽
-            let mx = window.innerWidth / 2, my = window.innerHeight / 2, raf = null;
-
-            const update = () => {
-                raf = null;
-                const r = svg.getBoundingClientRect();
-                if (!r.width) return;
-                balls.forEach((b) => {
-                    const cx = r.left + r.width * (b.vx / VW);
-                    const cy = r.top + r.height * (EYE_CY / VH);
-                    const ang = Math.atan2(my - cy, mx - cx);
-                    const reach = Math.min(1, Math.hypot(mx - cx, my - cy) / 520);
-                    const tx = Math.cos(ang) * MAX_X * reach;
-                    const ty = Math.sin(ang) * MAX_Y * reach;
-                    b.el.setAttribute('transform', `translate(${tx.toFixed(1)} ${ty.toFixed(1)})`);
-                });
-            };
-            document.addEventListener('mousemove', (e) => {
-                mx = e.clientX; my = e.clientY;
-                if (!raf) raf = requestAnimationFrame(update);
-            });
-            document.addEventListener('touchmove', (e) => {
-                const t = e.touches[0]; if (!t) return;
-                mx = t.clientX; my = t.clientY;
-                if (!raf) raf = requestAnimationFrame(update);
-            }, { passive: true });
         }
 
         // ===== 작업물 카드 예측 반응 (커서가 가까워지면 먼저 떠오름) =====
