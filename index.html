@@ -148,64 +148,61 @@
             letter-spacing: 1px;
         }
 
-        /* 나침반 그래픽 */
-        .compass {
+        /* 눈 — 마우스를 따라 움직이는 눈동자 */
+        .eyes {
             position: absolute;
-            top: 50%;
+            top: 30%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: min(80vw, 560px);
-            height: min(80vw, 560px);
-            z-index: 2;
+            display: flex;
+            gap: 38px;
+            z-index: 4;
             pointer-events: none;
-            opacity: 0.5;
         }
-
-        .compass .ring {
-            fill: none;
-            stroke: var(--line);
+        .eye {
+            position: relative;
+            width: clamp(64px, 11vw, 96px);
+            height: clamp(80px, 14vw, 120px);
+            background: var(--paper);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 18px 50px rgba(0,0,0,0.35);
         }
-
-        .compass .tick {
-            stroke: rgba(61,79,138,0.45);
-        }
-
-        .compass .cardinal {
-            fill: var(--gold-soft);
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .compass .needle {
-            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-            transform-origin: 300px 300px;
-        }
-
-        /* 사용자가 긋는 선 레이어 */
-        #drawLayer {
+        /* 눈꺼풀 — 주기적으로 깜빡임 */
+        .eye::before {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            cursor: crosshair;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            inset: -2px;
+            background: linear-gradient(160deg, var(--navy), var(--ink));
+            transform: translateY(-101%);
+            animation: blink 6s ease-in-out infinite;
         }
-
-        /* 시선 트레일 — 커서를 따라 흐르며 사라지는 '읽는 중' 자취 */
-        .draw-path {
-            fill: none;
-            stroke: var(--gold);
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            opacity: 0.85;
-            filter: drop-shadow(0 0 7px rgba(61,79,138,0.55));
+        .eye:last-child::before { animation-delay: 0.06s; }
+        @keyframes blink {
+            0%, 90%, 100% { transform: translateY(-101%); }
+            94%, 96% { transform: translateY(0); }
+        }
+        .pupil {
+            position: relative;
+            width: clamp(30px, 5vw, 42px);
+            height: clamp(30px, 5vw, 42px);
+            background: var(--ink);
+            border-radius: 50%;
+            transition: transform 0.12s ease-out;
+            will-change: transform;
+        }
+        .pupil::after {
+            content: '';
+            position: absolute;
+            top: 18%;
+            right: 18%;
+            width: 26%;
+            height: 26%;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
         }
 
         /* 하단 안내 + 진행도 */
@@ -389,34 +386,8 @@
             opacity: 0.5;
         }
 
-        /* 나침반 바늘 커서 (작업물 이미지 호버 시) */
-        #cursor-needle {
-            position: fixed;
-            top: 0; left: 0;
-            pointer-events: none;
-            z-index: 100000;
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
-            will-change: left, top, transform;
-        }
-        #cursor-needle svg { display: block; will-change: transform; }
-
-        body.cursor-compass #cursor-needle {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-        body.cursor-compass #cursor-dot { opacity: 0; }
-        body.cursor-compass #cursor-ring {
-            width: 76px;
-            height: 76px;
-            border-color: var(--gold-soft);
-            background: rgba(232, 213, 183, 0.12);
-            backdrop-filter: blur(1px);
-        }
-
         @media (hover: none) {
-            #cursor-dot, #cursor-ring, #cursor-needle { display: none; }
+            #cursor-dot, #cursor-ring { display: none; }
         }
 
         /* 상단 스크롤 진행 바 */
@@ -982,34 +953,11 @@
     <section id="home">
         <div class="home-grid"></div>
 
-        <!-- 나침반 -->
-        <svg class="compass" viewBox="0 0 600 600">
-            <circle class="ring" cx="300" cy="300" r="250" stroke-width="1.5"/>
-            <circle class="ring" cx="300" cy="300" r="210" stroke-width="1"/>
-            <circle class="ring" cx="300" cy="300" r="6" fill="#3D4F8A" stroke="none"/>
-            <!-- 눈금 -->
-            <g class="ticks">
-                <line class="tick" x1="300" y1="50" x2="300" y2="78" stroke-width="2"/>
-                <line class="tick" x1="300" y1="522" x2="300" y2="550" stroke-width="2"/>
-                <line class="tick" x1="50" y1="300" x2="78" y2="300" stroke-width="2"/>
-                <line class="tick" x1="522" y1="300" x2="550" y2="300" stroke-width="2"/>
-            </g>
-            <!-- 방위 -->
-            <text class="cardinal" x="300" y="40" text-anchor="middle">N</text>
-            <text class="cardinal" x="300" y="575" text-anchor="middle">S</text>
-            <text class="cardinal" x="575" y="306" text-anchor="middle">E</text>
-            <text class="cardinal" x="25" y="306" text-anchor="middle">W</text>
-            <!-- 바늘 -->
-            <g class="needle" id="needle">
-                <polygon points="300,120 285,300 315,300" fill="#3D4F8A"/>
-                <polygon points="300,480 285,300 315,300" fill="#C2C8D8"/>
-            </g>
-        </svg>
-
-        <!-- 사용자가 긋는 선 -->
-        <svg id="drawLayer" preserveAspectRatio="none">
-            <path class="draw-path" id="drawPath" d=""/>
-        </svg>
+        <!-- 눈 (마우스를 따라 보는 눈동자) -->
+        <div class="eyes" id="eyes" aria-hidden="true">
+            <div class="eye"><span class="pupil"></span></div>
+            <div class="eye"><span class="pupil"></span></div>
+        </div>
 
         <!-- 중앙 텍스트 -->
         <div class="home-inner">
@@ -1311,13 +1259,6 @@
 
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
-    <div id="cursor-needle" aria-hidden="true">
-        <svg width="18" height="54" viewBox="0 0 18 54">
-            <polygon points="9,2 15,27 3,27" fill="#3D4F8A"/>
-            <polygon points="3,27 15,27 9,52" fill="#C2C8D8"/>
-            <circle cx="9" cy="27" r="2.6" fill="#16181D"/>
-        </svg>
-    </div>
 
     <footer>
         <span class="big">눈치밥 <span class="accent">디자이너</span></span>
@@ -1344,8 +1285,6 @@
             const guide = document.getElementById('guide');
             const fill = document.getElementById('progressFill');
             const num = document.getElementById('progressNum');
-            const drawPath = document.getElementById('drawPath');
-            const needle = document.getElementById('needle');
             const scrollCue = document.getElementById('scrollCue');
 
             // null 체크
@@ -1368,8 +1307,7 @@
             if (guide) guide.style.opacity = '1';
             if (fill) fill.style.width = '0%';
             if (num) num.textContent = '읽는 중 0%';
-            if (drawPath) drawPath.setAttribute('d', '');
-            if (needle) needle.style.transform = 'rotate(0deg)';
+            document.querySelectorAll('#eyes .pupil').forEach(p => p.style.transform = '');
             if (scrollCue) scrollCue.classList.remove('show');
 
             document.body.classList.add('locked');
@@ -1399,14 +1337,9 @@
 
             const body = document.body;
             const home = document.getElementById('home');
-            const drawLayer = document.getElementById('drawLayer');
-            const drawPath = document.getElementById('drawPath');
             const fill = document.getElementById('progressFill');
             const num = document.getElementById('progressNum');
-            const needle = document.getElementById('needle');
             const guide = document.getElementById('guide');
-
-            const TRAIL = 34; // 시선 자취로 남길 최근 포인트 수
 
             // 움직임·의도를 누적해 사이트가 사용자를 '읽는' 정도를 채움
             const sense = (amount) => {
@@ -1418,7 +1351,7 @@
                 if (state.total >= THRESHOLD) unlock();
             };
 
-            // 커서/손가락 이동을 읽는다
+            // 커서/손가락 이동을 읽는다 (눈동자가 따라오는 동안 진행도 누적)
             const read = (e) => {
                 if (state.unlocked) return;
                 if (e.type === 'touchmove') e.preventDefault();
@@ -1433,20 +1366,6 @@
                 state.lastX = x; state.lastY = y;
                 if (dist < 0.5) return;
 
-                // 시선 자취 (커서를 따라오며 사라지는 트레일)
-                state.points.push(`${state.points.length ? 'L' : 'M'} ${x.toFixed(1)} ${y.toFixed(1)}`);
-                if (state.points.length > TRAIL) {
-                    state.points.splice(0, state.points.length - TRAIL);
-                    state.points[0] = 'M' + state.points[0].slice(1);
-                }
-                drawPath.setAttribute('d', state.points.join(' '));
-
-                // 나침반 바늘이 다음 방향을 먼저 가리킴 (예측)
-                if (dist > 1.5) {
-                    const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
-                    needle.style.transform = `rotate(${angle}deg)`;
-                }
-
                 sense(dist);
             };
 
@@ -1454,7 +1373,6 @@
                 if (state.unlocked) return;
                 state.unlocked = true;
 
-                needle.style.transform = 'rotate(0deg)';
                 guide.style.opacity = '0';
                 fill.style.width = '100%';
                 num.textContent = '먼저 알아챘습니다';
@@ -1483,7 +1401,6 @@
             // 이동을 수동적으로 읽음 (드래그 없이도)
             document.addEventListener('mousemove', read);
             document.addEventListener('touchmove', read, { passive: false });
-            drawLayer.addEventListener('dragstart', (e) => e.preventDefault());
 
             // 스크롤·키 입력 = "내려가고 싶다"는 의도. 막되, 그 의도를 먼저 읽어 가속
             const blockScroll = (e) => {
@@ -1574,7 +1491,41 @@
             setupHomeParallax();
             setupLetterCarousel();
             setupCardAnticipation();
+            setupEyes();
         });
+
+        // ===== 홈 눈동자 — 마우스를 따라 본다 =====
+        function setupEyes() {
+            const eyes = Array.from(document.querySelectorAll('#eyes .eye'));
+            if (!eyes.length) return;
+            let mx = window.innerWidth / 2, my = window.innerHeight / 2, raf = null;
+            const update = () => {
+                raf = null;
+                eyes.forEach((eye) => {
+                    const pupil = eye.querySelector('.pupil');
+                    if (!pupil) return;
+                    const r = eye.getBoundingClientRect();
+                    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+                    const ang = Math.atan2(my - cy, mx - cx);
+                    // 눈 안에서 움직일 수 있는 최대 반경 (흰자 여백)
+                    const rx = (r.width - pupil.offsetWidth) / 2 - 4;
+                    const ry = (r.height - pupil.offsetHeight) / 2 - 4;
+                    const reach = Math.min(1, Math.hypot(mx - cx, my - cy) / 280);
+                    const tx = Math.cos(ang) * rx * reach;
+                    const ty = Math.sin(ang) * ry * reach;
+                    pupil.style.transform = `translate(${tx}px, ${ty}px)`;
+                });
+            };
+            document.addEventListener('mousemove', (e) => {
+                mx = e.clientX; my = e.clientY;
+                if (!raf) raf = requestAnimationFrame(update);
+            });
+            document.addEventListener('touchmove', (e) => {
+                const t = e.touches[0]; if (!t) return;
+                mx = t.clientX; my = t.clientY;
+                if (!raf) raf = requestAnimationFrame(update);
+            }, { passive: true });
+        }
 
         // ===== 작업물 카드 예측 반응 (커서가 가까워지면 먼저 떠오름) =====
         function setupCardAnticipation() {
@@ -1651,60 +1602,33 @@
         function setupCursor() {
             const dot = document.getElementById('cursor-dot');
             const ring = document.getElementById('cursor-ring');
-            const needle = document.getElementById('cursor-needle');
-            const needleSvg = needle ? needle.querySelector('svg') : null;
             if (!dot || !ring) return;
 
             let mx = window.innerWidth / 2, my = window.innerHeight / 2;
             let rx = mx, ry = my;       // ring (지연 추적)
-            let nx = mx, ny = my;       // needle (지연 추적)
-            let pmx = mx, pmy = my;     // 직전 위치 (이동 방향 계산용)
-            let targetAngle = 0, angle = 0;
 
             document.addEventListener('mousemove', (e) => {
                 mx = e.clientX;
                 my = e.clientY;
                 dot.style.left = mx + 'px';
                 dot.style.top = my + 'px';
-                // 이동 방향으로 바늘이 향하도록 각도 계산 (바늘 기본은 위쪽=북쪽)
-                const dx = mx - pmx, dy = my - pmy;
-                if (dx * dx + dy * dy > 9) {
-                    targetAngle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
-                    pmx = mx; pmy = my;
-                }
             });
 
             const lerp = (a, b, t) => a + (b - a) * t;
-            // 최단 경로로 각도 보간 (-180~180 래핑)
-            const lerpAngle = (a, b, t) => {
-                let d = ((b - a + 540) % 360) - 180;
-                return a + d * t;
-            };
             (function animateRing() {
                 rx = lerp(rx, mx, 0.12);
                 ry = lerp(ry, my, 0.12);
                 ring.style.left = rx + 'px';
                 ring.style.top = ry + 'px';
-                if (needle && needleSvg) {
-                    nx = lerp(nx, mx, 0.18);
-                    ny = lerp(ny, my, 0.18);
-                    needle.style.left = nx + 'px';
-                    needle.style.top = ny + 'px';
-                    angle = lerpAngle(angle, targetAngle, 0.12);
-                    needleSvg.style.transform = `rotate(${angle}deg)`;
-                }
                 requestAnimationFrame(animateRing);
             })();
 
             const hoverSel = 'a, button, .wcard, .skill-row';
-            const compassSel = '.wcard-img';
             document.addEventListener('mouseover', (e) => {
                 if (e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
-                if (e.target.closest(compassSel)) document.body.classList.add('cursor-compass');
             });
             document.addEventListener('mouseout', (e) => {
                 if (e.target.closest(hoverSel)) document.body.classList.remove('cursor-hover');
-                if (e.target.closest(compassSel)) document.body.classList.remove('cursor-compass');
             });
             document.addEventListener('mouseleave', () => {
                 dot.style.opacity = '0'; ring.style.opacity = '0';
@@ -1734,19 +1658,19 @@
         // ===== HOME MOUSE PARALLAX =====
         function setupHomeParallax() {
             const homeEl = document.getElementById('home');
-            const compassEl = document.querySelector('.compass');
+            const eyesEl = document.querySelector('.eyes');
             const gridEl = document.querySelector('.home-grid');
-            if (!homeEl || !compassEl) return;
+            if (!homeEl) return;
 
             let tx = 0, ty = 0, cx = 0, cy = 0;
             homeEl.addEventListener('mousemove', (e) => {
-                tx = (e.clientX / homeEl.offsetWidth - 0.5) * 22;
-                ty = (e.clientY / homeEl.offsetHeight - 0.5) * 22;
+                tx = (e.clientX / homeEl.offsetWidth - 0.5) * 18;
+                ty = (e.clientY / homeEl.offsetHeight - 0.5) * 18;
             });
             (function animatePx() {
                 cx += (tx - cx) * 0.06;
                 cy += (ty - cy) * 0.06;
-                compassEl.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
+                if (eyesEl) eyesEl.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
                 if (gridEl) gridEl.style.transform = `translate(${cx * 0.3}px, ${cy * 0.3}px)`;
                 requestAnimationFrame(animatePx);
             })();
