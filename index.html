@@ -163,31 +163,6 @@
             transition: transform 0.12s ease-out;
         }
 
-        /* 하단 안내 + 진행도 */
-        .home-guide {
-            position: absolute;
-            bottom: 46px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 12;
-            text-align: center;
-            width: min(86vw, 420px);
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-
-        .home-guide .hint {
-            color: rgba(245,246,244,0.78);
-            font-size: 0.92em;
-            letter-spacing: 1px;
-            margin-bottom: 14px;
-        }
-
-        .home-guide .hint b {
-            color: var(--gold);
-            font-weight: 700;
-        }
-
         .scroll-cue {
             position: absolute;
             bottom: 28px;
@@ -1111,11 +1086,6 @@
         <div class="home-inner">
             <h1 class="home-title">눈치밥 <span class="accent">디자이너</span><br>고은진입니다</h1>
             <p class="home-sub">말하기 전에 먼저 알아채는 디자이너입니다</p>
-        </div>
-
-        <!-- 안내 -->
-        <div class="home-guide" id="guide">
-            <div class="hint"><b>스크롤</b>하여 다음으로</div>
         </div>
 
         <a class="scroll-cue" id="scrollCue" href="#about" aria-label="아래로 스크롤">
