@@ -112,6 +112,22 @@
             pointer-events: none;
         }
 
+        /* 커서 스포트라이트 */
+        .home-spotlight {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                700px circle at var(--sx, 50%) var(--sy, 50%),
+                rgba(61, 79, 138, 0.09) 0%,
+                transparent 65%
+            );
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .home-spotlight.on { opacity: 1; }
+
         .home-inner {
             position: relative;
             text-align: center;
@@ -125,8 +141,10 @@
             font-size: 0.9em;
             letter-spacing: 8px;
             margin-bottom: 28px;
-            opacity: 0.85;
+            opacity: 0;
+            transition: opacity 0.8s ease;
         }
+        .home-name.in { opacity: 0.85; }
 
         .home-title {
             font-size: clamp(3.2em, 12vw, 8em);
@@ -145,7 +163,10 @@
             color: rgba(22, 24, 29, 0.62);
             font-size: 1em;
             letter-spacing: 1px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
         }
+        .home-sub.in { opacity: 1; }
 
         .scroll-cue {
             position: absolute;
@@ -881,11 +902,15 @@
     <!-- 홈(히어로) -->
     <section id="home">
         <div class="home-grid"></div>
+        <div class="home-spotlight" id="homeSpotlight"></div>
 
         <!-- 히어로 텍스트 -->
         <div class="home-inner">
             <p class="home-name">EUNJIN KO &nbsp;·&nbsp; UI/UX DESIGNER</p>
-            <h1 class="home-title">눈치밥<br><span class="accent">디자이너</span></h1>
+            <h1 class="home-title">
+                <span class="scramble-line" data-text="눈치밥">눈치밥</span><br>
+                <span class="accent scramble-line" data-text="디자이너">디자이너</span>
+            </h1>
             <p class="home-sub">말하기 전에 먼저 알아채는 디자이너입니다</p>
         </div>
 
@@ -1247,7 +1272,13 @@
             loader.style.pointerEvents = 'auto';
             loader.style.zIndex = '3000';
 
-            // 1.4초 후 로더 숨김 (홈 화면이 보임)
+            // 이름/부제 초기화 (스크램블 전 숨김)
+            const heroName = document.querySelector('.home-name');
+            const heroSub = document.querySelector('.home-sub');
+            if (heroName) heroName.classList.remove('in');
+            if (heroSub) heroSub.classList.remove('in');
+
+            // 1.4초 후 로더 숨김 → 스크램블 시작
             setTimeout(() => {
                 loader.classList.add('hidden');
                 loader.removeAttribute('style');
@@ -1255,7 +1286,8 @@
                 loader.style.visibility = 'hidden';
                 loader.style.pointerEvents = 'none';
                 loader.style.zIndex = '-1';
-                if (scrollCue) scrollCue.classList.add('show'); // 스크롤 유도 표시
+                if (scrollCue) scrollCue.classList.add('show');
+                runHeroScramble();
             }, 1400);
         }
 
@@ -1492,25 +1524,62 @@
             });
         }
 
-        // ===== HOME MOUSE PARALLAX =====
+        // ===== HOME SPOTLIGHT (커서 스포트라이트) =====
         function setupHomeParallax() {
             const homeEl = document.getElementById('home');
-            const eyesEl = document.getElementById('eyes');
-            const gridEl = document.querySelector('.home-grid');
-            if (!homeEl) return;
+            const spotlight = document.getElementById('homeSpotlight');
+            if (!homeEl || !spotlight) return;
 
-            let tx = 0, ty = 0, cx = 0, cy = 0;
             homeEl.addEventListener('mousemove', (e) => {
-                tx = (e.clientX / homeEl.offsetWidth - 0.5) * 18;
-                ty = (e.clientY / homeEl.offsetHeight - 0.5) * 18;
+                const rect = homeEl.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2) + '%';
+                const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2) + '%';
+                homeEl.style.setProperty('--sx', x);
+                homeEl.style.setProperty('--sy', y);
+                spotlight.classList.add('on');
             });
-            (function animatePx() {
-                cx += (tx - cx) * 0.06;
-                cy += (ty - cy) * 0.06;
-                if (eyesEl) eyesEl.style.transform = `translate(${cx}px, ${cy}px)`;
-                if (gridEl) gridEl.style.transform = `translate(${cx * 0.3}px, ${cy * 0.3}px)`;
-                requestAnimationFrame(animatePx);
-            })();
+            homeEl.addEventListener('mouseleave', () => {
+                spotlight.classList.remove('on');
+            });
+        }
+
+        // ===== TEXT SCRAMBLE =====
+        function scrambleText(el, finalText, duration, delay) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$&%?!';
+            const totalFrames = Math.round(duration / 38);
+            let frame = 0;
+            const len = finalText.length;
+            const start = () => {
+                const tick = () => {
+                    const progress = frame / totalFrames;
+                    const revealed = Math.floor(progress * len);
+                    let result = '';
+                    for (let i = 0; i < len; i++) {
+                        result += i < revealed
+                            ? finalText[i]
+                            : chars[Math.floor(Math.random() * chars.length)];
+                    }
+                    el.textContent = result;
+                    frame++;
+                    if (frame <= totalFrames) requestAnimationFrame(tick);
+                    else el.textContent = finalText;
+                };
+                requestAnimationFrame(tick);
+            };
+            setTimeout(start, delay);
+        }
+
+        function runHeroScramble() {
+            const lines = document.querySelectorAll('.scramble-line');
+            lines.forEach((el, i) => {
+                const text = el.dataset.text;
+                if (text) scrambleText(el, text, 820, i * 140);
+            });
+            // 이름 레이블 + 부제 페이드인
+            const name = document.querySelector('.home-name');
+            const sub = document.querySelector('.home-sub');
+            setTimeout(() => { if (name) name.classList.add('in'); }, 80);
+            setTimeout(() => { if (sub) sub.classList.add('in'); }, 920);
         }
     </script>
 </body>
