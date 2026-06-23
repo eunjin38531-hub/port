@@ -156,7 +156,7 @@
             height: auto;
             transform: translate(-50%, -50%);
             z-index: 2;            /* 텍스트(z-index:5)보다 아래 */
-            opacity: 0.18;
+            opacity: 0.08;
             pointer-events: none;
         }
         .eyes-svg .eyeball {
@@ -190,34 +190,51 @@
 
         .scroll-cue {
             position: absolute;
-            bottom: 20px;
+            bottom: 28px;
             left: 50%;
             transform: translateX(-50%);
-            color: var(--gold);
-            font-size: 1.4em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--gold-soft);
             opacity: 0;
             z-index: 12;
             transition: opacity 0.5s ease;
         }
-
-        .scroll-cue.show {
-            opacity: 1;
-            animation: bounce 1.4s ease-in-out infinite;
+        .scroll-cue.show { opacity: 0.85; }
+        .scroll-cue-text {
+            font-size: 0.66em;
+            font-weight: 600;
+            letter-spacing: 3px;
         }
-
+        .scroll-cue-arrow {
+            font-size: 1.25em;
+            line-height: 1;
+        }
+        .scroll-cue.show .scroll-cue-arrow {
+            animation: bounce 1.5s ease-in-out infinite;
+        }
         @keyframes bounce {
-            0%, 100% { transform: translate(-50%, 0); }
-            50% { transform: translate(-50%, 10px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
         }
 
         /* ===== 상단 고정 네비게이션 ===== */
+        /* 히어로 위에서는 투명(배경과 자연스럽게 연결), 스크롤하면 밝은 바 */
         nav {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 3000;
-            background: rgba(245, 246, 244, 0.62);
+            background: transparent;
+            border-bottom: 1px solid transparent;
+            transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
+        }
+        nav.scrolled {
+            background: rgba(245, 246, 244, 0.72);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border-bottom: 1px solid rgba(22, 24, 29, 0.07);
@@ -243,18 +260,22 @@
             font-size: 1.05em;
             font-weight: 800;
             letter-spacing: -0.3px;
-            color: var(--ink);
+            color: var(--paper);
             text-decoration: none;
             transition: color 0.3s;
         }
-        .nav-brand:hover { color: var(--gold); }
+        .nav-brand:hover { color: var(--gold-soft); }
+        nav.scrolled .nav-brand { color: var(--ink); }
+        nav.scrolled .nav-brand:hover { color: var(--gold); }
         .nav-role {
             font-size: 0.76em;
             font-weight: 500;
-            color: #9a9aa6;
+            color: rgba(245, 246, 244, 0.55);
             pointer-events: none;
             user-select: none;
+            transition: color 0.3s;
         }
+        nav.scrolled .nav-role { color: #9a9aa6; }
 
         /* 오른쪽: 섹션 링크 */
         .nav-right {
@@ -275,10 +296,11 @@
             line-height: 1.4;
         }
         .nav-right a span:first-child {
-            color: #5a5a66;
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            color: rgba(245, 246, 244, 0.82);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
             display: block;
         }
+        nav.scrolled .nav-right a span:first-child { color: #5a5a66; }
         .nav-right a span:last-child {
             position: absolute;
             top: 100%;
@@ -1087,9 +1109,8 @@
 
         <!-- 중앙 텍스트 -->
         <div class="home-inner">
-            <div class="home-name">PORTFOLIO · 고은진</div>
             <h1 class="home-title">눈치밥 <span class="accent">디자이너</span><br>고은진입니다</h1>
-            <p class="home-sub">말하기 전에 먼저 알아채는 디자이너가 되겠습니다</p>
+            <p class="home-sub">말하기 전에 먼저 알아채는 디자이너입니다</p>
         </div>
 
         <!-- 안내 -->
@@ -1097,7 +1118,10 @@
             <div class="hint"><b>스크롤</b>하여 다음으로</div>
         </div>
 
-        <div class="scroll-cue" id="scrollCue">↓</div>
+        <a class="scroll-cue" id="scrollCue" href="#about" aria-label="아래로 스크롤">
+            <span class="scroll-cue-text">SCROLL</span>
+            <span class="scroll-cue-arrow">↓</span>
+        </a>
     </section>
 
     <!-- 상단 고정 네비게이션 -->
@@ -1526,6 +1550,10 @@
             document.addEventListener('touchstart', onTouchStart, { passive: true });
             document.addEventListener('touchmove', onTouchMove, { passive: false });
 
+            // 스크롤 유도 화살표 클릭 시에도 전환
+            const cue = document.getElementById('scrollCue');
+            if (cue) cue.addEventListener('click', (e) => { e.preventDefault(); advance(); });
+
             listeners = { onWheel, onKey };
         }
 
@@ -1573,11 +1601,15 @@
                 .map((a) => document.querySelector(a.getAttribute('href')))
                 .filter(Boolean);
 
+            const navEl = document.querySelector('nav');
             function onScroll() {
                 const scrollTop = window.scrollY;
                 const docH = document.documentElement.scrollHeight - window.innerHeight;
                 const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
                 if (progress) progress.style.width = pct + '%';
+
+                // 히어로를 벗어나면 네비 배경 표시
+                if (navEl) navEl.classList.toggle('scrolled', scrollTop > window.innerHeight * 0.6);
 
                 // 현재 보이는 섹션 찾기
                 const mid = scrollTop + window.innerHeight * 0.35;
