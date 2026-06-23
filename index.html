@@ -93,8 +93,10 @@
                 linear-gradient(160deg, var(--ink) 0%, var(--navy) 100%);
             overflow: hidden;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: clamp(24px, 4vh, 56px);
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -147,17 +149,15 @@
             letter-spacing: 1px;
         }
 
-        /* 눈 — 텍스트 뒤 배경처럼 깔리는 큰 SVG, 눈동자가 마우스를 따라감 */
+        /* 눈 — 히어로 상단 메인 요소, 눈동자가 마우스를 따라감 */
         .eyes-svg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: clamp(340px, 66vw, 1150px);
+            position: relative;
+            width: clamp(280px, 46vw, 640px);
             height: auto;
-            transform: translate(-50%, -50%);
-            z-index: 2;            /* 텍스트(z-index:5)보다 아래 */
-            opacity: 0.08;
+            z-index: 3;
+            opacity: 1;
             pointer-events: none;
+            will-change: transform;
         }
         .eyes-svg .eyeball {
             transition: transform 0.12s ease-out;
@@ -1831,7 +1831,7 @@
             (function animatePx() {
                 cx += (tx - cx) * 0.06;
                 cy += (ty - cy) * 0.06;
-                if (eyesEl) eyesEl.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
+                if (eyesEl) eyesEl.style.transform = `translate(${cx}px, ${cy}px)`;
                 if (gridEl) gridEl.style.transform = `translate(${cx * 0.3}px, ${cy * 0.3}px)`;
                 requestAnimationFrame(animatePx);
             })();
