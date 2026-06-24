@@ -141,6 +141,8 @@
             z-index: 5;
             pointer-events: none;
             padding: 0 24px;
+            width: 100%;
+            max-width: 100%;
         }
 
         .home-name {
@@ -150,6 +152,9 @@
             letter-spacing: 8px;
             margin-bottom: 28px;
             opacity: 0.85;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .home-title {
@@ -913,7 +918,7 @@
             .nav-brand { font-size: 1em; }
             .sheet { padding: 68px 18px; }
             .sheet-head { margin-bottom: 34px; padding-bottom: 20px; }
-            .home-name { letter-spacing: 4px; margin-bottom: 20px; }
+            .home-name { letter-spacing: 2px; margin-bottom: 20px; }
             .scroll-cue { bottom: 18px; }
             .about-grid { gap: 26px; }
             .profile-contact { grid-template-columns: 1fr; }
@@ -1627,7 +1632,7 @@
             const mouse = { x: -9999, y: -9999, px: -9999, py: -9999, vx: 0, vy: 0 };
 
             function build() {
-                const cssW = Math.min(window.innerWidth * 0.94, 980);
+                const cssW = Math.min(window.innerWidth - 48, 980);  // 24px padding × 2 = 48
                 const fs = Math.min(cssW / 3.9, 168);  // 좁은 화면에서 글자 클리핑 방지
                 const cx = cssW / 2;
                 W = cssW;
@@ -1805,7 +1810,8 @@
 
                     // 회전은 고정각(ang)만 사용 — atan2/save/restore 비용 제거
                     const path = (p.ink ? inkPaths : bluePaths)[p.tone];
-                    path.moveTo(p.x + p.rx, p.y);
+                    // moveTo must match the rotated ellipse's 0-angle start point
+                    path.moveTo(p.x + p.rx * Math.cos(p.ang), p.y + p.rx * Math.sin(p.ang));
                     path.ellipse(p.x, p.y, p.rx, p.ry, p.ang, 0, 6.283);
                 }
                 for (let t = 0; t < 3; t++) {
