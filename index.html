@@ -1652,7 +1652,8 @@
                         tone: (Math.random() * 3) | 0,    // 명암 버킷 0~2
                         rx: 2.1 + Math.random() * 1.0,    // 길쭉한 쌀알
                         ry: 0.7 + Math.random() * 0.35,
-                        ang: Math.random() * Math.PI
+                        ang: Math.random() * Math.PI,
+                        spin: (Math.random() < 0.5 ? -1 : 1) * (0.6 + Math.random() * 0.8) // 구르는 방향·세기
                     };
                 });
                 particles = next;
@@ -1754,7 +1755,11 @@
                     // 4) 마찰력 — 부드럽게 감속하며 가라앉음
                     p.vx *= FRICTION; p.vy *= FRICTION;
                     p.x += p.vx; p.y += p.vy;
-                    energy += p.vx * p.vx + p.vy * p.vy;
+                    const spd2 = p.vx * p.vx + p.vy * p.vy;
+                    energy += spd2;
+
+                    // 5) 구르기 — 속도에 비례해 회전(멈추면 그 각도로 안착)
+                    p.ang += p.spin * Math.sqrt(spd2) * 0.06;
 
                     // 회전은 고정각(ang)만 사용 — atan2/save/restore 비용 제거
                     const path = (p.ink ? inkPaths : bluePaths)[p.tone];
