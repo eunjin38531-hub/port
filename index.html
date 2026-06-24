@@ -1749,6 +1749,8 @@
             const BLUE = ['#3D4F8A', '#4B5C97', '#5A6AA8'];
 
             function frame() {
+                // 안전망: release 이벤트가 누락돼도 손 뗀 걸 감지해 복귀
+                if (window.__riceTouchWatch) window.__riceTouchWatch();
                 // 커서 이동 속도(궤적) 추적 — 빠르게 지날수록 휩쓸림 강해짐
                 const mouseActive = mouse.x > -9000;
                 if (mouse.px > -9000 && mouseActive) {
@@ -1824,46 +1826,42 @@
                 requestAnimationFrame(frame);
             }
 
-            // 마우스 → 캔버스 좌표
+            // 포인터(마우스+터치 통합) → 캔버스 좌표
             if (!reduce) {
-                homeEl.addEventListener('mousemove', (e) => {
+                let lastTouchTs = 0;          // 마지막 터치 갱신 시각(안전망)
+                let touchActive = false;      // 손가락이 닿아있는 중인지
+
+                const setFromPointer = (e) => {
                     const r = canvas.getBoundingClientRect();
                     mouse.x = e.clientX - r.left;
                     mouse.y = e.clientY - r.top;
                     settled = false;
-                });
-                homeEl.addEventListener('mouseleave', () => {
-                    mouse.x = mouse.y = mouse.px = mouse.py = -9999;
-                    mouse.vx = mouse.vy = 0;
-                });
-                // 터치 추적 플래그 — homeEl에서 시작한 터치만 추적
-                let _touching = false;
-                const _resetMouse = () => {
-                    _touching = false;
+                    if (e.pointerType === 'touch') {
+                        touchActive = true;
+                        lastTouchTs = e.timeStamp;
+                    }
+                };
+                const release = () => {
+                    touchActive = false;
                     mouse.x = mouse.y = mouse.px = mouse.py = -9999;
                     mouse.vx = mouse.vy = 0;
                     settled = false;
                 };
-                homeEl.addEventListener('touchstart', (e) => {
-                    const t = e.touches[0]; if (!t) return;
-                    _touching = true;
-                    const r = canvas.getBoundingClientRect();
-                    mouse.x = t.clientX - r.left;
-                    mouse.y = t.clientY - r.top;
-                    settled = false;
-                }, { passive: true });
-                homeEl.addEventListener('touchmove', (e) => {
-                    const t = e.touches[0]; if (!t) return;
-                    const r = canvas.getBoundingClientRect();
-                    mouse.x = t.clientX - r.left;
-                    mouse.y = t.clientY - r.top;
-                    settled = false;
-                }, { passive: true });
-                // document에 등록 — 손가락이 홈 영역 밖에서 떨어져도, Lenis가 터치를
-                // 가로채도 반드시 해제됨
-                const _onTouchEnd = () => { if (_touching) _resetMouse(); };
-                document.addEventListener('touchend',    _onTouchEnd, { passive: true });
-                document.addEventListener('touchcancel', _onTouchEnd, { passive: true });
+
+                homeEl.addEventListener('pointerdown', setFromPointer, { passive: true });
+                homeEl.addEventListener('pointermove', setFromPointer, { passive: true });
+                // 마우스가 영역을 벗어남 → 복귀 (데스크톱)
+                homeEl.addEventListener('pointerleave', release, { passive: true });
+                // 손가락을 뗌 → 복귀 (모바일). 손가락이 밖에서 떨어지거나 Lenis가
+                // 가로채도 확실히 잡도록 document에 등록.
+                document.addEventListener('pointerup',     release, { passive: true });
+                document.addEventListener('pointercancel', release, { passive: true });
+
+                // 안전망: 터치 중인데 일정 시간 갱신이 없으면(release 이벤트 누락 대비)
+                // 손을 뗀 것으로 간주하고 복귀
+                window.__riceTouchWatch = () => {
+                    if (touchActive && (performance.now() - lastTouchTs) > 250) release();
+                };
             }
 
             // 처음부터 모인 상태로 시작 — 인트로 흩뿌림 없음
