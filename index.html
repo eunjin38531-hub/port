@@ -1549,12 +1549,8 @@
                 o.fillText('눈치밥', cx, ty1);
                 o.fillText('디자이너', cx, ty2);
 
-                // 둥근 밥덩어리: 글자 줄을 부드럽게 아치(∩) — 글자는 똑바로 읽힘
-                const archAmp = fs * 0.5;
-                const warp = (x, y) => {
-                    const u = Math.max(-1, Math.min(1, (x - cx) / halfW));
-                    return { x: cx + (x - cx) * 0.96, y: y - archAmp * (1 - u * u) };
-                };
+                // 평평한 두 줄 (아치 없음)
+                const warp = (x, y) => ({ x, y });
 
                 const data = o.getImageData(0, 0, cssW, offH).data;
                 const step = fs < 90 ? 4 : 5;
