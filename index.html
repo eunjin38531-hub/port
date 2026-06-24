@@ -223,12 +223,25 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-            transition: border-color 0.4s ease, background 0.4s ease;
+            transition: background 0.5s ease, border-color 0.5s ease;
         }
         nav.scrolled {
             background: rgba(241, 245, 249, 0.88);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
+
+        /* 다크 섹션(Letter) 위를 지날 때 */
+        nav.nav--dark {
+            background: rgba(22, 24, 29, 0.72);
+            border-bottom-color: rgba(255, 255, 255, 0.06);
+        }
+        nav.nav--dark.scrolled {
+            background: rgba(22, 24, 29, 0.88);
+        }
+        nav.nav--dark .nav-brand { color: var(--paper); }
+        nav.nav--dark .nav-brand:hover { color: var(--gold-soft); }
+        nav.nav--dark .nav-role { color: rgba(194, 200, 216, 0.6); }
+        nav.nav--dark .nav-right a span:first-child { color: var(--paper); }
+        nav.nav--dark .nav-right a span:last-child { color: var(--gold-soft); }
 
         .nav-inner {
             max-width: 1240px;
@@ -1335,6 +1348,7 @@
                 .filter(Boolean);
 
             const navEl = document.querySelector('nav');
+            const darkSections = Array.from(document.querySelectorAll('#letter, footer'));
             function onScroll() {
                 const scrollTop = window.scrollY;
                 const docH = document.documentElement.scrollHeight - window.innerHeight;
@@ -1343,6 +1357,17 @@
 
                 // 히어로를 벗어나면 네비 배경 표시
                 if (navEl) navEl.classList.toggle('scrolled', scrollTop > window.innerHeight * 0.6);
+
+                // 다크 섹션 위에 있을 때 nav 다크 모드
+                if (navEl) {
+                    const navBottom = navEl.offsetHeight;
+                    const isDark = darkSections.some(sec => {
+                        const top = sec.offsetTop;
+                        const bot = top + sec.offsetHeight;
+                        return scrollTop + navBottom >= top && scrollTop < bot;
+                    });
+                    navEl.classList.toggle('nav--dark', isDark);
+                }
 
                 // 현재 보이는 섹션 찾기
                 const mid = scrollTop + window.innerHeight * 0.35;
