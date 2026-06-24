@@ -1843,6 +1843,14 @@
                     mouse.y = t.clientY - r.top;
                     settled = false;
                 }, { passive: true });
+                // 손을 떼면 커서 위치 해제 → 반발 멈추고 다시 모임 (mouseleave 대응)
+                const endTouch = () => {
+                    mouse.x = mouse.y = mouse.px = mouse.py = -9999;
+                    mouse.vx = mouse.vy = 0;
+                    settled = false;
+                };
+                homeEl.addEventListener('touchend', endTouch, { passive: true });
+                homeEl.addEventListener('touchcancel', endTouch, { passive: true });
             }
 
             // 처음부터 모인 상태로 시작 — 인트로 흩뿌림 없음
