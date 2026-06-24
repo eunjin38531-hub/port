@@ -1649,8 +1649,9 @@
                         vx: 0, vy: 0,
                         k: 0.012 + Math.random() * 0.01,  // 복귀 세기 — 약하게(천천히 모임)
                         ink: r.ink,
-                        rx: 1.25 + Math.random() * 0.95,
-                        ry: 0.5 + Math.random() * 0.35,
+                        tone: (Math.random() * 3) | 0,    // 명암 버킷 0~2
+                        rx: 2.1 + Math.random() * 1.0,    // 길쭉한 쌀알
+                        ry: 0.7 + Math.random() * 0.35,
                         ang: Math.random() * Math.PI
                     };
                 });
@@ -1695,6 +1696,9 @@
             let settled = false;          // 모두 정지 + 마우스 없음 → 렌더 휴면
             const FRICTION = 0.90;        // 공기 저항 — 출렁임 없이 가라앉음
             const R = 130, R2 = R * R;
+            // 쌀알 명암 3단계 (개별 알갱이로 보이게)
+            const INK  = ['#16181D', '#22252E', '#2D313C'];
+            const BLUE = ['#3D4F8A', '#4B5C97', '#5A6AA8'];
 
             function frame() {
                 // 커서 이동 속도(궤적) 추적 — 빠르게 지날수록 휩쓸림 강해짐
@@ -1713,9 +1717,9 @@
 
                 ctx.clearRect(0, 0, W, H);
 
-                // 색상별로 경로를 모아 fill 2회만 호출 (per-particle save/restore 제거)
-                const pathInk = new Path2D();
-                const pathBlue = new Path2D();
+                // 잉크/블루 × 명암 3단계 = 6개 경로에 모아 fill 6회 (per-particle save/restore 제거)
+                const inkPaths  = [new Path2D(), new Path2D(), new Path2D()];
+                const bluePaths = [new Path2D(), new Path2D(), new Path2D()];
                 let energy = 0;
                 const GRAV = 0.35;   // 중력 — 흩어진 알갱이가 아래로 떨어짐
                 for (let i = 0; i < particles.length; i++) {
@@ -1753,14 +1757,14 @@
                     energy += p.vx * p.vx + p.vy * p.vy;
 
                     // 회전은 고정각(ang)만 사용 — atan2/save/restore 비용 제거
-                    const path = p.ink ? pathInk : pathBlue;
+                    const path = (p.ink ? inkPaths : bluePaths)[p.tone];
                     path.moveTo(p.x + p.rx, p.y);
                     path.ellipse(p.x, p.y, p.rx, p.ry, p.ang, 0, 6.283);
                 }
-                ctx.fillStyle = '#16181D';
-                ctx.fill(pathInk);
-                ctx.fillStyle = '#3D4F8A';
-                ctx.fill(pathBlue);
+                for (let t = 0; t < 3; t++) {
+                    ctx.fillStyle = INK[t];  ctx.fill(inkPaths[t]);
+                    ctx.fillStyle = BLUE[t]; ctx.fill(bluePaths[t]);
+                }
 
                 // 마우스 없고 거의 정지 → 다음 프레임부터 휴면
                 if (!mouseActive && energy < 0.02) settled = true;
