@@ -20,6 +20,18 @@
             --gold-soft: #C2C8D8;/* Fog — 차갑고 절제된 보조 포인트 */
             --paper: #F5F6F4;    /* Off White — 배경 베이스 */
             --line: #EAECF0;     /* Ghost — 구분선·레이어 경계 */
+
+            /* ── 타이포 스케일 ── */
+            --fs-display: 64px;   /* 히어로 메인 타이틀 */
+            --fs-h1:      48px;   /* 섹션 대표 제목 */
+            --fs-h2:      32px;   /* 카드/프로젝트 제목 */
+            --fs-h3:      24px;   /* 서브 제목, 레이블 */
+            --fs-body-l:  18px;   /* 소개글, 긴 설명 */
+            --fs-body-m:  16px;   /* 기본 본문 */
+            --fs-body-s:  14px;   /* 캡션, 날짜, 태그 */
+            --fs-caption: 12px;   /* 보조 설명, 메타 정보 */
+            --fw-head:    600;
+            --fw-body:    400;
         }
 
         html, body {
@@ -122,7 +134,8 @@
 
         .home-name {
             color: var(--gold-soft);
-            font-size: 0.9em;
+            font-size: var(--fs-caption);
+            font-weight: var(--fw-body);
             letter-spacing: 8px;
             margin-bottom: 28px;
             opacity: 0.85;
@@ -161,7 +174,8 @@
         .home-sub {
             margin-top: 22px;
             color: rgba(22, 24, 29, 0.62);
-            font-size: 1em;
+            font-size: var(--fs-body-l);
+            font-weight: var(--fw-body);
             letter-spacing: 1px;
         }
 
@@ -327,9 +341,9 @@
         }
 
         .sheet-title {
-            font-size: clamp(2.4em, 6vw, 4.6em);
-            font-weight: 800;
-            letter-spacing: -2px;
+            font-size: clamp(32px, 5vw, var(--fs-h1));
+            font-weight: var(--fw-head);
+            letter-spacing: -1.5px;
             color: var(--ink);
             line-height: 0.95;
             display: flex;
@@ -346,7 +360,8 @@
         }
 
         .sheet-tag {
-            font-size: 0.82em;
+            font-size: var(--fs-body-s);
+            font-weight: var(--fw-body);
             color: #999;
             letter-spacing: 1px;
             text-align: right;
@@ -373,15 +388,15 @@
         }
 
         .about-statement {
-            font-size: clamp(1.3em, 2.2vw, 2em);
-            font-weight: 700;
+            font-size: var(--fs-body-l);
+            font-weight: var(--fw-body);
             color: var(--ink);
-            line-height: 1.35;
-            letter-spacing: -0.5px;
+            line-height: 1.7;
+            letter-spacing: 0;
             margin-bottom: 28px;
         }
 
-        .about-statement .hl { color: var(--gold); }
+        .about-statement .hl { color: var(--gold); font-weight: 600; }
 
         .profile-photo {
             width: 100%;
@@ -412,7 +427,8 @@
             align-items: center;
             gap: 12px;
             color: #555;
-            font-size: 0.86em;
+            font-size: var(--fs-body-s);
+            font-weight: var(--fw-body);
             padding: 13px 2px;
             border-bottom: 1px solid #eee;
         }
@@ -437,8 +453,8 @@
             background: none;
             border: none;
             font-family: inherit;
-            font-size: 0.95em;
-            font-weight: 700;
+            font-size: var(--fs-body-s);
+            font-weight: 600;
             letter-spacing: 0.5px;
             color: #9a9aa6;
             padding: 6px 2px 12px;
@@ -477,8 +493,8 @@
         .about-block:last-child { margin-bottom: 0; }
 
         .about-h {
-            font-size: 0.78em;
-            font-weight: 700;
+            font-size: var(--fs-caption);
+            font-weight: var(--fw-head);
             color: #999;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -499,21 +515,21 @@
             grid-template-columns: 96px 1fr;
             gap: 16px;
             padding: 13px 0;
-            font-size: 0.86em;
-            line-height: 1.55;
+            line-height: 1.6;
             border-bottom: 1px solid #f2f2f2;
             transition: padding-left 0.3s, background 0.3s;
         }
         .rec:hover { padding-left: 10px; background: #EEF0F3; }
 
-        .rec-date { color: var(--gold); font-weight: 600; font-size: 0.9em; }
-        .rec-body { color: #333; }
-        .rec-body em { font-style: normal; color: #999; display: block; margin-top: 3px; }
+        .rec-date { color: var(--gold); font-weight: 600; font-size: var(--fs-body-s); }
+        .rec-body { color: #333; font-size: var(--fs-body-m); font-weight: var(--fw-body); }
+        .rec-body em { font-style: normal; color: #999; display: block; margin-top: 3px; font-size: var(--fs-body-s); }
 
         /* 자격증: 태그(뱃지)로 압축 */
         .cert-badges { display: flex; flex-wrap: wrap; gap: 10px; }
         .cert-badges span {
-            font-size: 0.82em;
+            font-size: var(--fs-body-s);
+            font-weight: var(--fw-body);
             color: #6a6a78;
             background: #EEF0F3;
             border: 1px solid #E0E3EB;
@@ -550,9 +566,9 @@
         .skill-row:hover { padding-left: 34px; }
 
         .skill-num {
-            font-size: 0.85em;
+            font-size: var(--fs-caption);
             color: #bbb;
-            font-weight: 600;
+            font-weight: var(--fw-head);
             letter-spacing: 1px;
             position: relative;
             z-index: 1;
@@ -593,8 +609,8 @@
         .off-grid i { border-radius: 3px; display: block; }
 
         .skill-name {
-            font-size: 1.5em;
-            font-weight: 700;
+            font-size: var(--fs-h3);
+            font-weight: var(--fw-head);
             color: var(--ink);
             letter-spacing: -0.5px;
             position: relative;
@@ -605,7 +621,8 @@
 
         .skill-desc {
             color: #777;
-            font-size: 0.86em;
+            font-size: var(--fs-body-m);
+            font-weight: var(--fw-body);
             line-height: 1.7;
             position: relative;
             z-index: 1;
@@ -656,23 +673,24 @@
             margin-bottom: 12px;
         }
         .wcard-title {
-            font-size: clamp(1.1em, 1.9vw, 1.55em);
-            font-weight: 700;
+            font-size: clamp(22px, 2.5vw, var(--fs-h2));
+            font-weight: var(--fw-head);
             color: var(--ink);
             letter-spacing: -0.4px;
             line-height: 1.2;
         }
         .wcard-year {
-            font-size: 0.82em;
+            font-size: var(--fs-caption);
             color: var(--gold);
-            font-weight: 600;
+            font-weight: var(--fw-head);
             letter-spacing: 1px;
             white-space: nowrap;
             flex-shrink: 0;
         }
         .wcard-desc {
             color: #666;
-            font-size: 0.9em;
+            font-size: var(--fs-body-m);
+            font-weight: var(--fw-body);
             line-height: 1.75;
             margin-bottom: 18px;
         }
@@ -683,21 +701,21 @@
             margin-bottom: 16px;
         }
         .wcard-tags span {
-            font-size: 0.68em;
+            font-size: var(--fs-caption);
+            font-weight: var(--fw-head);
             color: #7a7a88;
             background: #EEF0F3;
             border-radius: 6px;
             padding: 7px 13px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            font-weight: 600;
         }
         .wcard-links { display: flex; gap: 22px; flex-wrap: wrap; }
         .wcard-link {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.77em;
+            font-size: var(--fs-caption);
             font-weight: 700;
             letter-spacing: 1.5px;
             text-transform: uppercase;
@@ -721,29 +739,6 @@
             padding-left: 1px;
         }
 
-        /* ===== 마퀴 (흐르는 텍스트 띠) ===== */
-        .marquee {
-            background: var(--ink);
-            overflow: hidden;
-            padding: 28px 0;
-            white-space: nowrap;
-        }
-        .marquee-track {
-            display: inline-block;
-            animation: marquee 22s linear infinite;
-        }
-        .marquee-track span {
-            font-size: 2.4em;
-            font-weight: 800;
-            color: var(--paper);
-            letter-spacing: -1px;
-            margin: 0 30px;
-        }
-        .marquee-track span.o { color: transparent; -webkit-text-stroke: 1px var(--gold); }
-        @keyframes marquee {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
 
         /* ===== 자소서 (COVER LETTER) ===== */
         .letter { background: var(--ink); max-width: none; color: #fff; }
@@ -778,23 +773,24 @@
         .lc-card.is-prev { opacity: 0; transform: translateY(-100%); }
 
         .lc-quote {
-            font-size: clamp(1.3em, 2.4vw, 2em);
-            font-weight: 700;
+            font-size: clamp(var(--fs-h3), 2.5vw, var(--fs-h2));
+            font-weight: var(--fw-head);
             color: var(--gold-soft);
             line-height: 1.5;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.3px;
             margin-bottom: 28px;
         }
         .lc-body {
             color: rgba(245,246,244,0.8);
-            font-size: 0.95em;
+            font-size: var(--fs-body-l);
+            font-weight: var(--fw-body);
             line-height: 1.9;
             max-width: 760px;
             margin: 0 auto 26px;
         }
         .lc-author {
-            font-size: 0.78em;
-            font-weight: 700;
+            font-size: var(--fs-caption);
+            font-weight: var(--fw-head);
             letter-spacing: 2px;
             color: var(--paper);
             text-transform: uppercase;
@@ -809,10 +805,10 @@
             margin-top: 30px;
         }
         .lc-count {
-            font-size: 0.85em;
+            font-size: var(--fs-caption);
+            font-weight: var(--fw-head);
             letter-spacing: 3px;
             color: rgba(245,246,244,0.6);
-            font-weight: 600;
         }
         .lc-count b { color: var(--gold); }
         .lc-arrows { display: flex; gap: 12px; }
@@ -839,12 +835,13 @@
             padding: 60px 40px;
             text-align: center;
             color: #888;
-            font-size: 0.85em;
+            font-size: var(--fs-caption);
+            font-weight: var(--fw-body);
             letter-spacing: 1px;
         }
         footer .big {
-            font-size: 2.4em;
-            font-weight: 800;
+            font-size: clamp(32px, 4vw, var(--fs-h1));
+            font-weight: var(--fw-head);
             color: var(--paper);
             letter-spacing: -1px;
             margin-bottom: 14px;
@@ -866,13 +863,13 @@
             .tab-panels { min-height: 0; }
             .profile-photo { aspect-ratio: 4 / 3; }
             .skill-row { grid-template-columns: 40px 56px 1fr; gap: 16px; padding: 24px 10px; }
+            .skill-name { font-size: 20px; }
             .skill-desc { grid-column: 1 / -1; }
             .works-grid { grid-template-columns: 1fr; }
             .works-col--r { padding-top: 0; }
             .works-col { gap: 44px; }
             .wcard-img { border-radius: 12px; }
             .lc-viewport { height: 560px; }
-            .marquee-track span { font-size: 1.6em; }
         }
     </style>
     <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
@@ -1018,12 +1015,6 @@
             </div>
         </section>
 
-        <!-- 마퀴 -->
-        <div class="marquee">
-            <div class="marquee-track">
-                <span>UI/UX DESIGN</span><span class="o">FIGMA</span><span>BRANDING</span><span class="o">EXPERIENCE</span><span>UI/UX DESIGN</span><span class="o">FIGMA</span><span>BRANDING</span><span class="o">EXPERIENCE</span>
-            </div>
-        </div>
 
         <!-- SKILLS -->
         <section id="skills" class="sheet">
