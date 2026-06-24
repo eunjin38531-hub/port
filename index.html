@@ -34,13 +34,22 @@
             --fw-body:    400;
         }
 
-        html, body {
+        html {
             height: 100%;
             scroll-behavior: auto;
-            overflow-x: hidden;           /* 가로 오버플로우 차단 */
+            /* clip: 스크롤 컨테이너 변경 없이 가로 오버플로우만 차단
+               hidden을 쓰면 Lenis 스크롤 컨테이너가 body로 바뀌어 PC 스크롤 깨짐 */
+            overflow-x: clip;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        body {
+            height: 100%;
+            scroll-behavior: auto;
+            overflow-x: clip;
             max-width: 100%;
-            scrollbar-width: none;        /* Firefox */
-            -ms-overflow-style: none;     /* 구 Edge/IE */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         /* 스크롤바 숨김 — 기능은 유지 (Chrome/Safari) */
         html::-webkit-scrollbar,
