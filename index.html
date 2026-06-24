@@ -587,10 +587,13 @@
         .cert-badges span:hover { background: var(--gold-soft); color: var(--ink); border-color: var(--gold-soft); }
 
         /* ===== SKILLS ===== */
+        #skills.sheet { padding-top: 90px; padding-bottom: 90px; }
+
         .sk-bento {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            grid-auto-rows: clamp(76px, 8vh, 100px);
+            gap: 10px;
         }
 
         .sk-bcard {
@@ -602,7 +605,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1 / 1;
             cursor: pointer;
             overflow: visible;
             transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
@@ -959,7 +961,7 @@
             .tab-panels { min-height: 0; }
             /* min-height + aspect-ratio 충돌 → 너비 480px로 팽창 방지 */
             .profile-photo { aspect-ratio: 4 / 3; min-height: 0; width: 100%; height: auto; }
-            .sk-bento { gap: 10px; }
+            .sk-bento { gap: 8px; }
             .sk-tooltip { width: 200px; }
             .works-grid { grid-template-columns: 1fr; }
             .works-col--r { padding-top: 0; }
