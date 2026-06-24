@@ -1836,6 +1836,22 @@
                     mouse.x = mouse.y = mouse.px = mouse.py = -9999;
                     mouse.vx = mouse.vy = 0;
                 });
+                // 터치 추적 플래그 — homeEl에서 시작한 터치만 추적
+                let _touching = false;
+                const _resetMouse = () => {
+                    _touching = false;
+                    mouse.x = mouse.y = mouse.px = mouse.py = -9999;
+                    mouse.vx = mouse.vy = 0;
+                    settled = false;
+                };
+                homeEl.addEventListener('touchstart', (e) => {
+                    const t = e.touches[0]; if (!t) return;
+                    _touching = true;
+                    const r = canvas.getBoundingClientRect();
+                    mouse.x = t.clientX - r.left;
+                    mouse.y = t.clientY - r.top;
+                    settled = false;
+                }, { passive: true });
                 homeEl.addEventListener('touchmove', (e) => {
                     const t = e.touches[0]; if (!t) return;
                     const r = canvas.getBoundingClientRect();
@@ -1843,14 +1859,11 @@
                     mouse.y = t.clientY - r.top;
                     settled = false;
                 }, { passive: true });
-                // 손을 떼면 커서 위치 해제 → 반발 멈추고 다시 모임 (mouseleave 대응)
-                const endTouch = () => {
-                    mouse.x = mouse.y = mouse.px = mouse.py = -9999;
-                    mouse.vx = mouse.vy = 0;
-                    settled = false;
-                };
-                homeEl.addEventListener('touchend', endTouch, { passive: true });
-                homeEl.addEventListener('touchcancel', endTouch, { passive: true });
+                // document에 등록 — 손가락이 홈 영역 밖에서 떨어져도, Lenis가 터치를
+                // 가로채도 반드시 해제됨
+                const _onTouchEnd = () => { if (_touching) _resetMouse(); };
+                document.addEventListener('touchend',    _onTouchEnd, { passive: true });
+                document.addEventListener('touchcancel', _onTouchEnd, { passive: true });
             }
 
             // 처음부터 모인 상태로 시작 — 인트로 흩뿌림 없음
