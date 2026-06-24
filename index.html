@@ -1645,6 +1645,7 @@
                         x: reduce ? hx : Math.random() * cssW,
                         y: reduce ? hy : (H / 2 + (Math.random() - 0.5) * H * 3),
                         vx: 0, vy: 0,
+                        k: 0.04 + Math.random() * 0.025,  // 복귀 스프링 세기 (파티클별 편차)
                         color: r.ink ? '#16181D' : '#3D4F8A',
                         rx: 1.5 + Math.random() * 1.1,
                         ry: 0.55 + Math.random() * 0.4,
@@ -1691,22 +1692,25 @@
             function frame() {
                 ctx.clearRect(0, 0, W, H);
                 drawBowl(); // 뒤 테두리 (쌀알 뒤)
-                const R = 72, R2 = R * R;
+                const R = 120, R2 = R * R;
                 for (let i = 0; i < particles.length; i++) {
                     const p = particles[i];
-                    p.vx += (p.hx - p.x) * 0.045;
-                    p.vy += (p.hy - p.y) * 0.045;
+                    // 원래 글자 위치로 자석처럼 복귀 (파티클별 미세 편차)
+                    p.vx += (p.hx - p.x) * p.k;
+                    p.vy += (p.hy - p.y) * p.k;
                     if (!reduce) {
                         const dx = p.x - mouse.x, dy = p.y - mouse.y;
                         const d2 = dx * dx + dy * dy;
                         if (d2 < R2) {
                             const d = Math.sqrt(d2) || 1;
+                            // 가까울수록 강하게 — 부드러운 제곱 falloff
                             const f = (R - d) / R;
-                            p.vx += (dx / d) * f * 4.6;
-                            p.vy += (dy / d) * f * 4.6;
+                            const push = f * f * 8.5;
+                            p.vx += (dx / d) * push;
+                            p.vy += (dy / d) * push;
                         }
                     }
-                    p.vx *= 0.86; p.vy *= 0.86;
+                    p.vx *= 0.88; p.vy *= 0.88;
                     p.x += p.vx; p.y += p.vy;
 
                     ctx.save();
