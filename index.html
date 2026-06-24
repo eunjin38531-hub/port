@@ -369,22 +369,16 @@
             display: grid;
             grid-template-columns: 0.8fr 1.2fr;
             gap: 60px;
-            align-items: stretch;
-        }
-
-        .about-intro {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            align-items: start;
         }
 
         .about-statement {
-            font-size: clamp(1.5em, 2.6vw, 2.3em);
+            font-size: clamp(1.3em, 2.2vw, 2em);
             font-weight: 700;
             color: var(--ink);
             line-height: 1.35;
             letter-spacing: -0.5px;
-            margin-bottom: 36px;
+            margin-bottom: 28px;
         }
 
         .about-statement .hl { color: var(--gold); }
@@ -431,9 +425,7 @@
 
         /* ===== About 탭 UI ===== */
         .about-tabs-wrap {
-            margin-top: 40px;
-            padding-top: 26px;
-            border-top: 1px solid #e7e7e7;
+            /* sits in the right column of about-grid */
         }
         .about-tabs {
             display: flex;
@@ -870,7 +862,7 @@
             .about-grid { grid-template-columns: 1fr; gap: 36px; }
             #about { min-height: 0; display: block; padding-top: 96px; }
             .rec-grid { grid-template-columns: 1fr; gap: 0; }
-            .about-tabs { gap: 20px; }
+            .about-tabs { gap: 16px; flex-wrap: wrap; }
             .tab-panels { min-height: 0; }
             .profile-photo { aspect-ratio: 4 / 3; }
             .skill-row { grid-template-columns: 40px 56px 1fr; gap: 16px; padding: 24px 10px; }
@@ -943,81 +935,82 @@
                     <div class="profile-photo">PROFILE</div>
                 </div>
 
-                <!-- 우측: 큰 선언문 + 연락처 -->
-                <div class="about-intro">
-                    <p class="about-statement">사용자의 <span class="hl">다음 발걸음</span>을<br>먼저 살피고,<br>경험의 흐름을 설계합니다.</p>
-                    <ul class="profile-contact">
-                        <li><span class="ci">◷</span> 0000.00.00</li>
-                        <li><span class="ci">☎</span> 010-0000-0000</li>
-                        <li><span class="ci">✉</span> contact@example.com</li>
-                        <li><span class="ci">⌖</span> 서울시 (비공개)</li>
-                    </ul>
-                </div>
-            </div>
+                <!-- 우측: 탭 4개 -->
+                <div class="about-tabs-wrap">
+                    <div class="about-tabs" role="tablist">
+                        <button class="about-tab is-active" data-tab="0" role="tab">소개</button>
+                        <button class="about-tab" data-tab="1" role="tab">이력</button>
+                        <button class="about-tab" data-tab="2" role="tab">전시·활동</button>
+                        <button class="about-tab" data-tab="3" role="tab">자격증</button>
+                    </div>
 
-            <!-- 탭 UI -->
-            <div class="about-tabs-wrap">
-                <div class="about-tabs" role="tablist">
-                    <button class="about-tab is-active" data-tab="0" role="tab">이력</button>
-                    <button class="about-tab" data-tab="1" role="tab">전시·활동</button>
-                    <button class="about-tab" data-tab="2" role="tab">자격증</button>
-                </div>
+                    <div class="tab-panels">
+                        <!-- 소개: 선언문 + 연락처 -->
+                        <div class="tab-panel is-active" data-panel="0" role="tabpanel">
+                            <p class="about-statement">사용자의 <span class="hl">다음 발걸음</span>을<br>먼저 살피고,<br>경험의 흐름을 설계합니다.</p>
+                            <ul class="profile-contact">
+                                <li><span class="ci">◷</span> 0000.00.00</li>
+                                <li><span class="ci">☎</span> 010-0000-0000</li>
+                                <li><span class="ci">✉</span> contact@example.com</li>
+                                <li><span class="ci">⌖</span> 서울시 (비공개)</li>
+                            </ul>
+                        </div>
 
-                <div class="tab-panels">
-                    <!-- 이력: 학력 · 경력 · 교육 -->
-                    <div class="tab-panel is-active" data-panel="0" role="tabpanel">
-                        <div class="rec-grid">
-                            <div class="about-block">
-                                <h4 class="about-h">학력</h4>
-                                <div class="rec">
-                                    <span class="rec-date">2021.03<br>– 2025.02</span>
-                                    <span class="rec-body">한국폴리텍대학 서울 정수캠퍼스<em>시각디자인과 졸업</em></span>
+                        <!-- 이력: 학력 · 경력 · 교육 -->
+                        <div class="tab-panel" data-panel="1" role="tabpanel">
+                            <div class="rec-grid">
+                                <div class="about-block">
+                                    <h4 class="about-h">학력</h4>
+                                    <div class="rec">
+                                        <span class="rec-date">2021.03<br>– 2025.02</span>
+                                        <span class="rec-body">한국폴리텍대학 서울 정수캠퍼스<em>시각디자인과 졸업</em></span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="about-block">
-                                <h4 class="about-h">경력</h4>
-                                <div class="rec">
-                                    <span class="rec-date">2024.10<br>– 2026.03</span>
-                                    <span class="rec-body">클라우드 PC방<em>고객 응대 · 음식 조리 · 매장/재고 관리</em></span>
+                                <div class="about-block">
+                                    <h4 class="about-h">경력</h4>
+                                    <div class="rec">
+                                        <span class="rec-date">2024.10<br>– 2026.03</span>
+                                        <span class="rec-body">클라우드 PC방<em>고객 응대 · 음식 조리 · 매장/재고 관리</em></span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="about-block">
-                                <h4 class="about-h">교육</h4>
-                                <div class="rec">
-                                    <span class="rec-date">2026.04<br>– 07</span>
-                                    <span class="rec-body">서울시 매력일자리 AI 디자인 취업캠프</span>
+                                <div class="about-block">
+                                    <h4 class="about-h">교육</h4>
+                                    <div class="rec">
+                                        <span class="rec-date">2026.04<br>– 07</span>
+                                        <span class="rec-body">서울시 매력일자리 AI 디자인 취업캠프</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 전시·활동: 전시 · 봉사활동 -->
-                    <div class="tab-panel" data-panel="1" role="tabpanel">
-                        <div class="rec-grid">
-                            <div class="about-block">
-                                <h4 class="about-h">전시</h4>
-                                <div class="rec"><span class="rec-date">2025.07</span><span class="rec-body">2025 한국디자인문화학회 신진작가전</span></div>
-                                <div class="rec"><span class="rec-date">2025.08</span><span class="rec-body">디지털로 그린 세상</span></div>
-                                <div class="rec"><span class="rec-date">2025.12</span><span class="rec-body">Piece Of Cake</span></div>
-                            </div>
-                            <div class="about-block">
-                                <h4 class="about-h">봉사활동</h4>
-                                <div class="rec"><span class="rec-date">2024.11<br>– 12</span><span class="rec-body">서울시립뇌성마비복지관<em>생활지원 (식사·목욕·세탁·간병·이미용) 3회</em></span></div>
-                                <div class="rec"><span class="rec-date">2024.11</span><span class="rec-body">노원구자원봉사센터<em>자원봉사교육 및 활성화 캠페인</em></span></div>
-                                <div class="rec"><span class="rec-date">2024.11</span><span class="rec-body">도봉구보건소의약과<em>심폐소생술 교육 및 SNS 홍보</em></span></div>
+                        <!-- 전시·활동: 전시 · 봉사활동 -->
+                        <div class="tab-panel" data-panel="2" role="tabpanel">
+                            <div class="rec-grid">
+                                <div class="about-block">
+                                    <h4 class="about-h">전시</h4>
+                                    <div class="rec"><span class="rec-date">2025.07</span><span class="rec-body">2025 한국디자인문화학회 신진작가전</span></div>
+                                    <div class="rec"><span class="rec-date">2025.08</span><span class="rec-body">디지털로 그린 세상</span></div>
+                                    <div class="rec"><span class="rec-date">2025.12</span><span class="rec-body">Piece Of Cake</span></div>
+                                </div>
+                                <div class="about-block">
+                                    <h4 class="about-h">봉사활동</h4>
+                                    <div class="rec"><span class="rec-date">2024.11<br>– 12</span><span class="rec-body">서울시립뇌성마비복지관<em>생활지원 (식사·목욕·세탁·간병·이미용) 3회</em></span></div>
+                                    <div class="rec"><span class="rec-date">2024.11</span><span class="rec-body">노원구자원봉사센터<em>자원봉사교육 및 활성화 캠페인</em></span></div>
+                                    <div class="rec"><span class="rec-date">2024.11</span><span class="rec-body">도봉구보건소의약과<em>심폐소생술 교육 및 SNS 홍보</em></span></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 자격증 -->
-                    <div class="tab-panel" data-panel="2" role="tabpanel">
-                        <div class="about-block">
-                            <div class="cert-badges">
-                                <span>컴퓨터그래픽스기능사</span>
-                                <span>GTQ 1급</span>
-                                <span>GTQi 1급</span>
-                                <span>ITQ 한글·엑셀·파워포인트·인터넷 A등급</span>
-                                <span>ITQ 아래한글 · 액세스</span>
+                        <!-- 자격증 -->
+                        <div class="tab-panel" data-panel="3" role="tabpanel">
+                            <div class="about-block">
+                                <div class="cert-badges">
+                                    <span>컴퓨터그래픽스기능사</span>
+                                    <span>GTQ 1급</span>
+                                    <span>GTQi 1급</span>
+                                    <span>ITQ 한글·엑셀·파워포인트·인터넷 A등급</span>
+                                    <span>ITQ 아래한글 · 액세스</span>
+                                </div>
                             </div>
                         </div>
                     </div>
