@@ -591,7 +591,7 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 18px;
-            align-items: stretch;
+            align-items: start;
         }
 
         .sk-card {
@@ -1582,7 +1582,22 @@
 
         // ===== 스킬 카드 인터랙션 =====
         function setupSkillCards() {
-            document.querySelectorAll('.sk-card').forEach(card => {
+            const cards = Array.from(document.querySelectorAll('.sk-card'));
+
+            // 닫힌 상태 높이를 측정해 min-height 고정 → 각 카드 독립 확장
+            const equalizeCards = () => {
+                cards.forEach(c => { c.style.minHeight = ''; });
+                const maxH = Math.max(...cards.map(c => c.offsetHeight));
+                cards.forEach(c => { c.style.minHeight = maxH + 'px'; });
+            };
+            equalizeCards();
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(equalizeCards, 150);
+            });
+
+            cards.forEach(card => {
                 const tools  = card.querySelectorAll('.sk-tool');
                 const expand = card.querySelector('.sk-expand');
                 const nameEl = card.querySelector('.sk-active-name');
