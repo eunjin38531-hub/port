@@ -1579,7 +1579,8 @@
             let particles = [];
             let W = 0, H = 0;
             let bowl = null;
-            const mouse = { x: -9999, y: -9999 };
+            // px,py: 이전 프레임 좌표 / vx,vy: 커서 이동 속도(궤적)
+            const mouse = { x: -9999, y: -9999, px: -9999, py: -9999, vx: 0, vy: 0 };
 
             function build() {
                 const cssW = Math.min(window.innerWidth * 0.92, 760);
@@ -1692,25 +1693,41 @@
             function frame() {
                 ctx.clearRect(0, 0, W, H);
                 drawBowl(); // 뒤 테두리 (쌀알 뒤)
-                const R = 120, R2 = R * R;
+
+                // 커서 이동 속도(궤적) 추적 — 빠르게 지날수록 휩쓸림 강해짐
+                if (mouse.px > -9000) {
+                    mouse.vx = mouse.x - mouse.px;
+                    mouse.vy = mouse.y - mouse.py;
+                } else { mouse.vx = 0; mouse.vy = 0; }
+                mouse.px = mouse.x; mouse.py = mouse.y;
+                const FRICTION = 0.92;            // 공기 저항 (0.9~0.95)
+                const R = 130, R2 = R * R;
+
                 for (let i = 0; i < particles.length; i++) {
                     const p = particles[i];
-                    // 원래 글자 위치로 자석처럼 복귀 (파티클별 미세 편차)
+                    // 1) 원래 글자 좌표로 스프링 복원 (파티클별 미세 편차)
                     p.vx += (p.hx - p.x) * p.k;
                     p.vy += (p.hy - p.y) * p.k;
+
+                    // 2) 커서 반발 — 힘(Force) 기반, 궤적 방향으로 휩쓸림
                     if (!reduce) {
                         const dx = p.x - mouse.x, dy = p.y - mouse.y;
                         const d2 = dx * dx + dy * dy;
                         if (d2 < R2) {
                             const d = Math.sqrt(d2) || 1;
-                            // 가까울수록 강하게 — 부드러운 제곱 falloff
-                            const f = (R - d) / R;
-                            const push = f * f * 8.5;
+                            const f = (R - d) / R;       // 가까울수록 1에 가까움
+                            const push = f * f * 9;      // 부드러운 제곱 falloff
+                            // 커서로부터 바깥쪽으로 튕김
                             p.vx += (dx / d) * push;
                             p.vy += (dy / d) * push;
+                            // 커서 진행 방향(궤적)으로 함께 휩쓸림
+                            p.vx += mouse.vx * f * 0.35;
+                            p.vy += mouse.vy * f * 0.35;
                         }
                     }
-                    p.vx *= 0.88; p.vy *= 0.88;
+
+                    // 3) 마찰력 — 뚝 끊기지 않고 부드럽게 감속
+                    p.vx *= FRICTION; p.vy *= FRICTION;
                     p.x += p.vx; p.y += p.vy;
 
                     ctx.save();
@@ -1733,7 +1750,10 @@
                     mouse.x = e.clientX - r.left;
                     mouse.y = e.clientY - r.top;
                 });
-                homeEl.addEventListener('mouseleave', () => { mouse.x = mouse.y = -9999; });
+                homeEl.addEventListener('mouseleave', () => {
+                    mouse.x = mouse.y = mouse.px = mouse.py = -9999;
+                    mouse.vx = mouse.vy = 0;
+                });
                 homeEl.addEventListener('touchmove', (e) => {
                     const t = e.touches[0]; if (!t) return;
                     const r = canvas.getBoundingClientRect();
