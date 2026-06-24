@@ -1382,11 +1382,55 @@
             onScroll();
         }
 
+        // ===== 홈 마우스 패럴랙스 (레이어 깊이감) =====
+        function setupHomeMouseParallax() {
+            if (!window.matchMedia('(hover: hover)').matches) return;
+            const homeEl = document.getElementById('home');
+            if (!homeEl) return;
+            const grid     = homeEl.querySelector('.home-grid');
+            const homeName = homeEl.querySelector('.home-name');
+            const homeSub  = homeEl.querySelector('.home-sub');
+
+            let tx = 0, ty = 0, cx = 0, cy = 0;
+
+            homeEl.addEventListener('mousemove', (e) => {
+                const r = homeEl.getBoundingClientRect();
+                tx = (e.clientX - r.left)  / r.width  - 0.5;
+                ty = (e.clientY - r.top)   / r.height - 0.5;
+            });
+            homeEl.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+
+            (function tick() {
+                cx += (tx - cx) * 0.06;
+                cy += (ty - cy) * 0.06;
+
+                // 그리드: background-position 이동 (가장 먼 레이어, 반대 방향)
+                if (grid) {
+                    const gx = (cx * -28).toFixed(2);
+                    const gy = (cy * -28).toFixed(2);
+                    grid.style.backgroundPosition = `${gx}px ${gy}px, ${gx}px ${gy}px`;
+                }
+                // 이름 레이블: 살짝 반대 (중간 레이어)
+                if (homeName) {
+                    homeName.style.transform =
+                        `translate(${(cx * -14).toFixed(2)}px, ${(cy * -14).toFixed(2)}px)`;
+                }
+                // 태그라인: 같은 방향 (가장 가까운 레이어)
+                if (homeSub) {
+                    homeSub.style.transform =
+                        `translate(${(cx * 18).toFixed(2)}px, ${(cy * 18).toFixed(2)}px)`;
+                }
+
+                requestAnimationFrame(tick);
+            })();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             setupContentInteractions();
             setupLenis();
             setupMagnetic();
             setupHomeParallax();
+            setupHomeMouseParallax();
             setupLetterCarousel();
             setupCardAnticipation();
             setupNav();
