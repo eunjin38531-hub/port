@@ -1717,30 +1717,37 @@
                 const pathInk = new Path2D();
                 const pathBlue = new Path2D();
                 let energy = 0;
+                const GRAV = 0.35;   // 중력 — 흩어진 알갱이가 아래로 떨어짐
                 for (let i = 0; i < particles.length; i++) {
                     const p = particles[i];
-                    // 1) 원래 글자 좌표로 스프링 복원 (파티클별 미세 편차)
-                    p.vx += (p.hx - p.x) * p.k;
-                    p.vy += (p.hy - p.y) * p.k;
+                    const dxh = p.hx - p.x, dyh = p.hy - p.y;
 
-                    // 2) 커서 반발 — 힘(Force) 기반, 궤적 방향으로 휩쓸림
+                    // 1) 원래 글자 좌표로 복원 (약한 스프링, 파티클별 편차)
+                    p.vx += dxh * p.k;
+                    p.vy += dyh * p.k;
+
+                    // 2) 중력 — 집에서 멀수록만 작용(평소엔 0 → 처지지 않음)
+                    const distH = Math.sqrt(dxh * dxh + dyh * dyh);
+                    if (distH > 1) {
+                        const gFactor = distH > 60 ? 1 : distH / 60;
+                        p.vy += GRAV * gFactor;
+                    }
+
+                    // 3) 커서 반발 — 방사형 튕김 + 알갱이별 랜덤(쌀 흩뿌림)
                     if (!reduce && mouseActive) {
                         const dx = p.x - mouse.x, dy = p.y - mouse.y;
                         const d2 = dx * dx + dy * dy;
                         if (d2 < R2) {
                             const d = Math.sqrt(d2) || 1;
-                            const f = (R - d) / R;       // 가까울수록 1에 가까움
-                            const push = f * f * 9;      // 부드러운 제곱 falloff
-                            // 커서로부터 바깥쪽으로 튕김
-                            p.vx += (dx / d) * push;
-                            p.vy += (dy / d) * push;
-                            // 커서 진행 방향(궤적)으로 함께 휩쓸림
-                            p.vx += mouse.vx * f * 0.35;
-                            p.vy += mouse.vy * f * 0.35;
+                            const f = (R - d) / R;
+                            const push = f * f * 11;
+                            // 바깥쪽으로 튕기되, 방향·세기에 무작위 편차
+                            p.vx += (dx / d) * push + (Math.random() - 0.5) * push * 0.9;
+                            p.vy += (dy / d) * push + (Math.random() - 0.5) * push * 0.9 - f * 2.5; // 살짝 위로 톡
                         }
                     }
 
-                    // 3) 마찰력 — 뚝 끊기지 않고 부드럽게 감속
+                    // 4) 마찰력 — 부드럽게 감속하며 가라앉음
                     p.vx *= FRICTION; p.vy *= FRICTION;
                     p.x += p.vx; p.y += p.vy;
                     energy += p.vx * p.vx + p.vy * p.vy;
