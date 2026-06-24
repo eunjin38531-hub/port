@@ -589,8 +589,9 @@
         /* ===== SKILLS ===== */
         .sk-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            align-items: start;
         }
 
         .sk-card {
@@ -950,6 +951,7 @@
             .tab-panels { min-height: 0; }
             /* min-height + aspect-ratio 충돌 → 너비 480px로 팽창 방지 */
             .profile-photo { aspect-ratio: 4 / 3; min-height: 0; width: 100%; height: auto; }
+            .sk-grid { grid-template-columns: 1fr 1fr; }
             .sk-card { padding: 22px 20px; }
             .works-grid { grid-template-columns: 1fr; }
             .works-col--r { padding-top: 0; }
