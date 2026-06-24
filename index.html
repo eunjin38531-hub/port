@@ -37,6 +37,8 @@
         html, body {
             height: 100%;
             scroll-behavior: auto;
+            overflow-x: hidden;           /* 가로 오버플로우 차단 */
+            max-width: 100%;
             scrollbar-width: none;        /* Firefox */
             -ms-overflow-style: none;     /* 구 Edge/IE */
         }
@@ -665,12 +667,13 @@
             gap: 0 48px;
             align-items: start;
         }
-        .works-col { display: flex; flex-direction: column; gap: 64px; }
+        .works-col { display: flex; flex-direction: column; gap: 64px; min-width: 0; }
         .works-col--r { padding-top: 200px; }
 
         .wcard {
             display: flex;
             flex-direction: column;
+            min-width: 0;
             transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
         }
