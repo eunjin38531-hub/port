@@ -587,32 +587,39 @@
         .cert-badges span:hover { background: var(--gold-soft); color: var(--ink); border-color: var(--gold-soft); }
 
         /* ===== SKILLS ===== */
-        .sk-icons {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 12px;
-        }
-
-        .sk-icon-item {
-            position: relative;
+        .sk-deck {
             display: flex;
-            justify-content: center;
-            -webkit-tap-highlight-color: transparent;
+            align-items: center;
+            overflow: visible;
         }
 
-        .sk-icon-item .skill-icon {
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+        .sk-dcard {
+            position: relative;
+            flex-shrink: 0;
+            left: 0;
+            z-index: 1;
+            transition: transform 0.4s ease-out, left 0.4s ease-out;
         }
 
-        .sk-icon-item.tip-open .skill-icon {
-            transform: scale(1.1) translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+        .sk-dcard:not(:first-child) { margin-left: -28px; }
+
+        .sk-dcard:hover {
+            transform: translateY(-16px);
+            z-index: 10;
+        }
+
+        .sk-dcard:hover ~ .sk-dcard { left: 46px; }
+
+        .sk-dcard .skill-icon { box-shadow: -4px 0 12px rgba(0,0,0,0.15); }
+
+        .sk-dcard:hover .skill-icon {
+            box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+            transform: scale(1.06);
         }
 
         .sk-tooltip {
             position: absolute;
-            bottom: calc(100% + 12px);
+            bottom: calc(100% + 14px);
             left: 50%;
             transform: translateX(-50%) translateY(8px);
             background: #1c1c28;
@@ -621,7 +628,7 @@
             width: 230px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            transition: opacity 0.22s ease, transform 0.22s ease;
             z-index: 200;
             box-shadow: 0 8px 32px rgba(0,0,0,0.22);
         }
@@ -636,7 +643,7 @@
             border-top-color: #1c1c28;
         }
 
-        .sk-icon-item.tip-open .sk-tooltip {
+        .sk-dcard.tip-open .sk-tooltip {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
@@ -659,15 +666,16 @@
         }
 
         .skill-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 14px;
+            width: 80px;
+            height: 80px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: #fff;
+            cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
         }
 
@@ -683,9 +691,9 @@
         .off-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3px;
-            width: 28px;
-            height: 28px;
+            gap: 4px;
+            width: 34px;
+            height: 34px;
         }
         .off-grid i { border-radius: 3px; display: block; }
 
@@ -925,7 +933,8 @@
             .tab-panels { min-height: 0; }
             /* min-height + aspect-ratio 충돌 → 너비 480px로 팽창 방지 */
             .profile-photo { aspect-ratio: 4 / 3; min-height: 0; width: 100%; height: auto; }
-            .sk-icons { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+            .sk-dcard:not(:first-child) { margin-left: -22px; }
+            .sk-dcard:hover ~ .sk-dcard { left: 36px; }
             .sk-tooltip { width: 200px; }
             .works-grid { grid-template-columns: 1fr; }
             .works-col--r { padding-top: 0; }
@@ -951,9 +960,10 @@
             .about-tab { font-size: 13px; padding: 5px 1px 10px; }
             .rec { grid-template-columns: 70px 1fr; gap: 10px; padding: 11px 0; }
             .cert-badges span { padding: 8px 14px; }
-            .sk-icons { grid-template-columns: repeat(4, 1fr); }
-            .sk-icons .skill-icon { width: 50px; height: 50px; border-radius: 12px; }
-            .sk-tooltip { width: 180px; font-size: 11px; }
+            .sk-dcard:not(:first-child) { margin-left: -16px; }
+            .sk-dcard:hover ~ .sk-dcard { left: 28px; }
+            .sk-deck .skill-icon { width: 60px; height: 60px; border-radius: 14px; }
+            .sk-tooltip { width: 190px; }
             .works-col { gap: 38px; }
             .wcard-links { gap: 16px; }
             .lc-viewport { height: 600px; }
@@ -1112,65 +1122,65 @@
                 <p class="sheet-tag">디자인 툴부터 구현까지<br>전 과정을 다룹니다</p>
             </div>
 
-            <div class="sk-icons">
-                <div class="sk-icon-item">
+            <div class="sk-deck">
+                <div class="sk-dcard">
                     <div class="skill-icon figma">
-                        <svg viewBox="0 0 38 57" width="22" height="33"><path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/><path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/><path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/><path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"/><path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/></svg>
+                        <svg viewBox="0 0 38 57" width="28" height="42"><path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/><path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/><path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/><path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"/><path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/></svg>
                     </div>
                     <div class="sk-tooltip">
                         <strong class="sk-tip-name">Figma</strong>
                         <p class="sk-tip-desc">프레임 생성, 레이아웃 그리드, 오토 레이아웃, 컴포넌트·배리언트, 디자인 시스템 등록, 프로토타입 인터랙션 (On click·On hover·On drag·After delay, Navigate to·Scroll to·Back)</p>
                     </div>
                 </div>
-                <div class="sk-icon-item">
+                <div class="sk-dcard">
                     <div class="skill-icon ps">Ps</div>
                     <div class="sk-tooltip">
                         <strong class="sk-tip-name">Photoshop</strong>
                         <p class="sk-tip-desc">배경 제거, 클리핑·레이어 마스크, 스마트 오브젝트, 색상 보정, 블렌딩 모드, 필터·브러시, 목업 제작, 합성, Firefly 생성형 기능 활용</p>
                     </div>
                 </div>
-                <div class="sk-icon-item">
+                <div class="sk-dcard">
                     <div class="skill-icon ai">Ai</div>
                     <div class="sk-tooltip">
                         <strong class="sk-tip-name">Illustrator</strong>
                         <p class="sk-tip-desc">벡터 드로잉, 펜 툴, 패스파인더, 서체·외곽선, 그라디언트·패턴, 로고·브랜드·아이콘 제작</p>
                     </div>
                 </div>
-                <div class="sk-icon-item">
+                <div class="sk-dcard">
                     <div class="skill-icon id">Id</div>
                     <div class="sk-tooltip">
                         <strong class="sk-tip-name">InDesign</strong>
                         <p class="sk-tip-desc">마스터 페이지, 텍스트·오브젝트 프레임, 이미지 배치, 문자·단락 스타일</p>
                     </div>
                 </div>
-                <div class="sk-icon-item">
+                <div class="sk-dcard">
                     <div class="skill-icon vscode">
-                        <svg viewBox="0 0 32 32" width="26" height="26"><path fill="#0065a9" d="M23.15 2.587 16.5 8.7 9.6 3.4 7 4.5l8 7.5L7 19.5l2.6 1.1 6.9-5.3 6.65 6.113L29 19.4V4.6z"/><path fill="#007acc" d="M29 4.6 23.15 2.587 7 17.9V4.5L4.5 6.4v13.2L7 21.5v-3.6l16.15 11.913L29 27.4z" opacity=".4"/></svg>
+                        <svg viewBox="0 0 32 32" width="33" height="33"><path fill="#0065a9" d="M23.15 2.587 16.5 8.7 9.6 3.4 7 4.5l8 7.5L7 19.5l2.6 1.1 6.9-5.3 6.65 6.113L29 19.4V4.6z"/><path fill="#007acc" d="M29 4.6 23.15 2.587 7 17.9V4.5L4.5 6.4v13.2L7 21.5v-3.6l16.15 11.913L29 27.4z" opacity=".4"/></svg>
                     </div>
                     <div class="sk-tooltip">
                         <strong class="sk-tip-name">VS Code</strong>
                         <p class="sk-tip-desc">HTML/CSS 기본 구조, 폰트·색상·배경 스타일링, 레이아웃 기초</p>
                     </div>
                 </div>
-                <div class="sk-icon-item">
+                <div class="sk-dcard">
                     <div class="skill-icon github">
-                        <svg viewBox="0 0 24 24" width="26" height="26" fill="#fff" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58l-.01-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.21.7.82.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
+                        <svg viewBox="0 0 24 24" width="33" height="33" fill="#fff" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58l-.01-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.21.7.82.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
                     </div>
                     <div class="sk-tooltip">
                         <strong class="sk-tip-name">GitHub</strong>
                         <p class="sk-tip-desc">저장소 관리, Codespaces 개발 환경, GitHub Pages 배포, Cloudflare 연동</p>
                     </div>
                 </div>
-                <div class="sk-icon-item">
+                <div class="sk-dcard">
                     <div class="skill-icon claude">
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="#fff" aria-hidden="true"><path d="M12 2.2c.27 0 .5.2.53.47l.66 5.02 3.5-3.66a.53.53 0 0 1 .8.7l-3.4 3.74 4.74-1.86a.53.53 0 0 1 .4.98l-4.66 2.06 5.04.55a.53.53 0 0 1 0 1.05l-5.04.55 4.66 2.06a.53.53 0 0 1-.4.98l-4.74-1.86 3.4 3.74a.53.53 0 0 1-.8.7l-3.5-3.66-.66 5.02a.53.53 0 0 1-1.06 0l-.66-5.02-3.5 3.66a.53.53 0 0 1-.8-.7l3.4-3.74-4.74 1.86a.53.53 0 0 1-.4-.98l4.66-2.06-5.04-.55a.53.53 0 0 1 0-1.05l5.04-.55-4.66-2.06a.53.53 0 0 1 .4-.98l4.74 1.86-3.4-3.74a.53.53 0 0 1 .8-.7l3.5 3.66.66-5.02A.53.53 0 0 1 12 2.2z"/></svg>
+                        <svg viewBox="0 0 24 24" width="30" height="30" fill="#fff" aria-hidden="true"><path d="M12 2.2c.27 0 .5.2.53.47l.66 5.02 3.5-3.66a.53.53 0 0 1 .8.7l-3.4 3.74 4.74-1.86a.53.53 0 0 1 .4.98l-4.66 2.06 5.04.55a.53.53 0 0 1 0 1.05l-5.04.55 4.66 2.06a.53.53 0 0 1-.4.98l-4.74-1.86 3.4 3.74a.53.53 0 0 1-.8.7l-3.5-3.66-.66 5.02a.53.53 0 0 1-1.06 0l-.66-5.02-3.5 3.66a.53.53 0 0 1-.8-.7l3.4-3.74-4.74 1.86a.53.53 0 0 1-.4-.98l4.66-2.06-5.04-.55a.53.53 0 0 1 0-1.05l5.04-.55-4.66-2.06a.53.53 0 0 1 .4-.98l4.74 1.86-3.4-3.74a.53.53 0 0 1 .8-.7l3.5 3.66.66-5.02A.53.53 0 0 1 12 2.2z"/></svg>
                     </div>
                     <div class="sk-tooltip">
                         <strong class="sk-tip-name">Claude</strong>
                         <p class="sk-tip-desc">기획·리서치 정리·카피 초안 (Claude), 디자인 시스템 및 앱 UI/UX 설계 (Claude Design), 인터랙션 구현 (Claude Code)</p>
                     </div>
                 </div>
-                <div class="sk-icon-item">
+                <div class="sk-dcard">
                     <div class="skill-icon office">
                         <span class="off-grid"><i style="background:#d83b01"></i><i style="background:#0f9d58"></i><i style="background:#ca5010"></i><i style="background:#185abd"></i></span>
                     </div>
@@ -1179,7 +1189,7 @@
                         <p class="sk-tip-desc">Word 문서·표 서식 / Excel 함수·필터·차트·Vlookup / PowerPoint 슬라이드 마스터·애니메이션</p>
                     </div>
                 </div>
-            </div>
+            </div><!-- .sk-deck -->
         </section>
 
         <!-- WORKS -->
@@ -1413,7 +1423,7 @@
         function setupContentInteractions() {
             // 1) 스크롤 리빌 — 주요 요소에 자동 적용
             const targets = document.querySelectorAll(
-                '.sheet-head, .about-profile, .about-statement, .sk-icons, .wcard'
+                '.sheet-head, .about-profile, .about-statement, .sk-deck, .wcard'
             );
             targets.forEach((el, i) => {
                 el.classList.add('reveal');
@@ -1554,7 +1564,7 @@
                 });
             };
 
-            document.querySelectorAll('.sk-icon-item').forEach(item => {
+            document.querySelectorAll('.sk-dcard').forEach(item => {
                 item.addEventListener('mouseenter', () => show(item));
                 item.addEventListener('mouseleave', closeAll);
                 item.addEventListener('click', (e) => {
