@@ -596,22 +596,21 @@
 
         .sk-bcard {
             position: relative;
-            background: #ffffff;
-            border-radius: 22px;
-            border: 1px solid rgba(22, 24, 29, 0.07);
-            box-shadow: 0 2px 8px rgba(22, 24, 29, 0.06), 0 1px 2px rgba(22, 24, 29, 0.04);
             display: flex;
             align-items: center;
             justify-content: center;
             aspect-ratio: 1 / 1;
             cursor: pointer;
             overflow: visible;
-            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .sk-bcard:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 40px rgba(22, 24, 29, 0.12), 0 4px 10px rgba(22, 24, 29, 0.07);
+            transform: translateY(-5px);
+        }
+
+        .sk-bcard:hover .skill-icon {
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
         }
 
         /* Explicit bento grid placement */
