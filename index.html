@@ -344,6 +344,11 @@
                         transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .reveal.in { opacity: 1; transform: translateY(0); }
+        /* Works 카드는 자체 hover transition이 있어 리빌 트랜지션을 명시 */
+        .wcard.reveal {
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
 
         /* ===== 공통 시트(섹션) ===== */
         .sheet {
@@ -1329,12 +1334,19 @@
         function setupContentInteractions() {
             // 1) 스크롤 리빌 — 주요 요소에 자동 적용
             const targets = document.querySelectorAll(
-                '.sheet-head, .about-profile, .about-statement, .skill-row'
+                '.sheet-head, .about-profile, .about-statement, .skill-row, .wcard'
             );
             targets.forEach((el, i) => {
                 el.classList.add('reveal');
                 // 같은 그룹은 살짝 시차를 둬 순차 등장
                 el.style.transitionDelay = ((i % 4) * 80) + 'ms';
+            });
+
+            // Works 카드는 컬럼 안에서 위→아래로 순차 등장
+            document.querySelectorAll('.works-col').forEach((col) => {
+                col.querySelectorAll('.wcard').forEach((card, j) => {
+                    card.style.transitionDelay = (j * 120) + 'ms';
+                });
             });
 
             const io = new IntersectionObserver((entries) => {
