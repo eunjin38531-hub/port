@@ -1571,14 +1571,10 @@
                     }
                 }
 
-                // 세로 배치
-                const topPad = fs * 0.8;
+                // 세로 배치 (밥공기 없이 둥근 밥덩어리만)
+                const topPad = fs * 0.6;
                 const offsetY = topPad - minY;
-                const rimY = (maxY + offsetY) + fs * 0.08;   // 공기 입구(밥덩어리 밑동)
-                const R = halfW + fs * 0.5;                  // 밥덩어리 가로 반경
-                const domeH = (rimY - topPad) + fs * 0.1;    // 밥덩어리 높이
-                const depth = fs * 1.05;
-                const cssH = Math.round(rimY + depth + fs * 0.45);
+                const cssH = Math.round((maxY + offsetY) + fs * 0.6);
                 H = cssH;
 
                 canvas.style.width = cssW + 'px';
@@ -1587,8 +1583,7 @@
                 canvas.height = Math.round(cssH * dpr);
                 ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-                const rxb = R * 0.99;
-                bowl = { cx, rimY, R, domeH, rxb, ryb: rxb * 0.13, depth, botW: rxb * 0.62, lw: Math.max(2.4, fs * 0.03) };
+                bowl = null; // 밥공기 제거
 
                 const next = raw.map((r) => {
                     const hx = r.wx;
