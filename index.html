@@ -901,6 +901,33 @@
             .wcard-img { border-radius: 12px; }
             .lc-viewport { height: 560px; }
         }
+
+        /* 작은 폰 */
+        @media (max-width: 560px) {
+            .nav-inner { padding: 11px 16px; gap: 12px; }
+            .nav-right { gap: 15px; }
+            .nav-right a { font-size: 0.82em; }
+            .nav-brand { font-size: 1em; }
+            .sheet { padding: 68px 18px; }
+            .sheet-head { margin-bottom: 34px; padding-bottom: 20px; }
+            .home-name { letter-spacing: 4px; margin-bottom: 20px; }
+            .scroll-cue { bottom: 18px; }
+            .about-grid { gap: 26px; }
+            .profile-contact { grid-template-columns: 1fr; }
+            .about-tabs { gap: 12px; }
+            .about-tab { font-size: 13px; padding: 5px 1px 10px; }
+            .rec { grid-template-columns: 70px 1fr; gap: 10px; padding: 11px 0; }
+            .cert-badges span { padding: 8px 14px; }
+            .skill-row { grid-template-columns: 30px 44px 1fr; gap: 12px; padding: 20px 4px; }
+            .skill-icon { width: 44px; height: 44px; border-radius: 11px; }
+            .skill-name { font-size: 18px; }
+            .works-col { gap: 38px; }
+            .wcard-links { gap: 16px; }
+            .lc-viewport { height: 600px; }
+            .lc-card { padding: 30px 16px; }
+            .lc-controls { margin-top: 22px; }
+            footer { padding: 48px 22px; }
+        }
     </style>
     <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 </head>
@@ -1598,7 +1625,7 @@
 
             function build() {
                 const cssW = Math.min(window.innerWidth * 0.94, 980);
-                const fs = Math.min(cssW / 3.7, 168);
+                const fs = Math.min(cssW / 3.9, 168);  // 좁은 화면에서 글자 클리핑 방지
                 const cx = cssW / 2;
                 W = cssW;
 
