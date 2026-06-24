@@ -899,7 +899,8 @@
             .rec-grid { grid-template-columns: 1fr; gap: 0; }
             .about-tabs { gap: 16px; flex-wrap: wrap; }
             .tab-panels { min-height: 0; }
-            .profile-photo { aspect-ratio: 4 / 3; }
+            /* min-height + aspect-ratio 충돌 → 너비 480px로 팽창 방지 */
+            .profile-photo { aspect-ratio: 4 / 3; min-height: 0; width: 100%; height: auto; }
             .skill-row { grid-template-columns: 40px 56px 1fr; gap: 16px; padding: 24px 10px; }
             .skill-name { font-size: 20px; }
             .skill-desc { grid-column: 1 / -1; }
@@ -921,6 +922,7 @@
             .home-name { letter-spacing: 2px; margin-bottom: 20px; }
             .scroll-cue { bottom: 18px; }
             .about-grid { gap: 26px; }
+            .profile-photo { aspect-ratio: 3 / 2; }
             .profile-contact { grid-template-columns: 1fr; }
             .about-tabs { gap: 12px; }
             .about-tab { font-size: 13px; padding: 5px 1px 10px; }
