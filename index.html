@@ -1343,7 +1343,7 @@
 
                 // 현재 보이는 섹션 찾기
                 const mid = scrollTop + window.innerHeight * 0.35;
-                let activeIdx = 0;
+                let activeIdx = -1;
                 sections.forEach((sec, i) => {
                     if (sec.offsetTop <= mid) activeIdx = i;
                 });
