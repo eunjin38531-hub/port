@@ -910,7 +910,6 @@
             <p class="home-name">EUNJIN KO &nbsp;·&nbsp; UI/UX DESIGNER</p>
             <h1 class="home-title sr-only">눈치밥 디자이너</h1>
             <canvas class="rice-canvas" id="riceCanvas" aria-hidden="true"></canvas>
-            <p class="home-sub">말하기 전에 먼저 알아채는 디자이너입니다</p>
         </div>
 
         <a class="scroll-cue" id="scrollCue" href="#about" aria-label="아래로 스크롤">
@@ -1389,7 +1388,6 @@
             if (!homeEl) return;
             const grid     = homeEl.querySelector('.home-grid');
             const homeName = homeEl.querySelector('.home-name');
-            const homeSub  = homeEl.querySelector('.home-sub');
 
             let tx = 0, ty = 0, cx = 0, cy = 0;
 
@@ -1414,11 +1412,6 @@
                 if (homeName) {
                     homeName.style.transform =
                         `translate(${(cx * -14).toFixed(2)}px, ${(cy * -14).toFixed(2)}px)`;
-                }
-                // 태그라인: 같은 방향 (가장 가까운 레이어)
-                if (homeSub) {
-                    homeSub.style.transform =
-                        `translate(${(cx * 18).toFixed(2)}px, ${(cy * 18).toFixed(2)}px)`;
                 }
 
                 requestAnimationFrame(tick);
@@ -1583,8 +1576,8 @@
             const mouse = { x: -9999, y: -9999, px: -9999, py: -9999, vx: 0, vy: 0 };
 
             function build() {
-                const cssW = Math.min(window.innerWidth * 0.92, 760);
-                const fs = Math.min(cssW / 4.6, 116);
+                const cssW = Math.min(window.innerWidth * 0.94, 980);
+                const fs = Math.min(cssW / 3.7, 168);
                 const cx = cssW / 2;
                 W = cssW;
 
@@ -1610,7 +1603,7 @@
                 const warp = (x, y) => ({ x, y });
 
                 const data = o.getImageData(0, 0, cssW, offH).data;
-                const step = fs < 90 ? 4 : 5;
+                const step = 3;  // 샘플 간격 ↓ → 쌀알 더 빽빽하게
                 const raw = [];
                 let minY = Infinity, maxY = -Infinity;
                 for (let y = 0; y < offH; y += step) {
@@ -1648,8 +1641,8 @@
                         vx: 0, vy: 0,
                         k: 0.012 + Math.random() * 0.01,  // 복귀 세기 — 약하게(천천히 모임)
                         color: r.ink ? '#16181D' : '#3D4F8A',
-                        rx: 1.5 + Math.random() * 1.1,
-                        ry: 0.55 + Math.random() * 0.4,
+                        rx: 1.25 + Math.random() * 0.95,
+                        ry: 0.5 + Math.random() * 0.35,
                         ang: Math.random() * Math.PI
                     };
                 });
