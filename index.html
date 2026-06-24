@@ -1535,8 +1535,8 @@
                 const lineGap = fs * 1.04;
                 const y1 = topPad + fs * 0.55;       // '눈치밥' 중심
                 const y2 = y1 + lineGap;              // '디자이너' 중심
-                const rimY = y2 + fs * 0.56;          // 공기 입구(테두리)
-                const bowlDepth = fs * 1.18;
+                const rimY = y2 + fs * 0.5;           // 공기 입구(테두리)
+                const bowlDepth = fs * 0.92;
                 const cssH = Math.round(rimY + bowlDepth + fs * 0.55);
                 H = cssH;
 
@@ -1561,11 +1561,11 @@
 
                 // 밥공기 지오메트리
                 const cx = cssW / 2;
-                const rxb = Math.min(cssW * 0.46, Math.max(w1, w2) / 2 + fs * 0.5);
+                const rxb = Math.min(cssW * 0.42, Math.max(w1, w2) / 2 + fs * 0.22);
                 bowl = { cx, rimY, rxb, ryb: rxb * 0.15, depth: bowlDepth, lw: Math.max(2.2, fs * 0.024) };
 
-                // 봉긋한 밥 모양: 가운데가 솟은 돔 형태로 글자를 살짝 아치
-                const amp = fs * 0.16;
+                // 봉긋한 밥 모양: 가운데가 솟은 돔 형태로 글자를 아치
+                const amp = fs * 0.34;
 
                 const data = o.getImageData(0, 0, cssW, cssH).data;
                 const step = fs < 90 ? 4 : 5;
