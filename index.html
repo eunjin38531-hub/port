@@ -459,6 +459,13 @@
             border-radius: 8px;
             overflow: hidden;
         }
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+        }
 
         /* 연락처: 선언문 아래 2열로 정돈 */
         .profile-contact {
@@ -976,7 +983,9 @@
             <div class="about-grid">
                 <!-- 좌측: 프로필 이미지 -->
                 <div class="about-profile">
-                    <div class="profile-photo">PROFILE</div>
+                    <div class="profile-photo">
+                        <img src="assets/profile.jpg" alt="고은진 프로필 사진" loading="lazy">
+                    </div>
                 </div>
 
                 <!-- 우측: 탭 4개 -->
