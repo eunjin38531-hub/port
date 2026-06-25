@@ -359,22 +359,21 @@
         }
         .nav-right a span:first-child {
             color: var(--ink);
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: color 0.3s ease;
             display: block;
         }
+        /* 두 번째 span(롤 효과용) 미사용 — 숨김 */
         .nav-right a span:last-child {
             position: absolute;
             top: 100%;
             left: 0;
             color: var(--gold);
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
             display: block;
             white-space: nowrap;
         }
+        /* 호버/활성 = 색상만 변경 (이동 없음) */
         .nav-right a:hover span:first-child,
-        .nav-right a.active span:first-child { transform: translateY(-100%); }
-        .nav-right a:hover span:last-child,
-        .nav-right a.active span:last-child { transform: translateY(-100%); }
+        .nav-right a.active span:first-child { color: var(--gold); }
 
         /* (커스텀 커서 제거 — 네이티브 커서 사용) */
 
@@ -1645,7 +1644,6 @@
             setupGallery();
             setupContentInteractions();
             setupLenis();
-            setupMagnetic();
             setupHomeParallax();
             setupHomeMouseParallax();
             setupLetterCarousel();
