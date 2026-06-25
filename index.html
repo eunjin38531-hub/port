@@ -460,18 +460,13 @@
             padding-bottom: 32px;
         }
 
-        .about-layout {
+        .about-grid {
             display: grid;
-            grid-template-columns: 1fr 1.4fr;
-            gap: 60px;
+            grid-template-columns: 0.7fr 1.3fr;
+            gap: 50px;
             align-items: start;
         }
-        .about-left {
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-        }
-        .about-profile { display: flex; }
+        .about-profile { display: flex; justify-content: flex-end; }
 
         .about-intro { padding-top: 2px; }
         /* 컨셉 카피 — 크게 강조 */
@@ -543,7 +538,7 @@
 
         /* ===== About 탭 UI ===== */
         .about-tabs-wrap {
-            margin-top: 0;
+            margin-top: 24px;
         }
         .about-tabs {
             display: flex;
@@ -1099,8 +1094,8 @@
             .gallery-panel { padding-left: 24px; padding-right: 24px; }
             .sheet-head { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 40px; }
             .sheet-tag { text-align: left; }
-            .about-layout { grid-template-columns: 1fr; gap: 40px; }
-            .about-tabs-wrap { margin-top: 0; }
+            .about-grid { grid-template-columns: 1fr; gap: 28px; }
+            .about-tabs-wrap { margin-top: 38px; }
             #about { min-height: 0; display: block; padding-top: 84px; }
             .rec-grid { grid-template-columns: 1fr; gap: 0; }
             .about-tabs { gap: 16px; flex-wrap: wrap; }
@@ -1135,7 +1130,7 @@
             .sheet-head { margin-bottom: 30px; padding-bottom: 20px; }
             .home-name { letter-spacing: 2px; margin-bottom: 20px; }
             .scroll-cue { bottom: 18px; }
-            .about-layout { gap: 20px; }
+            .about-grid { gap: 24px; }
             .about-statement { white-space: normal; word-break: keep-all; }
             .profile-photo { aspect-ratio: 4 / 5; max-width: 260px; }
             .profile-contact { grid-template-columns: 1fr; }
@@ -1209,28 +1204,29 @@
                 <h2 class="sheet-title"><span class="idx">01</span>About</h2>
             </div>
 
-            <div class="about-layout">
-                <!-- 좌측: 프로필 이미지 + 인트로 -->
-                <div class="about-left">
-                    <div class="about-profile">
-                        <div class="profile-photo">
-                            <img src="profile.jpeg" alt="고은진 프로필 사진" loading="lazy">
-                        </div>
-                    </div>
-                    <div class="about-intro">
-                        <p class="about-statement">눈치는 타고나는 게 아닙니다.<br><span class="hl">관찰하는 습관</span>에서 옵니다.</p>
-                        <p class="about-sub">사용자가 말하기 전에 먼저 불편함을 읽는<br>UI/UX 디자이너입니다.</p>
-                        <ul class="profile-contact">
-                            <li><span class="ci">◷</span> 0000.00.00</li>
-                            <li><span class="ci">☎</span> 010-0000-0000</li>
-                            <li><span class="ci">✉</span> contact@example.com</li>
-                            <li><span class="ci">⌖</span> 서울시 (비공개)</li>
-                        </ul>
+            <div class="about-grid">
+                <!-- 좌측: 프로필 이미지 -->
+                <div class="about-profile">
+                    <div class="profile-photo">
+                        <img src="profile.jpeg" alt="고은진 프로필 사진" loading="lazy">
                     </div>
                 </div>
 
-                <!-- 우측: 탭 4개 -->
-                <div class="about-tabs-wrap">
+                <!-- 우측: 고정 인트로 (컨셉 카피 + 서브 + 연락처) -->
+                <div class="about-intro">
+                    <p class="about-statement">눈치는 타고나는 게 아닙니다.<br><span class="hl">관찰하는 습관</span>에서 옵니다.</p>
+                    <p class="about-sub">사용자가 말하기 전에 먼저 불편함을 읽는<br>UI/UX 디자이너입니다.</p>
+                    <ul class="profile-contact">
+                        <li><span class="ci">◷</span> 0000.00.00</li>
+                        <li><span class="ci">☎</span> 010-0000-0000</li>
+                        <li><span class="ci">✉</span> contact@example.com</li>
+                        <li><span class="ci">⌖</span> 서울시 (비공개)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 탭 4개 -->
+            <div class="about-tabs-wrap">
                 <div class="about-tabs" role="tablist">
                     <button class="about-tab is-active" data-tab="0" role="tab">이력</button>
                     <button class="about-tab" data-tab="1" role="tab">전시·활동</button>
@@ -1337,7 +1333,7 @@
                         </div>
                     </div><!-- .tab-panels -->
                 </div><!-- .about-tabs-wrap -->
-            </div><!-- .about-layout -->
+            </div>
         </section>
 
         <!-- WORKS -->
