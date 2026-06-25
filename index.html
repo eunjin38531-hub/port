@@ -864,6 +864,49 @@
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         /* 확대 보기 레이어 */
+        /* ===== PDF 케이스 스터디 모달 ===== */
+        .pdf-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            background: rgba(12, 13, 17, 0.82);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: clamp(40px, 7vh, 88px) 0 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        .pdf-modal.is-open { opacity: 1; visibility: visible; }
+        .pdf-panel {
+            position: relative;
+            width: 100%;
+            max-width: 1280px;
+            height: calc(100vh - clamp(40px, 7vh, 88px));
+            background: #14151a;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-bottom: none;
+            border-radius: 18px 18px 0 0;
+            padding: 44px 60px 0;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            transform: scale(0.97);
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+            display: flex;
+            flex-direction: column;
+        }
+        .pdf-modal.is-open .pdf-panel { transform: scale(1); }
+        .pdf-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            display: block;
+            min-height: 0;
+            border-radius: 4px 4px 0 0;
+        }
+
         .gallery-zoom {
             position: fixed;
             inset: 0;
@@ -1348,13 +1391,11 @@
             <div class="works-grid">
                 <!-- 왼쪽 컬럼: 프로젝트 1, 3 -->
                 <div class="works-col works-col--l">
-                    <div class="wcard">
-                        <a class="wcard-link" href="naru-case-study.pdf" target="_blank" rel="noopener" aria-label="naru 브랜드·디자인 시스템 케이스 스터디 PDF 열기">
-                            <div class="wcard-img s1">
-                                <img class="wcard-photo" src="work1.jpg" alt="naru 브랜드·디자인 시스템 케이스 스터디" loading="lazy" onerror="this.style.display='none'">
-                                <span class="wcard-name">naru<br>브랜드 · 디자인 시스템</span>
-                            </div>
-                        </a>
+                    <div class="wcard wcard--gallery" id="pdfTrigger">
+                        <div class="wcard-img s1">
+                            <img class="wcard-photo" src="work1.jpg" alt="naru 브랜드·디자인 시스템 케이스 스터디" loading="lazy" onerror="this.style.display='none'">
+                            <span class="wcard-name">naru<br>브랜드 · 디자인 시스템</span>
+                        </div>
                     </div>
                     <div class="wcard">
                         <div class="wcard-img s3">
@@ -1399,6 +1440,17 @@
                 </div>
             </div>
         </div>
+        <!-- PDF 케이스 스터디 모달 -->
+        <div class="pdf-modal" id="pdfModal" aria-hidden="true" role="dialog" aria-label="naru 케이스 스터디">
+            <div class="pdf-panel">
+                <div class="gallery-head">
+                    <h3>naru 브랜드 · 디자인 시스템</h3>
+                    <p>2026 케이스 스터디 · 14p</p>
+                </div>
+                <iframe class="pdf-frame" src="" data-src="naru-case-study.pdf" title="naru 케이스 스터디"></iframe>
+            </div>
+        </div>
+
         <div class="gallery-zoom" id="galleryZoom" aria-hidden="true">
             <img id="galleryZoomImg" src="" alt="">
         </div>
@@ -1654,6 +1706,7 @@
             setupCursor();
             setupWorkVideos();
             setupGallery();
+            setupPdfModal();
             setupContentInteractions();
             setupLenis();
             setupHeroSnap();
@@ -1666,6 +1719,31 @@
         });
 
         // ===== 일러스트 갤러리 모달 (S4 클릭 → 그리드 → 확대 → 닫기) =====
+        function setupPdfModal() {
+            const trigger = document.getElementById('pdfTrigger');
+            const modal   = document.getElementById('pdfModal');
+            if (!trigger || !modal) return;
+            const frame = modal.querySelector('.pdf-frame');
+
+            const openModal = () => {
+                if (frame && !frame.src) frame.src = frame.dataset.src;
+                modal.classList.add('is-open');
+                modal.setAttribute('aria-hidden', 'false');
+                if (window.lenis) window.lenis.stop();
+            };
+            const closeModal = () => {
+                modal.classList.remove('is-open');
+                modal.setAttribute('aria-hidden', 'true');
+                if (window.lenis) window.lenis.start();
+            };
+
+            trigger.addEventListener('click', openModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+            });
+        }
+
         function setupGallery() {
             const trigger = document.getElementById('illustTrigger');
             const modal   = document.getElementById('galleryModal');
