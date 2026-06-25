@@ -885,7 +885,7 @@
             position: relative;
             width: 100%;
             max-width: 1280px;
-            height: calc(100vh - clamp(40px, 7vh, 88px));
+            max-height: calc(100vh - clamp(40px, 7vh, 88px));
             background: #14151a;
             border: 1px solid rgba(255,255,255,0.07);
             border-bottom: none;
@@ -894,17 +894,22 @@
             box-shadow: 0 30px 80px rgba(0,0,0,0.5);
             transform: scale(0.97);
             transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .pdf-panel::-webkit-scrollbar { display: none; }
+        .pdf-modal.is-open .pdf-panel { transform: scale(1); }
+        .pdf-pages {
             display: flex;
             flex-direction: column;
+            gap: 8px;
+            padding-bottom: 0;
         }
-        .pdf-modal.is-open .pdf-panel { transform: scale(1); }
-        .pdf-frame {
-            flex: 1;
+        .pdf-pages img {
             width: 100%;
-            border: none;
             display: block;
-            min-height: 0;
-            border-radius: 4px 4px 0 0;
+            border-radius: 4px;
         }
 
         .gallery-zoom {
@@ -1442,12 +1447,27 @@
         </div>
         <!-- PDF 케이스 스터디 모달 -->
         <div class="pdf-modal" id="pdfModal" aria-hidden="true" role="dialog" aria-label="naru 케이스 스터디">
-            <div class="pdf-panel">
+            <div class="pdf-panel" data-lenis-prevent>
                 <div class="gallery-head">
                     <h3>naru 브랜드 · 디자인 시스템</h3>
                     <p>2026 케이스 스터디 · 14p</p>
                 </div>
-                <iframe class="pdf-frame" src="" data-src="naru-case-study.pdf" title="naru 케이스 스터디"></iframe>
+                <div class="pdf-pages">
+                    <img src="naru-p01.jpg" alt="1p" loading="lazy">
+                    <img src="naru-p02.jpg" alt="2p" loading="lazy">
+                    <img src="naru-p03.jpg" alt="3p" loading="lazy">
+                    <img src="naru-p04.jpg" alt="4p" loading="lazy">
+                    <img src="naru-p05.jpg" alt="5p" loading="lazy">
+                    <img src="naru-p06.jpg" alt="6p" loading="lazy">
+                    <img src="naru-p07.jpg" alt="7p" loading="lazy">
+                    <img src="naru-p08.jpg" alt="8p" loading="lazy">
+                    <img src="naru-p09.jpg" alt="9p" loading="lazy">
+                    <img src="naru-p10.jpg" alt="10p" loading="lazy">
+                    <img src="naru-p11.jpg" alt="11p" loading="lazy">
+                    <img src="naru-p12.jpg" alt="12p" loading="lazy">
+                    <img src="naru-p13.jpg" alt="13p" loading="lazy">
+                    <img src="naru-p14.jpg" alt="14p" loading="lazy">
+                </div>
             </div>
         </div>
 
@@ -1723,10 +1743,8 @@
             const trigger = document.getElementById('pdfTrigger');
             const modal   = document.getElementById('pdfModal');
             if (!trigger || !modal) return;
-            const frame = modal.querySelector('.pdf-frame');
 
             const openModal = () => {
-                if (frame && !frame.src.endsWith(frame.dataset.src)) frame.src = frame.dataset.src;
                 modal.classList.add('is-open');
                 modal.setAttribute('aria-hidden', 'false');
                 if (window.lenis) window.lenis.stop();
