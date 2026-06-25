@@ -783,6 +783,8 @@
         .wcard:hover .wcard-name { opacity: 1; transform: translateY(0); }
         /* 갤러리 트리거 카드 — 클릭 가능 표시 */
         .wcard--gallery { cursor: pointer; }
+        /* 링크형 카드(PDF 등) — 카드 전체를 클릭 영역으로 */
+        .wcard-link { display: block; cursor: pointer; text-decoration: none; }
 
         /* ===== 일러스트 갤러리 모달 ===== */
         .gallery-modal {
@@ -1347,10 +1349,12 @@
                 <!-- 왼쪽 컬럼: 프로젝트 1, 3 -->
                 <div class="works-col works-col--l">
                     <div class="wcard">
-                        <div class="wcard-img s1">
-                            <img class="wcard-photo" src="work1.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-                            <span class="wcard-name">프로젝트 이름</span>
-                        </div>
+                        <a class="wcard-link" href="naru-case-study.pdf" target="_blank" rel="noopener" aria-label="naru 브랜드·디자인 시스템 케이스 스터디 PDF 열기">
+                            <div class="wcard-img s1">
+                                <img class="wcard-photo" src="work1.jpg" alt="naru 브랜드·디자인 시스템 케이스 스터디" loading="lazy" onerror="this.style.display='none'">
+                                <span class="wcard-name">naru<br>브랜드 · 디자인 시스템</span>
+                            </div>
+                        </a>
                     </div>
                     <div class="wcard">
                         <div class="wcard-img s3">
