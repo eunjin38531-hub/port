@@ -1748,10 +1748,32 @@
             let mx = window.innerWidth / 2, my = window.innerHeight / 2;
             let rx = mx, ry = my;
 
-            // 커서 아래가 어두운 섹션이면 반대(흰) 색으로 — difference 블렌드 대신 명시적 대비
+            // 커서 바로 아래 요소의 '실제 배경색'을 읽어 밝기에 따라 반대색으로 자동 대비
+            const parseRGB = (str) => {
+                const m = str && str.match(/rgba?\(([^)]+)\)/);
+                if (!m) return null;
+                const p = m[1].split(',').map((s) => parseFloat(s.trim()));
+                return { r: p[0], g: p[1], b: p[2], a: p[3] === undefined ? 1 : p[3] };
+            };
+            const isDarkUnder = (el) => {
+                let node = el;
+                while (node && node.nodeType === 1) {
+                    const c = parseRGB(getComputedStyle(node).backgroundColor);
+                    if (c && c.a > 0.2) {
+                        // 상대 휘도 (0=검정 ~ 1=흰색)
+                        const lum = (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255;
+                        return lum < 0.5;
+                    }
+                    node = node.parentElement;
+                }
+                return false; // 배경 못 찾으면 밝은 것으로 간주
+            };
+            let lastEl = null;
             const updateContrast = () => {
                 const el = document.elementFromPoint(mx, my);
-                const dark = !!(el && el.closest('#letter, footer'));
+                if (el === lastEl) return;   // 같은 요소면 재계산 생략 (성능)
+                lastEl = el;
+                const dark = el ? isDarkUnder(el) : false;
                 dot.classList.toggle('on-dark', dark);
                 ring.classList.toggle('on-dark', dark);
             };
