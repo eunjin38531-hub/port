@@ -298,6 +298,11 @@
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             transition: background 0.5s ease, border-color 0.5s ease;
         }
+        body.has-modal nav {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
         nav.scrolled {
             background: rgba(245, 246, 244, 0.88);
         }
@@ -1747,11 +1752,13 @@
             const openModal = () => {
                 modal.classList.add('is-open');
                 modal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('has-modal');
                 if (window.lenis) window.lenis.stop();
             };
             const closeModal = () => {
                 modal.classList.remove('is-open');
                 modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('has-modal');
                 if (window.lenis) window.lenis.start();
             };
 
@@ -1773,13 +1780,14 @@
             const openModal = () => {
                 modal.classList.add('is-open');
                 modal.setAttribute('aria-hidden', 'false');
-                // 배경 스크롤을 현재 위치에서 그대로 고정 (Lenis 정지 → 닫을 때 위치 유지)
+                document.body.classList.add('has-modal');
                 if (window.lenis) window.lenis.stop();
             };
             const closeModal = () => {
                 closeZoom();
                 modal.classList.remove('is-open');
                 modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('has-modal');
                 if (window.lenis) window.lenis.start();
             };
             const openZoom = (src, alt) => {
