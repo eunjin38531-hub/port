@@ -1083,20 +1083,21 @@
             .nav-inner { padding: 13px 20px; gap: 16px; }
             .nav-right { gap: 22px; }
             .nav-role { display: none; }
-            .sheet { padding: 90px 24px; }
+            .sheet { padding: 60px 24px; }
             .gallery-panel { padding-left: 24px; padding-right: 24px; }
-            .sheet-head { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 50px; }
+            .sheet-head { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 40px; }
             .sheet-tag { text-align: left; }
-            .about-grid { grid-template-columns: 1fr; gap: 36px; }
-            #about { min-height: 0; display: block; padding-top: 96px; }
+            .about-grid { grid-template-columns: 1fr; gap: 32px; }
+            #about { min-height: 0; display: block; padding-top: 84px; }
             .rec-grid { grid-template-columns: 1fr; gap: 0; }
             .about-tabs { gap: 16px; flex-wrap: wrap; }
             .tab-panels { min-height: 0; }
-            /* min-height + aspect-ratio 충돌 → 너비 480px로 팽창 방지 */
-            .profile-photo { aspect-ratio: 4 / 3; min-height: 0; width: 100%; height: auto; }
+            /* 세로 사진 — 가로비율로 잘리지 않게 세로형(4/5) 유지 + 가운데 정렬 */
+            .profile-photo { aspect-ratio: 4 / 5; min-height: 0; width: 100%; max-width: 300px; height: auto; margin: 0 auto; }
             .sk-bento { gap: 8px; }
             .skill-icon { width: 84%; }
-            .works-grid { grid-template-columns: 1fr; }
+            /* 한 줄로 쌓일 때 카드 간 간격이 컬럼 내부 간격(44px)과 동일하도록 row-gap 부여 */
+            .works-grid { grid-template-columns: 1fr; gap: 44px; }
             .works-col--r { padding-top: 0; }
             .works-col { gap: 44px; }
             .wcard-img { border-radius: 12px; }
@@ -1107,6 +1108,7 @@
             .lc-card::-webkit-scrollbar { display: none; }
             .lc-quote { font-size: 20px; }
             .lc-body { font-size: 16px; line-height: 1.8; }
+            footer { padding: 52px 24px; }
         }
 
         /* 작은 폰 */
@@ -1115,13 +1117,13 @@
             .nav-right { gap: 15px; }
             .nav-right a { font-size: 0.82em; }
             .nav-brand { font-size: 1em; }
-            .sheet { padding: 68px 18px; }
+            .sheet { padding: 46px 18px; }
             .gallery-panel { padding-left: 18px; padding-right: 18px; }
-            .sheet-head { margin-bottom: 34px; padding-bottom: 20px; }
+            .sheet-head { margin-bottom: 30px; padding-bottom: 20px; }
             .home-name { letter-spacing: 2px; margin-bottom: 20px; }
             .scroll-cue { bottom: 18px; }
-            .about-grid { gap: 26px; }
-            .profile-photo { aspect-ratio: 3 / 2; }
+            .about-grid { gap: 24px; }
+            .profile-photo { aspect-ratio: 4 / 5; max-width: 260px; }
             .profile-contact { grid-template-columns: 1fr; }
             .about-tabs { gap: 12px; }
             .about-tab { font-size: 13px; padding: 5px 1px 10px; }
@@ -1130,6 +1132,7 @@
             .sk-bento { gap: 6px; }
             .sk-bcard { flex: 1 1 0; width: auto; }
             .skill-icon { width: 82%; border-radius: 26%; }
+            .works-grid { gap: 38px; }
             .works-col { gap: 38px; }
             .wcard-links { gap: 16px; }
             .lc-viewport { height: 76vh; min-height: 440px; max-height: 560px; }
@@ -1137,7 +1140,7 @@
             .lc-quote { font-size: 17px; line-height: 1.45; margin-bottom: 14px; }
             .lc-body { font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
             .lc-controls { margin-top: 22px; }
-            footer { padding: 48px 22px; }
+            footer { padding: 40px 22px; }
         }
     </style>
     <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
