@@ -857,23 +857,6 @@
         .gallery-item:hover { box-shadow: 0 12px 36px rgba(0,0,0,0.45); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        .gallery-close {
-            position: fixed;
-            top: clamp(16px, 3vh, 28px);
-            right: clamp(16px, 3vw, 32px);
-            width: 46px; height: 46px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.18);
-            background: rgba(255,255,255,0.06);
-            color: #fff;
-            font-size: 24px;
-            line-height: 1;
-            cursor: pointer;
-            z-index: 9300;
-            transition: background 0.25s ease, transform 0.25s ease;
-        }
-        .gallery-close:hover { background: rgba(255,255,255,0.16); transform: rotate(90deg); }
-
         /* 확대 보기 레이어 */
         .gallery-zoom {
             position: fixed;
@@ -1375,7 +1358,6 @@
 
         <!-- 일러스트 갤러리 모달 -->
         <div class="gallery-modal" id="galleryModal" aria-hidden="true" role="dialog" aria-label="Digital Illustration 갤러리">
-            <button class="gallery-close" id="galleryClose" aria-label="갤러리 닫기">&times;</button>
             <div class="gallery-panel" data-lenis-prevent>
                 <div class="gallery-head">
                     <h3>Digital Illustration</h3>
@@ -1674,7 +1656,6 @@
         function setupGallery() {
             const trigger = document.getElementById('illustTrigger');
             const modal   = document.getElementById('galleryModal');
-            const closeBtn= document.getElementById('galleryClose');
             const grid    = document.getElementById('galleryGrid');
             const zoom    = document.getElementById('galleryZoom');
             const zoomImg = document.getElementById('galleryZoomImg');
@@ -1704,7 +1685,6 @@
             };
 
             trigger.addEventListener('click', openModal);
-            closeBtn.addEventListener('click', closeModal);
 
             // 그림 클릭 → 확대 / 깨진(미업로드) 이미지는 무시
             grid.querySelectorAll('.gallery-item').forEach((btn) => {
@@ -1792,7 +1772,7 @@
             loop();
 
             // 인터랙티브 요소 위에서 '초점' 확대
-            const hoverSel = 'a, button, input, textarea, [role="tab"], .sk-bcard, .about-tab, .lc-btn, .wcard, .wcard-link, .scroll-cue, .nav-brand, .gallery-item, .gallery-close';
+            const hoverSel = 'a, button, input, textarea, [role="tab"], .sk-bcard, .about-tab, .lc-btn, .wcard, .wcard-link, .scroll-cue, .nav-brand, .gallery-item';
             const bindHover = (el) => {
                 el.addEventListener('mouseenter', () => { ring.classList.add('is-hover'); dot.classList.add('is-hover'); });
                 el.addEventListener('mouseleave', () => { ring.classList.remove('is-hover'); dot.classList.remove('is-hover'); });
