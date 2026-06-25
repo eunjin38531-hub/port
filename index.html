@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고은진 | 눈칫밥 잘 먹는 디자이너</title>
+    <title>고은진 | 눈칫밥 디자이너</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='none' stroke='%233D4F8A' stroke-width='5'/><polygon points='50,18 42,50 58,50' fill='%233D4F8A'/><polygon points='50,82 42,50 58,50' fill='%23C2C8D8'/></svg>">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <style>
@@ -1021,7 +1021,7 @@
         <!-- 히어로 텍스트 -->
         <div class="home-inner">
             <p class="home-name">EUNJIN KO &nbsp;·&nbsp; UI/UX DESIGNER</p>
-            <h1 class="home-title sr-only">눈칫밥 잘 먹는 디자이너</h1>
+            <h1 class="home-title sr-only">눈칫밥 디자이너</h1>
             <canvas class="rice-canvas" id="riceCanvas" aria-hidden="true"></canvas>
         </div>
 
@@ -1340,7 +1340,7 @@
 
 
     <footer>
-        <span class="big">눈칫밥 잘 먹는 <span class="accent">디자이너</span></span>
+        <span class="big">눈칫밥 <span class="accent">디자이너</span></span>
         <p>contact@example.com · 010-0000-0000</p>
         <p>&copy; 2026 고은진 · UI/UX Designer</p>
     </footer>
@@ -1765,7 +1765,7 @@
                 W = cssW;
 
                 // 오프스크린에 글자 3줄 렌더 (평면) → 픽셀 샘플링
-                const offH = Math.round(fs * 5.5);
+                const offH = Math.round(fs * 4);
                 const off = document.createElement('canvas');
                 off.width = cssW; off.height = offH;
                 const o = off.getContext('2d');
@@ -1774,16 +1774,13 @@
                 o.textBaseline = 'middle';
                 o.font = `800 ${fs}px Pretendard, -apple-system, sans-serif`;
                 const w1 = o.measureText('눈칫밥').width;
-                const w2 = o.measureText('잘 먹는').width;
-                const w3 = o.measureText('디자이너').width;
-                const halfW = Math.max(w1, w2, w3) / 2;
+                const w2 = o.measureText('디자이너').width;
+                const halfW = Math.max(w1, w2) / 2;
                 const ty1 = fs * 0.95;           // '눈칫밥' 중심
-                const ty2 = ty1 + fs * 1.06;     // '잘 먹는' 중심
-                const ty3 = ty2 + fs * 1.06;     // '디자이너' 중심
-                const baseY = (ty1 + ty3) / 2;
+                const ty2 = ty1 + fs * 1.06;     // '디자이너' 중심
+                const baseY = (ty1 + ty2) / 2;
                 o.fillText('눈칫밥', cx, ty1);
-                o.fillText('잘 먹는', cx, ty2);
-                o.fillText('디자이너', cx, ty3);
+                o.fillText('디자이너', cx, ty2);
 
                 // 평평한 두 줄 (아치 없음)
                 const warp = (x, y) => ({ x, y });
