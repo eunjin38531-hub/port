@@ -1795,6 +1795,25 @@
             const wrap = document.querySelector('.tab-panels');
             if (!tabs.length) return;
 
+            const lockHeight = () => {
+                if (!wrap) return;
+                let max = 0;
+                panels.forEach((p) => {
+                    const prev = p.style.display;
+                    p.style.position = 'absolute';
+                    p.style.visibility = 'hidden';
+                    p.style.display = 'block';
+                    p.style.width = '100%';
+                    max = Math.max(max, p.offsetHeight);
+                    p.style.position = '';
+                    p.style.visibility = '';
+                    p.style.display = prev;
+                    p.style.width = '';
+                });
+                wrap.style.minHeight = max + 'px';
+            };
+            lockHeight();
+            window.addEventListener('resize', lockHeight);
 
             tabs.forEach((tab) => {
                 tab.addEventListener('click', () => {
