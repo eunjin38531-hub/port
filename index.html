@@ -84,13 +84,12 @@
                             height 0.3s cubic-bezier(0.22,1,0.36,1),
                             opacity 0.3s ease, background-color 0.25s ease, border-color 0.25s ease;
             }
-            /* 인터랙티브 요소 위 = 속 채운 원(대비 색)으로 → 오브제 위에서 반대색 도트 */
-            .cursor-ring.is-hover { width: 46px; height: 46px; background: var(--ink); border-color: transparent; }
+            /* 인터랙티브 요소 위 = 속 빈 큰 링(테두리만) → 안쪽이 비어 무엇을 누르는지 보임 */
+            .cursor-ring.is-hover { width: 54px; height: 54px; background: transparent; border-width: 2px; }
             .cursor-dot.is-hover  { opacity: 0; }
             /* 어두운 섹션 위(Letter·Footer) = 반대로 흰색 */
             .cursor-dot.on-dark  { background: #fff; }
             .cursor-ring.on-dark { border-color: #fff; }
-            .cursor-ring.on-dark.is-hover { background: #fff; border-color: transparent; }
             /* 클릭 = 눈을 '깜빡'이듯 링이 빠르게 수축 */
             .cursor-ring.is-down  { width: 22px; height: 22px; }
             .cursor-dot.is-down   { width: 4px; height: 4px; }
