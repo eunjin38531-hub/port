@@ -480,16 +480,27 @@
             align-items: start;
         }
 
+        .about-intro { padding-top: 2px; }
+        /* 컨셉 카피 — 크게 강조 */
         .about-statement {
-            font-size: var(--fs-body-l);
-            font-weight: var(--fw-body);
+            font-size: clamp(23px, 3vw, 34px);
+            font-weight: var(--fw-head);
             color: var(--ink);
-            line-height: 1.7;
-            letter-spacing: 0;
-            margin-bottom: 28px;
+            line-height: 1.32;
+            letter-spacing: -0.6px;
+            margin-bottom: 18px;
+            word-break: keep-all;
         }
-
-        .about-statement .hl { color: var(--gold); font-weight: 600; }
+        .about-statement .hl { color: var(--gold); }
+        /* 서브 문장 — 작게 */
+        .about-sub {
+            font-size: var(--fs-body-m);
+            font-weight: var(--fw-body);
+            color: #6a6a72;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            word-break: keep-all;
+        }
 
         .profile-photo {
             width: 100%;
@@ -543,7 +554,7 @@
 
         /* ===== About 탭 UI ===== */
         .about-tabs-wrap {
-            /* sits in the right column of about-grid */
+            margin-top: 56px;   /* 인트로(프로필) 영역 아래로 분리 */
         }
         .about-tabs {
             display: flex;
@@ -1099,7 +1110,8 @@
             .gallery-panel { padding-left: 24px; padding-right: 24px; }
             .sheet-head { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 40px; }
             .sheet-tag { text-align: left; }
-            .about-grid { grid-template-columns: 1fr; gap: 32px; }
+            .about-grid { grid-template-columns: 1fr; gap: 28px; }
+            .about-tabs-wrap { margin-top: 38px; }
             #about { min-height: 0; display: block; padding-top: 84px; }
             .rec-grid { grid-template-columns: 1fr; gap: 0; }
             .about-tabs { gap: 16px; flex-wrap: wrap; }
@@ -1216,30 +1228,31 @@
                     </div>
                 </div>
 
-                <!-- 우측: 탭 4개 -->
-                <div class="about-tabs-wrap">
-                    <div class="about-tabs" role="tablist">
-                        <button class="about-tab is-active" data-tab="0" role="tab">소개</button>
-                        <button class="about-tab" data-tab="1" role="tab">이력</button>
-                        <button class="about-tab" data-tab="2" role="tab">전시·활동</button>
-                        <button class="about-tab" data-tab="3" role="tab">자격증</button>
-                        <button class="about-tab" data-tab="4" role="tab">스킬</button>
-                    </div>
+                <!-- 우측: 고정 인트로 (컨셉 카피 + 서브 + 연락처) -->
+                <div class="about-intro">
+                    <p class="about-statement">눈치는 타고나는 게<br>아닙니다.<br><span class="hl">관찰하는 습관</span>에서 옵니다.</p>
+                    <p class="about-sub">사용자가 말하기 전에 먼저 불편함을 읽는<br>UI/UX 디자이너입니다.</p>
+                    <ul class="profile-contact">
+                        <li><span class="ci">◷</span> 0000.00.00</li>
+                        <li><span class="ci">☎</span> 010-0000-0000</li>
+                        <li><span class="ci">✉</span> contact@example.com</li>
+                        <li><span class="ci">⌖</span> 서울시 (비공개)</li>
+                    </ul>
+                </div>
+            </div>
 
-                    <div class="tab-panels">
-                        <!-- 소개: 선언문 + 연락처 -->
-                        <div class="tab-panel is-active" data-panel="0" role="tabpanel">
-                            <p class="about-statement">말하기 전에<br><span class="hl">먼저 압니다.</span></p>
-                            <ul class="profile-contact">
-                                <li><span class="ci">◷</span> 0000.00.00</li>
-                                <li><span class="ci">☎</span> 010-0000-0000</li>
-                                <li><span class="ci">✉</span> contact@example.com</li>
-                                <li><span class="ci">⌖</span> 서울시 (비공개)</li>
-                            </ul>
-                        </div>
+            <!-- 탭 4개 -->
+            <div class="about-tabs-wrap">
+                <div class="about-tabs" role="tablist">
+                    <button class="about-tab is-active" data-tab="0" role="tab">이력</button>
+                    <button class="about-tab" data-tab="1" role="tab">전시·활동</button>
+                    <button class="about-tab" data-tab="2" role="tab">자격증</button>
+                    <button class="about-tab" data-tab="3" role="tab">스킬</button>
+                </div>
 
-                        <!-- 이력: 학력 · 경력 · 교육 -->
-                        <div class="tab-panel" data-panel="1" role="tabpanel">
+                <div class="tab-panels">
+                    <!-- 이력: 학력 · 경력 · 교육 -->
+                    <div class="tab-panel is-active" data-panel="0" role="tabpanel">
                             <div class="rec-grid">
                                 <div class="about-block">
                                     <h4 class="about-h">학력</h4>
@@ -1266,7 +1279,7 @@
                         </div>
 
                         <!-- 전시·활동: 전시 · 봉사활동 -->
-                        <div class="tab-panel" data-panel="2" role="tabpanel">
+                        <div class="tab-panel" data-panel="1" role="tabpanel">
                             <div class="rec-grid">
                                 <div class="about-block">
                                     <h4 class="about-h">전시</h4>
@@ -1284,7 +1297,7 @@
                         </div>
 
                         <!-- 자격증 -->
-                        <div class="tab-panel" data-panel="3" role="tabpanel">
+                        <div class="tab-panel" data-panel="2" role="tabpanel">
                             <div class="about-block">
                                 <div class="cert-badges">
                                     <span>컴퓨터그래픽스기능사</span>
@@ -1296,7 +1309,7 @@
                         </div>
 
                         <!-- 스킬 -->
-                        <div class="tab-panel" data-panel="4" role="tabpanel">
+                        <div class="tab-panel" data-panel="3" role="tabpanel">
                             <div class="sk-bento">
                                 <div class="sk-bcard">
                                     <div class="skill-icon figma">
@@ -1334,8 +1347,8 @@
                                 </div>
                             </div><!-- .sk-bento -->
                         </div>
-                    </div>
-                </div>
+                    </div><!-- .tab-panels -->
+                </div><!-- .about-tabs-wrap -->
             </div>
         </section>
 
