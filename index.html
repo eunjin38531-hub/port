@@ -477,7 +477,7 @@
             display: grid;
             grid-template-columns: 0.7fr 1.3fr;
             gap: 50px;
-            align-items: stretch;   /* 이미지가 텍스트 블록 높이에 맞춰 늘어남 */
+            align-items: start;
         }
         .about-profile { display: flex; }
 
@@ -505,8 +505,9 @@
 
         .profile-photo {
             width: 100%;
-            height: 100%;            /* 텍스트 블록 전체 높이에 맞춤 */
-            min-height: 340px;
+            aspect-ratio: 4 / 5;
+            height: auto;
+            min-height: 0;
             background: linear-gradient(150deg, var(--navy), var(--ink));
             display: flex;
             align-items: center;
@@ -550,7 +551,7 @@
 
         /* ===== About 탭 UI ===== */
         .about-tabs-wrap {
-            margin-top: 56px;   /* 인트로(프로필) 영역 아래로 분리 */
+            margin-top: 24px;
         }
         .about-tabs {
             display: flex;
