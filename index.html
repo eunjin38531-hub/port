@@ -1726,7 +1726,7 @@
             const frame = modal.querySelector('.pdf-frame');
 
             const openModal = () => {
-                if (frame && !frame.src) frame.src = frame.dataset.src;
+                if (frame && !frame.src.endsWith(frame.dataset.src)) frame.src = frame.dataset.src;
                 modal.classList.add('is-open');
                 modal.setAttribute('aria-hidden', 'false');
                 if (window.lenis) window.lenis.stop();
