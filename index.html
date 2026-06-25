@@ -70,24 +70,27 @@
                 pointer-events: none;
                 z-index: 99999;
                 border-radius: 50%;
-                mix-blend-mode: difference;  /* 밝은/어두운 섹션 모두에서 반전 대비 */
                 will-change: transform;
             }
             .cursor-dot {
                 width: 7px; height: 7px;
-                background: #fff;
-                transition: width 0.22s ease, height 0.22s ease, opacity 0.22s ease;
+                background: var(--ink);
+                transition: width 0.22s ease, height 0.22s ease, opacity 0.22s ease, background-color 0.25s ease;
             }
             .cursor-ring {
                 width: 34px; height: 34px;
-                border: 1.4px solid #fff;
+                border: 1.5px solid var(--ink);
                 transition: width 0.3s cubic-bezier(0.22,1,0.36,1),
                             height 0.3s cubic-bezier(0.22,1,0.36,1),
-                            opacity 0.3s ease, background-color 0.3s ease;
+                            opacity 0.3s ease, background-color 0.25s ease, border-color 0.25s ease;
             }
-            /* 인터랙티브 요소 위 = 링이 '속 채운 원'으로 → difference 블렌드로 아래 색이 반전됨 */
-            .cursor-ring.is-hover { width: 46px; height: 46px; background: #fff; border-color: transparent; }
+            /* 인터랙티브 요소 위 = 속 채운 원(대비 색)으로 → 오브제 위에서 반대색 도트 */
+            .cursor-ring.is-hover { width: 46px; height: 46px; background: var(--ink); border-color: transparent; }
             .cursor-dot.is-hover  { opacity: 0; }
+            /* 어두운 섹션 위(Letter·Footer) = 반대로 흰색 */
+            .cursor-dot.on-dark  { background: #fff; }
+            .cursor-ring.on-dark { border-color: #fff; }
+            .cursor-ring.on-dark.is-hover { background: #fff; border-color: transparent; }
             /* 클릭 = 눈을 '깜빡'이듯 링이 빠르게 수축 */
             .cursor-ring.is-down  { width: 22px; height: 22px; }
             .cursor-dot.is-down   { width: 4px; height: 4px; }
@@ -1532,12 +1535,21 @@
             let mx = window.innerWidth / 2, my = window.innerHeight / 2;
             let rx = mx, ry = my;
 
+            // 커서 아래가 어두운 섹션이면 반대(흰) 색으로 — difference 블렌드 대신 명시적 대비
+            const updateContrast = () => {
+                const el = document.elementFromPoint(mx, my);
+                const dark = !!(el && el.closest('#letter, footer'));
+                dot.classList.toggle('on-dark', dark);
+                ring.classList.toggle('on-dark', dark);
+            };
+
             // 동공은 즉시, 링은 살짝 늦게 따라오며 '먼저 향하는 시선'의 잔상을 만든다
             window.addEventListener('mousemove', (e) => {
                 mx = e.clientX; my = e.clientY;
                 dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
                 dot.classList.remove('is-hidden');
                 ring.classList.remove('is-hidden');
+                updateContrast();
             });
 
             const loop = () => {
