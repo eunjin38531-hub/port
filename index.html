@@ -1667,6 +1667,7 @@
             setupGallery();
             setupContentInteractions();
             setupLenis();
+            setupHeroSnap();
             setupHomeParallax();
             setupHomeMouseParallax();
             setupLetterCarousel();
@@ -1920,6 +1921,54 @@
             nextBtn.addEventListener('click', () => { if (idx < total - 1) { idx++; render(); } });
 
             render();
+        }
+
+        // ===== 히어로 → About 스냅 (PPT처럼 한 번에 끝까지 슬라이드) =====
+        function setupHeroSnap() {
+            const about = document.getElementById('about');
+            if (!about || !window.lenis) return;
+            if (!window.matchMedia('(pointer: fine)').matches && !('ontouchstart' in window)) return;
+
+            let snapping = false;
+            const vh = () => window.innerHeight;
+            const snapTo = (target) => {
+                snapping = true;
+                window.lenis.scrollTo(target, { duration: 1.0, lock: true, onComplete: () => { snapping = false; } });
+            };
+
+            // 휠: 히어로 구간에서 아래로 → About까지 한 번에 / About 상단에서 위로 → 히어로로
+            window.addEventListener('wheel', (e) => {
+                const y = window.scrollY;
+                if (snapping) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+                if (y < vh() * 0.6 && e.deltaY > 0) {
+                    e.preventDefault(); e.stopImmediatePropagation();
+                    snapTo(about);
+                } else if (y >= vh() * 0.6 && y < vh() * 1.4 && e.deltaY < 0) {
+                    e.preventDefault(); e.stopImmediatePropagation();
+                    snapTo(0);
+                }
+            }, { passive: false, capture: true });
+
+            // 키보드
+            window.addEventListener('keydown', (e) => {
+                if (snapping) return;
+                const y = window.scrollY;
+                if (y < vh() * 0.6 && (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ')) {
+                    e.preventDefault();
+                    snapTo(about);
+                }
+            }, true);
+
+            // 터치 (모바일)
+            let ty = null;
+            window.addEventListener('touchstart', (e) => { ty = e.touches[0].clientY; }, { passive: true });
+            window.addEventListener('touchmove', (e) => {
+                if (ty == null || snapping) return;
+                const y = window.scrollY;
+                const dy = ty - e.touches[0].clientY; // +면 아래로 스와이프(콘텐츠 위로)
+                if (y < vh() * 0.6 && dy > 24) { e.preventDefault(); snapTo(about); }
+                else if (y >= vh() * 0.6 && y < vh() * 1.4 && dy < -24) { e.preventDefault(); snapTo(0); }
+            }, { passive: false });
         }
 
         // ===== LENIS SMOOTH SCROLL =====
