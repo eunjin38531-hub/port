@@ -786,24 +786,45 @@
             position: fixed;
             inset: 0;
             z-index: 9000;
-            background: rgba(12, 13, 17, 0.92);
+            background: rgba(12, 13, 17, 0.82);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            overflow-y: auto;
-            padding: clamp(56px, 9vh, 96px) clamp(18px, 5vw, 64px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(28px, 6vh, 64px) clamp(24px, 8vw, 120px);  /* 좌우 여백 */
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.35s ease, visibility 0.35s ease;
         }
         .gallery-modal.is-open { opacity: 1; visibility: visible; }
 
+        /* 가운데 패널 — 내부 스크롤, 바깥(여백) 클릭 시 닫힘 */
+        .gallery-panel {
+            position: relative;
+            width: 100%;
+            max-width: 1080px;
+            max-height: 86vh;
+            overflow-y: auto;
+            background: #14151a;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 18px;
+            padding: clamp(26px, 3.5vw, 44px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            -webkit-overflow-scrolling: touch;
+            transform: scale(0.97);
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .gallery-modal.is-open .gallery-panel { transform: scale(1); }
+        .gallery-panel::-webkit-scrollbar { width: 8px; }
+        .gallery-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 8px; }
+
         .gallery-head {
-            max-width: 1100px;
-            margin: 0 auto 28px;
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
             gap: 16px;
+            margin-bottom: 24px;
         }
         .gallery-head h3 {
             color: #fff;
@@ -814,8 +835,6 @@
         .gallery-head p { color: rgba(255,255,255,0.55); font-size: var(--fs-body-s); }
 
         .gallery-grid {
-            max-width: 1100px;
-            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
@@ -1356,18 +1375,20 @@
         <!-- 일러스트 갤러리 모달 -->
         <div class="gallery-modal" id="galleryModal" aria-hidden="true" role="dialog" aria-label="Digital Illustration 갤러리">
             <button class="gallery-close" id="galleryClose" aria-label="갤러리 닫기">&times;</button>
-            <div class="gallery-head">
-                <h3>Digital Illustration</h3>
-                <p>클릭하면 크게 볼 수 있어요</p>
-            </div>
-            <div class="gallery-grid" id="galleryGrid">
-                <button class="gallery-item" type="button"><img src="illust1.jpg" alt="Digital Illustration 1" loading="lazy"></button>
-                <button class="gallery-item" type="button"><img src="illust2.jpg" alt="Digital Illustration 2" loading="lazy"></button>
-                <button class="gallery-item" type="button"><img src="illust3.jpg" alt="Digital Illustration 3" loading="lazy"></button>
-                <button class="gallery-item" type="button"><img src="illust4.jpg" alt="Digital Illustration 4" loading="lazy"></button>
-                <button class="gallery-item" type="button"><img src="illust5.jpg" alt="Digital Illustration 5" loading="lazy"></button>
-                <button class="gallery-item" type="button"><img src="illust6.jpg" alt="Digital Illustration 6" loading="lazy"></button>
-                <button class="gallery-item" type="button"><img src="illust7.jpg" alt="Digital Illustration 7" loading="lazy"></button>
+            <div class="gallery-panel" data-lenis-prevent>
+                <div class="gallery-head">
+                    <h3>Digital Illustration</h3>
+                    <p>클릭하면 크게 볼 수 있어요</p>
+                </div>
+                <div class="gallery-grid" id="galleryGrid">
+                    <button class="gallery-item" type="button"><img src="illust1.jpg" alt="Digital Illustration 1" loading="lazy"></button>
+                    <button class="gallery-item" type="button"><img src="illust2.jpg" alt="Digital Illustration 2" loading="lazy"></button>
+                    <button class="gallery-item" type="button"><img src="illust3.jpg" alt="Digital Illustration 3" loading="lazy"></button>
+                    <button class="gallery-item" type="button"><img src="illust4.jpg" alt="Digital Illustration 4" loading="lazy"></button>
+                    <button class="gallery-item" type="button"><img src="illust5.jpg" alt="Digital Illustration 5" loading="lazy"></button>
+                    <button class="gallery-item" type="button"><img src="illust6.jpg" alt="Digital Illustration 6" loading="lazy"></button>
+                    <button class="gallery-item" type="button"><img src="illust7.jpg" alt="Digital Illustration 7" loading="lazy"></button>
+                </div>
             </div>
         </div>
         <div class="gallery-zoom" id="galleryZoom" aria-hidden="true">
@@ -1661,13 +1682,14 @@
             const openModal = () => {
                 modal.classList.add('is-open');
                 modal.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden';
+                // 배경 스크롤을 현재 위치에서 그대로 고정 (Lenis 정지 → 닫을 때 위치 유지)
+                if (window.lenis) window.lenis.stop();
             };
             const closeModal = () => {
                 closeZoom();
                 modal.classList.remove('is-open');
                 modal.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = '';
+                if (window.lenis) window.lenis.start();
             };
             const openZoom = (src, alt) => {
                 zoomImg.src = src;
