@@ -601,7 +601,7 @@
             display: flex;
             flex-wrap: nowrap;
             gap: 8px;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         .sk-bcard {
@@ -1486,7 +1486,30 @@
         function setupAboutTabs() {
             const tabs = Array.from(document.querySelectorAll('.about-tab'));
             const panels = Array.from(document.querySelectorAll('.tab-panel'));
+            const wrap = document.querySelector('.tab-panels');
             if (!tabs.length) return;
+
+            // 가장 큰 패널 높이를 미리 잡아둬서, 탭 전환 시 아래 레이아웃이 밀리지 않게 고정
+            const lockHeight = () => {
+                if (!wrap) return;
+                let max = 0;
+                panels.forEach((p) => {
+                    const prevDisplay = p.style.display;
+                    p.style.position = 'absolute';
+                    p.style.visibility = 'hidden';
+                    p.style.display = 'block';
+                    p.style.width = '100%';
+                    max = Math.max(max, p.offsetHeight);
+                    p.style.position = '';
+                    p.style.visibility = '';
+                    p.style.display = prevDisplay;
+                    p.style.width = '';
+                });
+                wrap.style.minHeight = max + 'px';
+            };
+            lockHeight();
+            window.addEventListener('resize', lockHeight);
+
             tabs.forEach((tab) => {
                 tab.addEventListener('click', () => {
                     const i = tab.dataset.tab;
