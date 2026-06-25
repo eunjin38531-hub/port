@@ -64,6 +64,7 @@
         @media (hover: hover) and (pointer: fine) {
             * { cursor: none !important; }
 
+            /* 흰색 + difference 블렌드 → 배경을 픽셀 단위로 자동 반전 (레퍼런스 방식) */
             .cursor-dot, .cursor-ring {
                 position: fixed;
                 top: 0; left: 0;
@@ -71,26 +72,23 @@
                 z-index: 99999;
                 border-radius: 50%;
                 will-change: transform;
+                mix-blend-mode: difference;
             }
             .cursor-dot {
                 width: 7px; height: 7px;
-                background: var(--ink);
-                transition: width 0.22s ease, height 0.22s ease, opacity 0.22s ease, background-color 0.25s ease;
+                background: #fff;
+                transition: width 0.22s ease, height 0.22s ease, opacity 0.22s ease;
             }
             .cursor-ring {
                 width: 34px; height: 34px;
-                border: 1.5px solid var(--ink);
+                border: 1.5px solid #fff;
                 transition: width 0.3s cubic-bezier(0.22,1,0.36,1),
                             height 0.3s cubic-bezier(0.22,1,0.36,1),
                             opacity 0.3s ease, background-color 0.25s ease, border-color 0.25s ease;
             }
-            /* 클릭 가능한 요소 위 = 배경과 대비되는 '단색(꽉 찬 원)' */
-            .cursor-ring.is-hover { width: 40px; height: 40px; background: var(--ink); border-color: transparent; }
+            /* 클릭 가능한 요소 위 = 꽉 찬 흰 원 (difference로 배경 반전색이 됨) */
+            .cursor-ring.is-hover { width: 40px; height: 40px; background: #fff; border-color: transparent; }
             .cursor-dot.is-hover  { opacity: 0; }
-            /* 배경 밝기에 따라 자동 대비: 어두운 배경 위 = 흰색 */
-            .cursor-dot.on-dark  { background: #fff; }
-            .cursor-ring.on-dark { border-color: #fff; }
-            .cursor-ring.on-dark.is-hover { background: #fff; }
             /* 클릭 = 살짝 수축 */
             .cursor-ring.is-down  { width: 26px; height: 26px; }
             .cursor-dot.is-down   { width: 4px; height: 4px; }
@@ -1758,43 +1756,13 @@
             let mx = window.innerWidth / 2, my = window.innerHeight / 2;
             let rx = mx, ry = my;
 
-            // 커서 바로 아래 요소의 '실제 배경색'을 읽어 밝기에 따라 반대색으로 자동 대비
-            const parseRGB = (str) => {
-                const m = str && str.match(/rgba?\(([^)]+)\)/);
-                if (!m) return null;
-                const p = m[1].split(',').map((s) => parseFloat(s.trim()));
-                return { r: p[0], g: p[1], b: p[2], a: p[3] === undefined ? 1 : p[3] };
-            };
-            const isDarkUnder = (el) => {
-                let node = el;
-                while (node && node.nodeType === 1) {
-                    const c = parseRGB(getComputedStyle(node).backgroundColor);
-                    if (c && c.a > 0.2) {
-                        // 상대 휘도 (0=검정 ~ 1=흰색)
-                        const lum = (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255;
-                        return lum < 0.5;
-                    }
-                    node = node.parentElement;
-                }
-                return false; // 배경 못 찾으면 밝은 것으로 간주
-            };
-            let lastEl = null;
-            const updateContrast = () => {
-                const el = document.elementFromPoint(mx, my);
-                if (el === lastEl) return;   // 같은 요소면 재계산 생략 (성능)
-                lastEl = el;
-                const dark = el ? isDarkUnder(el) : false;
-                dot.classList.toggle('on-dark', dark);
-                ring.classList.toggle('on-dark', dark);
-            };
-
             // 동공은 즉시, 링은 살짝 늦게 따라오며 '먼저 향하는 시선'의 잔상을 만든다
+            // 색 대비는 CSS mix-blend-mode: difference 가 픽셀 단위로 자동 처리
             window.addEventListener('mousemove', (e) => {
                 mx = e.clientX; my = e.clientY;
                 dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
                 dot.classList.remove('is-hidden');
                 ring.classList.remove('is-hidden');
-                updateContrast();
             });
 
             const loop = () => {
