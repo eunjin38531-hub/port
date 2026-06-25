@@ -600,7 +600,8 @@
         .sk-bento {
             display: flex;
             flex-wrap: nowrap;
-            gap: 12px;
+            gap: 8px;
+            justify-content: center;
         }
 
         .sk-bcard {
@@ -608,7 +609,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex: 1 1 0;
+            flex: 0 0 auto;
+            width: clamp(46px, 6vw, 60px);
             min-width: 0;
             aspect-ratio: 1 / 1;
             cursor: pointer;
@@ -625,7 +627,7 @@
         }
 
         .skill-icon {
-            width: 58%;
+            width: 84%;
             aspect-ratio: 1 / 1;
             border-radius: 24%;
             display: flex;
@@ -912,7 +914,7 @@
             /* min-height + aspect-ratio 충돌 → 너비 480px로 팽창 방지 */
             .profile-photo { aspect-ratio: 4 / 3; min-height: 0; width: 100%; height: auto; }
             .sk-bento { gap: 8px; }
-            .skill-icon { width: 64%; }
+            .skill-icon { width: 84%; }
             .works-grid { grid-template-columns: 1fr; }
             .works-col--r { padding-top: 0; }
             .works-col { gap: 44px; }
@@ -938,7 +940,8 @@
             .rec { grid-template-columns: 70px 1fr; gap: 10px; padding: 11px 0; }
             .cert-badges span { padding: 8px 14px; }
             .sk-bento { gap: 6px; }
-            .skill-icon { width: 70%; border-radius: 26%; }
+            .sk-bcard { flex: 1 1 0; width: auto; }
+            .skill-icon { width: 82%; border-radius: 26%; }
             .works-col { gap: 38px; }
             .wcard-links { gap: 16px; }
             .lc-viewport { height: 600px; }
