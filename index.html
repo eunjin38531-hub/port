@@ -879,15 +879,23 @@
             font-weight: var(--fw-body);
             letter-spacing: 1px;
         }
-        footer .big {
-            font-size: clamp(32px, 4vw, var(--fs-h1));
+        footer .foot-name {
+            font-size: clamp(20px, 2.4vw, 28px);
             font-weight: var(--fw-head);
             color: var(--paper);
-            letter-spacing: -1px;
-            margin-bottom: 14px;
-            display: block;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
         }
-        footer .big .accent { color: var(--gold); }
+        footer .foot-role {
+            font-size: 0.5em;
+            font-weight: var(--fw-body);
+            color: #8a8d96;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+        footer .foot-contact { color: #aaa; margin-bottom: 26px; }
+        footer .foot-copy { color: #6f727a; font-size: 0.92em; }
 
         @media (max-width: 920px) {
             .nav-inner { padding: 13px 20px; gap: 16px; }
@@ -1247,9 +1255,9 @@
 
 
     <footer>
-        <span class="big">눈칫밥 <span class="accent">디자이너</span></span>
-        <p>contact@example.com · 010-0000-0000</p>
-        <p>&copy; 2026 고은진 · UI/UX Designer</p>
+        <p class="foot-name">고은진 <span class="foot-role">· 눈칫밥 디자이너</span></p>
+        <p class="foot-contact">contact@example.com · 010-0000-0000</p>
+        <p class="foot-copy">&copy; 2026 고은진 · UI/UX Designer</p>
     </footer>
 
     <script>
