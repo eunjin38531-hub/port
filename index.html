@@ -745,7 +745,8 @@
         .wcard:hover .wcard-img.s2 { background: linear-gradient(160deg, #F0F1F4, #C2C8D8); }
         .wcard:hover .wcard-img.s3 { background: linear-gradient(135deg, #C2C8D8, #8C99C4); }
         .wcard:hover .wcard-img.s4 { background: linear-gradient(160deg, #EAECF0, #A9B4D0); }
-        /* 호버 시 재생되는 작품 영상 (파일 넣으면 자동 표시·2배속) */
+        /* 작품 이미지 / 호버 재생 영상 — 카드 영역을 꽉 채움 */
+        .wcard-photo,
         .wcard-video {
             position: absolute;
             inset: 0;
@@ -1217,13 +1218,13 @@
                 <div class="works-col works-col--l">
                     <div class="wcard">
                         <div class="wcard-img s1">
-                            <video class="wcard-video" src="work1.mp4" muted loop playsinline preload="metadata"></video>
+                            <img class="wcard-photo" src="work1.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
                             <span class="wcard-name">프로젝트 이름</span>
                         </div>
                     </div>
                     <div class="wcard">
                         <div class="wcard-img s3">
-                            <video class="wcard-video" src="work3.mp4" muted loop playsinline preload="metadata"></video>
+                            <img class="wcard-photo" src="work3.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
                             <span class="wcard-name">프로젝트 이름</span>
                         </div>
                     </div>
@@ -1232,7 +1233,7 @@
                 <div class="works-col works-col--r">
                     <div class="wcard">
                         <div class="wcard-img s2">
-                            <video class="wcard-video" src="work2.mp4" muted loop playsinline preload="metadata"></video>
+                            <img class="wcard-photo" src="work2.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
                             <span class="wcard-name">프로젝트 이름</span>
                         </div>
                     </div>
