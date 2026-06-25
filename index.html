@@ -154,11 +154,14 @@
 
         /* ===== 홈(히어로) 화면 ===== */
         #home {
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100vh;
             background: var(--paper);
             overflow: hidden;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -168,6 +171,14 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+        }
+
+        /* 히어로는 고정, 본문(About~)이 그 위로 부드럽게 슬라이드되어 올라옴 */
+        main {
+            position: relative;
+            z-index: 2;
+            margin-top: 100vh;
+            background: var(--paper);
         }
 
         /* 배경 좌표선 */
@@ -1052,6 +1063,8 @@
         .lc-btn:disabled { opacity: 0.3; cursor: default; }
 
         footer {
+            position: relative;
+            z-index: 2;            /* 고정 히어로 위로 올라오게 */
             background: #16181D;
             padding: 60px 40px;
             text-align: center;
