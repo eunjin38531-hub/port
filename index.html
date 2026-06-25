@@ -85,8 +85,8 @@
                             height 0.3s cubic-bezier(0.22,1,0.36,1),
                             opacity 0.3s ease, background-color 0.3s ease;
             }
-            /* 인터랙티브 요소 위 = 시선이 '초점'을 맞추듯 링이 커지고 동공은 숨음 */
-            .cursor-ring.is-hover { width: 60px; height: 60px; background: rgba(255,255,255,0.12); }
+            /* 인터랙티브 요소 위 = 링이 '속 채운 원'으로 → difference 블렌드로 아래 색이 반전됨 */
+            .cursor-ring.is-hover { width: 46px; height: 46px; background: #fff; border-color: transparent; }
             .cursor-dot.is-hover  { opacity: 0; }
             /* 클릭 = 눈을 '깜빡'이듯 링이 빠르게 수축 */
             .cursor-ring.is-down  { width: 22px; height: 22px; }
