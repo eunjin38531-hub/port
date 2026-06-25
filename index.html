@@ -625,19 +625,29 @@
         }
 
         .skill-icon {
-            width: 72%;
+            width: 58%;
             aspect-ratio: 1 / 1;
             border-radius: 24%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: clamp(11px, 1.5vw, 17px);
+            font-size: clamp(10px, 1.3vw, 15px);
             color: #fff;
             flex-shrink: 0;
         }
 
-        .skill-icon svg { display: block; width: 62%; height: auto; }
+        /* 로고 원본 비율 유지 — 한 축만 %로 잡고 나머지는 auto (찌그러짐 방지, 타일에 맞춰 확대) */
+        .skill-icon svg {
+            display: block;
+            width: 56%;
+            height: auto;
+        }
+        /* Figma 로고는 세로로 길쭉 → 높이 기준으로 맞춰 넘침 방지 */
+        .skill-icon.figma svg {
+            width: auto;
+            height: 60%;
+        }
 
         .skill-icon.figma { background: #1e1e1e; }
         .skill-icon.ps { background: #001e36; color: #31a8ff; border: 1px solid rgba(49,168,255,0.5); }
@@ -894,7 +904,7 @@
             /* min-height + aspect-ratio 충돌 → 너비 480px로 팽창 방지 */
             .profile-photo { aspect-ratio: 4 / 3; min-height: 0; width: 100%; height: auto; }
             .sk-bento { gap: 8px; }
-            .skill-icon { width: 78%; }
+            .skill-icon { width: 64%; }
             .works-grid { grid-template-columns: 1fr; }
             .works-col--r { padding-top: 0; }
             .works-col { gap: 44px; }
@@ -920,7 +930,7 @@
             .rec { grid-template-columns: 70px 1fr; gap: 10px; padding: 11px 0; }
             .cert-badges span { padding: 8px 14px; }
             .sk-bento { gap: 6px; }
-            .skill-icon { width: 82%; border-radius: 26%; }
+            .skill-icon { width: 70%; border-radius: 26%; }
             .works-col { gap: 38px; }
             .wcard-links { gap: 16px; }
             .lc-viewport { height: 600px; }
