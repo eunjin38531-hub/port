@@ -1100,7 +1100,13 @@
             .works-col--r { padding-top: 0; }
             .works-col { gap: 44px; }
             .wcard-img { border-radius: 12px; }
-            .lc-viewport { height: 560px; }
+            /* Letter 카드: 좁은 화면에서 긴 글이 잘리지 않게 — 상단정렬 + 넘치면 내부 스크롤
+               (Lenis는 터치 스크롤은 가로채지 않으므로 모바일 터치엔 영향 없음) */
+            .lc-viewport { height: 520px; }
+            .lc-card { justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .lc-card::-webkit-scrollbar { display: none; }
+            .lc-quote { font-size: 20px; }
+            .lc-body { font-size: 16px; line-height: 1.8; }
         }
 
         /* 작은 폰 */
@@ -1126,8 +1132,10 @@
             .skill-icon { width: 82%; border-radius: 26%; }
             .works-col { gap: 38px; }
             .wcard-links { gap: 16px; }
-            .lc-viewport { height: 600px; }
-            .lc-card { padding: 30px 16px; }
+            .lc-viewport { height: 76vh; min-height: 440px; max-height: 560px; }
+            .lc-card { padding: 26px 16px 30px; justify-content: flex-start; }
+            .lc-quote { font-size: 17px; line-height: 1.45; margin-bottom: 14px; }
+            .lc-body { font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
             .lc-controls { margin-top: 22px; }
             footer { padding: 48px 22px; }
         }
